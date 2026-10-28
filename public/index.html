@@ -3,112 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Curated Problem Solvers | Honest Daily Finds</title>
+  <title>Emma's Curated Finds | Daily Problem Solvers</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .slot-pill {
-      box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.25);
+    body { 
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
+    .soft-card-shadow {
+      box-shadow: 0 4px 24px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+    }
+    .soft-card-shadow:hover {
+      box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 flex flex-col items-center">
+<body class="bg-[#F6F7FA] text-slate-900 min-h-screen py-8 px-4 flex flex-col items-center selection:bg-slate-900 selection:text-white">
 
-  <!-- Profile & Hero Header -->
-  <header class="w-full max-w-md text-center mb-6">
-    <div class="relative inline-block mb-3">
-      <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 to-amber-200 p-[2px] mx-auto shadow-xl">
-        <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-3xl">
-          🔍
+  <!-- Main Container -->
+  <div class="w-full max-w-[440px] flex flex-col items-center">
+
+    <!-- Profile Header (Minimalist & Clean) -->
+    <header class="w-full text-center mb-6 pt-2">
+      <div class="relative inline-block mb-3.5">
+        <div class="w-20 h-20 rounded-full p-[2px] bg-gradient-to-b from-slate-200 to-slate-300 shadow-md mx-auto overflow-hidden">
+          <img 
+            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&h=240&q=80" 
+            alt="Emma" 
+            class="w-full h-full object-cover rounded-full"
+          />
+        </div>
+        <div class="absolute bottom-0 right-0 bg-slate-950 text-white rounded-full p-1 border-2 border-[#F6F7FA] shadow-sm flex items-center justify-center">
+          <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
         </div>
       </div>
-      <span class="absolute bottom-0 right-0 bg-emerald-500 text-[10px] font-bold text-slate-950 px-2 py-0.5 rounded-full border-2 border-slate-950">
-        VERIFIED
-      </span>
-    </div>
 
-    <h1 class="text-xl font-extrabold text-white tracking-tight">The Daily Finds</h1>
-    <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
-      I research top-rated products that solve annoying daily problems. 10k+ reviews, zero sponsored fluff.
-    </p>
-
-    <!-- Stats Bar -->
-    <div class="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-slate-800/80 text-[11px] text-slate-300">
-      <div><span id="total-count" class="font-bold text-white">10</span> Curated Finds</div>
-      <div class="w-1 h-1 rounded-full bg-slate-700"></div>
-      <div><span class="font-bold text-amber-400">4.5★+</span> Rating</div>
-      <div class="w-1 h-1 rounded-full bg-slate-700"></div>
-      <div><span class="font-bold text-emerald-400">100%</span> Honest</div>
-    </div>
-  </header>
-
-  <!-- Search & Category Filters Bar -->
-  <section class="w-full max-w-md mb-5 flex flex-col gap-2.5">
-    <!-- Live Search Input -->
-    <div class="relative w-full">
-      <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
+      <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200/60 text-[11px] font-medium text-slate-600 mb-1.5">
+        <span>Verified Curator</span>
       </div>
-      <input 
-        type="text" 
-        id="search-input" 
-        placeholder="Search by problem, product, or slot (#1, baby, dog...)"
-        class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 focus:border-amber-500/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-all shadow-inner"
-      />
+
+      <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Emma's Daily Finds</h1>
+      <p class="text-xs text-slate-500 mt-1 max-w-[320px] mx-auto leading-relaxed">
+        Researching products with 10k+ reviews that solve annoying daily problems. No sponsored fluff.
+      </p>
+
+      <!-- Minimal Stats Bar -->
+      <div class="flex items-center justify-center gap-4 mt-3.5 pt-3 border-t border-slate-200/70 text-[11px] text-slate-500">
+        <div><span class="font-bold text-slate-900">10</span> Curated Finds</div>
+        <div class="w-1 h-1 rounded-full bg-slate-300"></div>
+        <div><span class="font-bold text-amber-500">4.5★+</span> Rating</div>
+        <div class="w-1 h-1 rounded-full bg-slate-300"></div>
+        <div><span class="font-bold text-emerald-600">100%</span> Honest</div>
+      </div>
+    </header>
+
+    <!-- Search & Filter Controls -->
+    <section class="w-full mb-5 flex flex-col gap-2.5">
+      <!-- Search Input -->
+      <div class="relative w-full">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search by problem, product, or slot (#1, baby, dog...)"
+          class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200/80 focus:border-slate-400 rounded-2xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/5 transition-all shadow-sm"
+        />
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div id="category-pills" class="flex gap-1.5 overflow-x-auto pb-1 text-[11px] no-scrollbar">
+        <button class="cat-pill active px-3.5 py-1.5 rounded-full font-semibold bg-slate-950 text-white whitespace-nowrap transition-all shadow-sm" data-category="ALL">
+          All Finds
+        </button>
+        <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Pets">
+          Pets 🐕
+        </button>
+        <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Sleep">
+          Sleep 😴
+        </button>
+        <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Back">
+          Posture 🪑
+        </button>
+        <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Clean">
+          Cleaning 🧼
+        </button>
+        <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Travel">
+          Travel ✈️
+        </button>
+      </div>
+    </section>
+
+    <!-- Product Cards List -->
+    <main id="products-list" class="w-full flex flex-col gap-3.5 mb-10">
+      <!-- Populated via Javascript -->
+    </main>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden w-full text-center py-12 px-4 bg-white border border-slate-200/70 rounded-3xl mb-10 shadow-sm">
+      <div class="text-3xl mb-2">🔍</div>
+      <h3 class="text-sm font-bold text-slate-900">No matching finds</h3>
+      <p class="text-xs text-slate-500 mt-1">Try keywords like "hair", "baby", "clean", or a slot number like "#2".</p>
     </div>
 
-    <!-- Category Filter Pills -->
-    <div id="category-pills" class="flex gap-1.5 overflow-x-auto pb-1 text-[11px] no-scrollbar">
-      <button class="cat-pill active px-3 py-1 rounded-full font-semibold bg-amber-500 text-slate-950 whitespace-nowrap transition-all" data-category="ALL">
-        All Finds
-      </button>
-      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Pets">
-        Pets 🐕
-      </button>
-      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Sleep">
-        Sleep 😴
-      </button>
-      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Back">
-        Posture 🪑
-      </button>
-      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Clean">
-        Clean 🧼
-      </button>
-      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Travel">
-        Travel ✈️
-      </button>
-    </div>
-  </section>
+    <!-- Transparent Footer & Mandatory Amazon Affiliate Disclosure -->
+    <footer class="w-full text-center border-t border-slate-200/70 pt-6 pb-12 text-[11px] text-slate-400 leading-relaxed px-4">
+      <p class="font-semibold text-slate-600 mb-1">Affiliate Disclosure</p>
+      <p>
+        As an Amazon Associate I earn from qualifying purchases. Products listed are independently researched based on verified consumer feedback and high rating benchmarks.
+      </p>
+      <p class="mt-3 text-[10px] text-slate-400">
+        &copy; 2026 Emma's Curated Finds • Immutable Slots System
+      </p>
+    </footer>
 
-  <!-- Products List Container -->
-  <main id="products-list" class="w-full max-w-md flex flex-col gap-3 mb-10">
-    <!-- Populated by JS -->
-  </main>
-
-  <!-- Empty State (if search has 0 results) -->
-  <div id="empty-state" class="hidden w-full max-w-md text-center py-12 px-4 bg-slate-900/50 border border-slate-800 rounded-2xl mb-10">
-    <div class="text-3xl mb-2">🔍</div>
-    <h3 class="text-sm font-bold text-white">No problem solver found</h3>
-    <p class="text-xs text-slate-400 mt-1">Try searching for keywords like "crying", "hair", "desk", or a slot number like "#2".</p>
   </div>
 
-  <!-- Amazon Associates Mandatory Legal Disclosure Footer -->
-  <footer class="w-full max-w-md text-center border-t border-slate-900 pt-6 pb-12 text-[11px] text-slate-500 leading-relaxed px-4">
-    <p class="font-semibold text-slate-400 mb-1">Affiliate Disclosure</p>
-    <p>
-      As an Amazon Associate I earn from qualifying purchases. Products listed are independently researched based on verified consumer feedback and high rating benchmarks.
-    </p>
-    <p class="mt-3 text-[10px] text-slate-600">
-      &copy; 2026 Curated Daily Finds • Immutable Slots System
-    </p>
-  </footer>
-
-  <!-- Catalog Data & Search Script -->
   <script>
     // IMMUTABLE SLOTS: Slot numbers must NEVER change once published!
     const CATALOG = [
@@ -117,7 +137,7 @@
         "category": "Pets & Fur",
         "cat_tag": "Pets",
         "title": "PetLovers Extra Sticky Lint Roller (Mega 450 Sheets)",
-        "pain": "Couch & clothes covered in stubborn dog/cat hair",
+        "pain": "Stubborn dog & cat hair on couch and clothes",
         "price": 12.99,
         "rating": 4.6,
         "reviews": "39.3k reviews",
@@ -169,7 +189,7 @@
         "category": "Deep Clean",
         "cat_tag": "Clean",
         "title": "Cordless Electric Spin Scrubber with Extension Arm",
-        "pain": "Back-breaking knee pain from scrubbing bathroom & tile",
+        "pain": "Back-breaking knee pain scrubbing tile & shower",
         "price": 39.99,
         "rating": 4.4,
         "reviews": "8.9k reviews",
@@ -182,7 +202,7 @@
         "category": "Desk Clutter",
         "cat_tag": "Desk",
         "title": "Smartish Magnetic Cord Holder & Cable Wrangler",
-        "pain": "Charging cables falling behind desk and tangling",
+        "pain": "Charging cables sliding off desk and tangling",
         "price": 29.99,
         "rating": 4.6,
         "reviews": "5.2k reviews",
@@ -195,7 +215,7 @@
         "category": "Travel & Commute",
         "cat_tag": "Travel",
         "title": "Perilogics Universal Airplane Flight Phone Mount",
-        "pain": "Hands cramping & neck strain holding phone on flights",
+        "pain": "Neck strain holding phone on long flights/trains",
         "price": 21.59,
         "rating": 4.6,
         "reviews": "22.9k reviews",
@@ -208,7 +228,7 @@
         "category": "Clothing Care",
         "cat_tag": "Travel",
         "title": "OGHom Handheld Travel Garment Steamer",
-        "pain": "Wrinkled clothes while traveling without ironing boards",
+        "pain": "Wrinkled clothes on trips without ironing boards",
         "price": 35.99,
         "rating": 4.3,
         "reviews": "1.6k reviews",
@@ -234,7 +254,7 @@
         "category": "Car Interior",
         "cat_tag": "Clean",
         "title": "PULIDIKI Universal Car Detailing Cleaning Putty",
-        "pain": "Dust, crumbs & gunk stuck in car AC vents & seams",
+        "pain": "Dust, crumbs & gunk stuck in car vents & cup holders",
         "price": 7.99,
         "rating": 4.1,
         "reviews": "101k reviews",
@@ -256,10 +276,7 @@
       container.innerHTML = "";
       
       const filtered = CATALOG.filter(p => {
-        // Category check
         const matchesCategory = currentCategory === "ALL" || p.cat_tag === currentCategory;
-        
-        // Search query check
         const q = searchQuery.toLowerCase().trim();
         const matchesSearch = !q || 
           p.title.toLowerCase().includes(q) ||
@@ -282,51 +299,51 @@
         card.href = p.url;
         card.target = "_blank";
         card.rel = "noopener noreferrer";
-        card.className = "group relative bg-slate-900/90 hover:bg-slate-850 border border-slate-800/80 hover:border-amber-500/50 rounded-2xl p-3.5 transition-all duration-200 flex gap-3.5 items-center shadow-lg hover:scale-[1.01] active:scale-[0.99]";
+        card.className = "group relative bg-white border border-slate-200/80 rounded-3xl p-3.5 transition-all duration-200 flex gap-3.5 items-center soft-card-shadow active:scale-[0.99]";
 
         card.innerHTML = `
-          <!-- Number Slot Badge -->
-          <div class="flex-shrink-0 flex flex-col items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/10 border border-amber-500/30 text-amber-400 font-extrabold text-base slot-pill">
-            #${p.slot}
-          </div>
-
-          <!-- Product Image -->
-          <div class="flex-shrink-0 w-16 h-16 rounded-lg bg-slate-950 p-1 border border-slate-800 flex items-center justify-center overflow-hidden">
+          <!-- Product Image in Soft Frame -->
+          <div class="relative flex-shrink-0 w-20 h-20 rounded-2xl bg-[#F8F9FA] p-1.5 border border-slate-100 flex items-center justify-center overflow-hidden">
             <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
+            <!-- Slot Badge on Top Left of Image -->
+            <span class="absolute top-1 left-1 bg-slate-900/85 backdrop-blur-sm text-white font-extrabold text-[10px] px-1.5 py-0.5 rounded-lg shadow-sm">
+              #${p.slot}
+            </span>
           </div>
 
-          <!-- Info Column -->
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-1.5 mb-1">
-              <span class="text-[9px] font-semibold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
+          <!-- Product Details Center -->
+          <div class="flex-1 min-w-0 pr-1">
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                 ${p.category}
               </span>
-              <span class="text-[9px] text-emerald-400 font-medium">
+              <!-- Soft Green Velocity Badge (like Ref 2) -->
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100/80">
                 ${p.velocity}
               </span>
             </div>
 
-            <h2 class="text-xs font-bold text-slate-100 group-hover:text-amber-300 truncate">
+            <h2 class="text-xs font-bold text-slate-900 group-hover:text-slate-700 line-clamp-1 leading-snug">
               ${p.title}
             </h2>
 
-            <p class="text-[10px] text-slate-400 truncate mt-0.5">
-              Solves: ${p.pain}
+            <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+              ${p.pain}
             </p>
 
-            <div class="flex items-center gap-2 mt-1.5 text-[11px]">
-              <span class="font-extrabold text-white">$${p.price.toFixed(2)}</span>
-              <span class="text-slate-600">•</span>
-              <span class="text-amber-400 font-medium">${p.rating} ★</span>
-              <span class="text-[10px] text-slate-500">(${p.reviews})</span>
-            </div>
-          </div>
+            <div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-100/80">
+              <div class="flex items-baseline gap-1.5">
+                <span class="text-sm font-extrabold text-slate-900">$${p.price.toFixed(2)}</span>
+                <span class="text-[10px] font-medium text-slate-400">• ${p.rating}★ (${p.reviews})</span>
+              </div>
 
-          <!-- Action Arrow -->
-          <div class="flex-shrink-0 pr-1 text-slate-500 group-hover:text-amber-400 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
-            </svg>
+              <!-- Sleek Action Button -->
+              <div class="w-7 h-7 rounded-full bg-slate-100 group-hover:bg-slate-900 group-hover:text-white text-slate-600 flex items-center justify-center transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </div>
+            </div>
           </div>
         `;
 
@@ -334,25 +351,22 @@
       });
     }
 
-    // Search event
     searchInput.addEventListener("input", (e) => {
       searchQuery = e.target.value;
       renderProducts();
     });
 
-    // Category pills events
     pills.forEach(btn => {
       btn.addEventListener("click", () => {
         pills.forEach(b => {
-          b.className = "cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all";
+          b.className = "cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm";
         });
-        btn.className = "cat-pill active px-3 py-1 rounded-full font-semibold bg-amber-500 text-slate-950 whitespace-nowrap transition-all";
+        btn.className = "cat-pill active px-3.5 py-1.5 rounded-full font-semibold bg-slate-950 text-white whitespace-nowrap transition-all shadow-sm";
         currentCategory = btn.dataset.category;
         renderProducts();
       });
     });
 
-    // Initial render
     renderProducts();
   </script>
 </body>

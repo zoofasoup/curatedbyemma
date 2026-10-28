@@ -28,32 +28,34 @@
   <!-- Main Container -->
   <div class="w-full max-w-[440px] flex flex-col items-center">
 
-    <!-- Profile Header (Warm, Natural, 100% Human) -->
-    <header class="w-full text-center mb-6 pt-1">
-      <div class="relative inline-block mb-3">
-        <div class="w-16 h-16 rounded-full p-[2px] bg-slate-200 shadow-sm mx-auto overflow-hidden">
+    <!-- Profile Header (Editorial, Warm & Human) -->
+    <header class="w-full text-center mb-6 pt-3 flex flex-col items-center">
+      <!-- Natural Warm Avatar -->
+      <div class="relative mb-3">
+        <div class="w-20 h-20 rounded-full p-[2px] bg-gradient-to-b from-amber-200/60 to-slate-200 shadow-sm mx-auto overflow-hidden">
           <img 
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&h=240&q=80" 
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&h=300&q=80" 
             alt="Emma" 
             class="w-full h-full object-cover rounded-full"
           />
         </div>
+        <!-- Natural Active Indicator -->
+        <span class="absolute bottom-0.5 right-0.5 w-4 h-4 bg-emerald-500 border-2 border-[#F6F7FA] rounded-full shadow-sm"></span>
       </div>
 
-      <!-- Human status pill -->
-      <div class="flex items-center justify-center gap-1.5 mb-2">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 text-[11px] font-medium text-slate-600 shadow-sm">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          Updated for this week
-        </span>
+      <!-- Human Status Capsule -->
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 text-[11px] font-medium text-slate-600 shadow-sm mb-2.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <span>Updated for this week</span>
       </div>
 
-      <h1 class="text-xl font-bold text-slate-900 tracking-tight">Things that actually worked.</h1>
+      <!-- Clean Warm Title & Bio -->
+      <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Things that actually worked.</h1>
       <p class="text-xs text-slate-500 mt-1.5 max-w-[320px] mx-auto leading-relaxed">
         A running master list of Amazon finds that genuinely fixed annoying daily problems. Zero sponsored posts, just stuff with crazy good reviews.
       </p>
 
-      <!-- Clean Social Proof Stats -->
+      <!-- Minimal Stats Bar -->
       <div class="flex items-center justify-center gap-4 mt-3.5 pt-3 border-t border-slate-200/60 text-[11px] text-slate-500">
         <div><span class="font-bold text-slate-900">10</span> tested items</div>
         <div class="w-1 h-1 rounded-full bg-slate-300"></div>

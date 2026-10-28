@@ -67,7 +67,7 @@
 
     <!-- Search & Filter Controls -->
     <section class="w-full mb-5 flex flex-col gap-2.5">
-      <!-- Search Input -->
+      <!-- Search Input Container -->
       <div class="relative w-full">
         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,8 +78,19 @@
           type="text" 
           id="search-input" 
           placeholder="What's bothering you? (e.g. dog hair, baby, back pain, #5...)"
-          class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200/80 focus:border-slate-400 rounded-2xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/5 transition-all shadow-sm"
+          class="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200/80 focus:border-slate-400 rounded-2xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/5 transition-all shadow-sm"
         />
+        <!-- Clear (X) Button -->
+        <button 
+          id="clear-search-btn" 
+          type="button"
+          aria-label="Clear search"
+          class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 transition-colors"
+        >
+          <span class="w-4 h-4 rounded-full bg-slate-200/80 hover:bg-slate-300 flex items-center justify-center text-[10px] font-bold text-slate-600">
+            ✕
+          </span>
+        </button>
       </div>
 
       <!-- Category Filter Pills (Conversational, not rigid) -->
@@ -279,6 +290,7 @@
     const container = document.getElementById("products-list");
     const emptyState = document.getElementById("empty-state");
     const searchInput = document.getElementById("search-input");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
     const pills = document.querySelectorAll(".cat-pill");
 
     let currentCategory = "ALL";
@@ -364,8 +376,23 @@
       });
     }
 
+    // Search Input Event
     searchInput.addEventListener("input", (e) => {
       searchQuery = e.target.value;
+      if (searchQuery.trim().length > 0) {
+        clearSearchBtn.classList.remove("hidden");
+      } else {
+        clearSearchBtn.classList.add("hidden");
+      }
+      renderProducts();
+    });
+
+    // Clear Search Click
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      searchQuery = "";
+      clearSearchBtn.classList.add("hidden");
+      searchInput.focus();
       renderProducts();
     });
 

@@ -22,59 +22,71 @@
     input[type="text"] {
       font-size: 16px !important;
     }
-    .soft-card-shadow {
-      box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.05), 0 1px 3px -1px rgba(15, 23, 42, 0.02);
+    .clean-card-shadow {
+      box-shadow: 0 2px 14px -2px rgba(15, 23, 42, 0.04), 0 1px 3px -1px rgba(15, 23, 42, 0.02);
     }
-    .soft-card-shadow:active {
+    .clean-card-shadow:hover {
+      box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    }
+    .clean-card-shadow:active {
       transform: scale(0.985);
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-[#F6F7FA] text-slate-900 min-h-screen pt-3 pb-12 px-3.5 flex flex-col items-center selection:bg-slate-900 selection:text-white">
+<body class="bg-[#F8F9FA] text-slate-900 min-h-screen pt-3 pb-14 px-3 flex flex-col items-center selection:bg-slate-900 selection:text-white">
 
-  <!-- Main Container strictly bounded to max-w-[440px] -->
-  <div class="w-full max-w-[440px] flex flex-col items-center overflow-x-hidden">
+  <!-- Main Container strictly bounded to mobile width -->
+  <div class="w-full max-w-[420px] flex flex-col items-center overflow-x-hidden">
 
-    <!-- COMPACT HEADER (Clean, Accessible & Proportionate) -->
-    <header class="w-full mb-3 flex items-center justify-between gap-2.5 bg-white border border-slate-200/80 rounded-2xl p-3 shadow-sm">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <!-- Avatar with active dot -->
+    <!-- CLEAN, UNCLUTTERED HEADER (No Cut-Offs) -->
+    <header class="w-full mb-3 bg-white border border-slate-200/80 rounded-3xl p-3.5 shadow-sm">
+      <div class="flex items-center gap-3">
+        <!-- Emma Avatar -->
         <div class="relative flex-shrink-0">
-          <div class="w-11 h-11 rounded-full p-[2px] bg-slate-200 shadow-sm overflow-hidden">
+          <div class="w-12 h-12 rounded-full p-[2px] bg-slate-200 shadow-sm overflow-hidden">
             <img 
               src="assets/emma/emma_desk.jpg" 
               alt="Emma" 
               class="w-full h-full object-cover rounded-full"
             />
           </div>
-          <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+          <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></span>
         </div>
 
-        <!-- Identity & Status -->
-        <div class="min-w-0">
+        <!-- Name & Bio Statement -->
+        <div class="min-w-0 flex-1">
           <div class="flex items-center gap-1.5">
-            <h1 class="text-sm font-extrabold text-slate-900 tracking-tight truncate">Emma's Daily Finds</h1>
-            <span class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 flex-shrink-0">
-              Verified
-            </span>
+            <h1 class="text-sm font-extrabold text-slate-900 tracking-tight">Emma's Daily Finds</h1>
+            <svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
           </div>
-          <p class="text-[11px] text-slate-500 truncate mt-0.5">
-            Amazon finds that actually worked • 10k+ reviews
+          <p class="text-[11.5px] text-slate-500 font-medium leading-snug mt-0.5">
+            Amazon problem solvers backed by 10k+ verified reviews.
           </p>
         </div>
       </div>
 
-      <!-- Quick Trust Badge -->
-      <div class="flex-shrink-0 text-right pl-2 border-l border-slate-100">
-        <div class="text-[11px] font-extrabold text-slate-900">10 Picks</div>
-        <div class="text-[10px] font-bold text-amber-500">4.5★+ avg</div>
+      <!-- Trust Metrics Bar -->
+      <div class="flex items-center justify-between pt-2.5 mt-2.5 border-t border-slate-100 text-[11px] font-semibold text-slate-500">
+        <div class="flex items-center gap-1">
+          <span class="text-slate-900 font-extrabold">10</span> Tested Picks
+        </div>
+        <div class="w-1 h-1 rounded-full bg-slate-300"></div>
+        <div class="flex items-center gap-1">
+          <span class="text-amber-500 font-bold">4.5★+</span> Minimum
+        </div>
+        <div class="w-1 h-1 rounded-full bg-slate-300"></div>
+        <div class="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+          Updated Weekly
+        </div>
       </div>
     </header>
 
     <!-- STICKY SEARCH & CATEGORY BAR -->
-    <section class="sticky top-0 z-30 w-full pt-1 pb-2.5 mb-2 bg-[#F6F7FA]/95 backdrop-blur-md flex flex-col gap-2 overflow-x-hidden">
+    <section class="sticky top-0 z-30 w-full pt-1 pb-2 mb-2 bg-[#F8F9FA]/95 backdrop-blur-md flex flex-col gap-2 overflow-x-hidden">
       <!-- Search Input Container -->
       <div class="relative w-full">
         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -101,39 +113,39 @@
         </button>
       </div>
 
-      <!-- Category Filter Pills (Safely horizontally scrollable without breaking parent layout) -->
+      <!-- Category Filter Pills -->
       <div class="w-full max-w-full overflow-hidden">
         <div id="category-pills" class="flex gap-1.5 overflow-x-auto pb-0.5 text-xs no-scrollbar">
-          <button class="cat-pill active px-3 py-1 rounded-full font-bold bg-slate-950 text-white whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="ALL">
+          <button class="cat-pill active px-3 py-1.5 rounded-full font-bold bg-slate-950 text-white whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="ALL">
             All 10 Picks
           </button>
-          <button class="cat-pill px-3 py-1 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Pets">
+          <button class="cat-pill px-3 py-1.5 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Pets">
             Pet Hair 🐕
           </button>
-          <button class="cat-pill px-3 py-1 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Sleep">
+          <button class="cat-pill px-3 py-1.5 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Sleep">
             Sleep & Kids 😴
           </button>
-          <button class="cat-pill px-3 py-1 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Back">
+          <button class="cat-pill px-3 py-1.5 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Back">
             Desk & Back 🪑
           </button>
-          <button class="cat-pill px-3 py-1 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Clean">
+          <button class="cat-pill px-3 py-1.5 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Clean">
             Deep Clean 🧼
           </button>
-          <button class="cat-pill px-3 py-1 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Travel">
+          <button class="cat-pill px-3 py-1.5 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0" data-category="Travel">
             Travel Hacks ✈️
           </button>
         </div>
       </div>
     </section>
 
-    <!-- Product Cards List (Strictly contained flex layout) -->
-    <main id="products-list" class="w-full flex flex-col gap-3 mb-10 overflow-x-hidden">
+    <!-- ULTRA-CLEAN PRODUCT CARDS (Pure Focus: No Cluttered Description, Just Like Ref 2) -->
+    <main id="products-list" class="w-full flex flex-col gap-2.5 mb-10 overflow-x-hidden">
       <!-- Populated via Javascript -->
     </main>
 
     <!-- Empty State -->
-    <div id="empty-state" class="hidden w-full text-center py-10 px-4 bg-white border border-slate-200/70 rounded-2xl mb-10 shadow-sm">
-      <div class="text-2xl mb-1.5">🤔</div>
+    <div id="empty-state" class="hidden w-full text-center py-12 px-4 bg-white border border-slate-200/70 rounded-3xl mb-10 shadow-sm">
+      <div class="text-3xl mb-2">🤔</div>
       <h3 class="text-sm font-bold text-slate-900">Couldn't find that one</h3>
       <p class="text-xs text-slate-500 mt-1 max-w-[260px] mx-auto">Try typing a keyword like "sleep", "dog", "chair", or just a slot number like "#2".</p>
     </div>
@@ -167,14 +179,13 @@
     const CATALOG = [
       {
         "slot": 1,
-        "category": "Pet Mess",
+        "category": "Pet Hair",
         "cat_tag": "Pets",
-        "title": "PetLovers Extra-Sticky Lint Roller Set",
-        "human_note": "For when your couch looks like a second dog. Picks up fur vacuums leave behind.",
+        "title": "PetLovers Extra-Sticky Lint Roller Set (5 Pack)",
         "price": 12.99,
         "rating": 4.6,
         "reviews": "39k reviews",
-        "velocity": "10k+ bought recently",
+        "velocity": "10k+ bought last month",
         "image": "https://m.media-amazon.com/images/I/812M1RJAdEL._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B07GV57JYJ?tag=findshunter-20"
       },
@@ -183,11 +194,10 @@
         "category": "Toddler Sleep",
         "cat_tag": "Sleep",
         "title": "Fisher-Price Breathing Rhythm Otter Plush",
-        "human_note": "The famous gentle breathing plush that actually calms restless babies down at night.",
         "price": 34.79,
         "rating": 4.7,
         "reviews": "60k reviews",
-        "velocity": "5k+ bought recently",
+        "velocity": "5k+ bought last month",
         "image": "https://m.media-amazon.com/images/I/61yMGP6pujL._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B07N1JP56L?tag=findshunter-20"
       },
@@ -196,11 +206,10 @@
         "category": "Desk Setup",
         "cat_tag": "Back",
         "title": "Ergonomic Memory Foam Lumbar Support Cushion",
-        "human_note": "Saves your lower back from stiff 8-hour office chairs without buying a $500 seat.",
         "price": 27.99,
         "rating": 4.4,
         "reviews": "27k reviews",
-        "velocity": "10k+ bought recently",
+        "velocity": "10k+ bought last month",
         "image": "https://m.media-amazon.com/images/I/81Qm1-Fja2L._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B074C9F45S?tag=findshunter-20"
       },
@@ -209,24 +218,22 @@
         "category": "Kitchen Hack",
         "cat_tag": "Kitchen",
         "title": "TrendPlain Glass Olive Oil Mister Sprayer",
-        "human_note": "Even fine mist so your air fryer fries don't end up drenched in oil or coming out soggy.",
         "price": 15.99,
         "rating": 4.6,
         "reviews": "49k reviews",
-        "velocity": "2k+ bought recently",
+        "velocity": "2k+ bought last month",
         "image": "https://m.media-amazon.com/images/I/71Sx9YQ00fL._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B0CY1S56JZ?tag=findshunter-20"
       },
       {
         "slot": 5,
-        "category": "Easy Cleaning",
+        "category": "Deep Clean",
         "cat_tag": "Clean",
         "title": "Cordless Electric Spin Scrubber with Extension Pole",
-        "human_note": "Zero kneeling or back pain. Cleans stubborn tile grout and bathtub scum in minutes.",
         "price": 39.99,
         "rating": 4.4,
         "reviews": "9k reviews",
-        "velocity": "20k+ bought recently",
+        "velocity": "20k+ bought last month",
         "image": "https://m.media-amazon.com/images/I/71GhDHqOwNL._AC_UY218_.jpg",
         "url": "https://www.amazon.com/dp/B0C1NJDTTX?tag=findshunter-20"
       },
@@ -235,11 +242,10 @@
         "category": "Cable Clutter",
         "cat_tag": "Back",
         "title": "Smartish Magnetic Cable Wrangler & Organizer",
-        "human_note": "Stops your phone charging cables from sliding off the nightstand and behind the bed.",
         "price": 29.99,
         "rating": 4.6,
         "reviews": "5k reviews",
-        "velocity": "1k+ bought recently",
+        "velocity": "1k+ bought last month",
         "image": "https://m.media-amazon.com/images/I/7123kAuMpIL._AC_UY218_.jpg",
         "url": "https://www.amazon.com/dp/B07BB4YXHW?tag=findshunter-20"
       },
@@ -248,11 +254,10 @@
         "category": "Flight Essential",
         "cat_tag": "Travel",
         "title": "Perilogics Airplane Tray-Table Phone Mount",
-        "human_note": "Clamps to the seat in front of you so your hands and neck don't cramp watching movies on flights.",
         "price": 21.59,
         "rating": 4.6,
         "reviews": "23k reviews",
-        "velocity": "500+ bought recently",
+        "velocity": "500+ bought last month",
         "image": "https://m.media-amazon.com/images/I/71P9DdPma2L._AC_UY218_.jpg",
         "url": "https://www.amazon.com/dp/B08TKPRKBN?tag=findshunter-20"
       },
@@ -261,11 +266,10 @@
         "category": "Quick Steam",
         "cat_tag": "Travel",
         "title": "OGHom Compact Handheld Travel Garment Steamer",
-        "human_note": "Heats up in 30s. Melts wrinkles right out of suitcase clothes without an ironing board.",
         "price": 35.99,
         "rating": 4.3,
         "reviews": "2k reviews",
-        "velocity": "30k+ bought recently",
+        "velocity": "30k+ bought last month",
         "image": "https://m.media-amazon.com/images/I/71vshmAdKuL._AC_UY218_.jpg",
         "url": "https://www.amazon.com/dp/B0FYF2X322?tag=findshunter-20"
       },
@@ -274,11 +278,10 @@
         "category": "Deep Sleep",
         "cat_tag": "Sleep",
         "title": "TOPOINT 3D Bluetooth Sleep Eye Mask",
-        "human_note": "100% pitch blackout with flat speakers that don't hurt your ears when side-sleeping to drown out snoring.",
         "price": 23.97,
         "rating": 4.3,
         "reviews": "13k reviews",
-        "velocity": "1k+ bought recently",
+        "velocity": "1k+ bought last month",
         "image": "https://m.media-amazon.com/images/I/71a4Pm7uBCL._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B07TPL5K7W?tag=findshunter-20"
       },
@@ -287,11 +290,10 @@
         "category": "Car Clean",
         "cat_tag": "Clean",
         "title": "PULIDIKI Reusable Car Detailing Putty Gel",
-        "human_note": "Squishes deep into AC vents, seams, and cup holders to grab all the stubborn crumbs and dust.",
         "price": 7.99,
         "rating": 4.1,
         "reviews": "101k reviews",
-        "velocity": "10k+ bought recently",
+        "velocity": "10k+ bought last month",
         "image": "https://m.media-amazon.com/images/I/71WpCXsPbML._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B07SBFDZ6T?tag=findshunter-20"
       }
@@ -314,7 +316,6 @@
         const q = searchQuery.toLowerCase().trim();
         const matchesSearch = !q || 
           p.title.toLowerCase().includes(q) ||
-          p.human_note.toLowerCase().includes(q) ||
           p.category.toLowerCase().includes(q) ||
           `#${p.slot}`.includes(q) ||
           `${p.slot}` === q;
@@ -333,51 +334,46 @@
         card.href = p.url;
         card.target = "_blank";
         card.rel = "noopener noreferrer";
-        card.className = "group relative w-full bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-3 transition-all duration-150 flex gap-3 items-center soft-card-shadow overflow-hidden";
+        card.className = "group relative w-full bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-3 transition-all duration-150 flex items-center gap-3 clean-card-shadow";
 
         card.innerHTML = `
-          <!-- Thumbnail Frame (Strict 76px width to prevent any flex blowout) -->
-          <div class="relative flex-shrink-0 w-[76px] h-[76px] rounded-xl bg-[#F8F9FA] p-1 border border-slate-100 flex items-center justify-center overflow-hidden">
+          <!-- Thumbnail Frame with # Slot Tag (Clean & Square) -->
+          <div class="relative flex-shrink-0 w-[78px] h-[78px] rounded-xl bg-[#F8F9FA] p-1.5 border border-slate-100 flex items-center justify-center overflow-hidden">
             <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
-            <!-- Clear High-Contrast Slot Badge -->
-            <span class="absolute top-1 left-1 bg-slate-900 text-white font-extrabold text-[10px] px-1.5 py-0.2 rounded-md shadow-sm">
+            <!-- Sleek Minimal Slot Badge -->
+            <span class="absolute top-1 left-1 bg-slate-950 text-white font-extrabold text-[10px] px-1.5 py-0.2 rounded-md shadow-sm">
               #${p.slot}
             </span>
           </div>
 
-          <!-- Product Details (Elderly / Skim-Friendly) -->
-          <div class="flex-1 min-w-0 pr-0.5">
-            <div class="flex items-center justify-between gap-1 mb-0.5">
+          <!-- Product Details Center (Zero Description Clutter) -->
+          <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+            <!-- Category & Velocity Row -->
+            <div class="flex items-center justify-between gap-1 mb-1">
               <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">
                 ${p.category}
               </span>
-              <!-- Soft Green Velocity Badge -->
+              <!-- Soft Green Velocity Badge (Directly like Ref 2) -->
               <span class="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 flex-shrink-0">
                 ${p.velocity}
               </span>
             </div>
 
-            <!-- Crisp Title -->
-            <h2 class="text-[13.5px] font-extrabold text-slate-900 group-hover:text-slate-700 leading-tight truncate">
+            <!-- Clear, Bold Title (High Contrast) -->
+            <h2 class="text-[13.5px] font-extrabold text-slate-900 group-hover:text-slate-700 leading-snug line-clamp-2">
               ${p.title}
             </h2>
 
-            <!-- 2-Line Note -->
-            <p class="text-[11.5px] text-slate-500 line-clamp-2 mt-0.5 leading-snug">
-              ${p.human_note}
-            </p>
-
-            <!-- Price & Action Bar -->
-            <div class="flex items-center justify-between mt-1.5 pt-1 border-t border-slate-100">
+            <!-- Price & Action Row -->
+            <div class="flex items-center justify-between mt-1.5 pt-1.5 border-t border-slate-100">
               <div class="flex items-baseline gap-1.5">
-                <span class="text-sm font-extrabold text-slate-900">$${p.price.toFixed(2)}</span>
+                <span class="text-[15px] font-extrabold text-slate-900">$${p.price.toFixed(2)}</span>
                 <span class="text-[11px] font-semibold text-slate-400">• ${p.rating}★ (${p.reviews})</span>
               </div>
 
-              <!-- Thumb-friendly click button -->
-              <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 group-hover:bg-slate-900 text-slate-700 group-hover:text-white transition-colors text-[11px] font-bold">
-                <span>View</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <!-- Sleek Circular Button (Directly like Ref 2) -->
+              <div class="w-7 h-7 rounded-full bg-slate-100 group-hover:bg-slate-950 group-hover:text-white text-slate-600 flex items-center justify-center transition-colors flex-shrink-0">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
               </div>
@@ -413,9 +409,9 @@
     pills.forEach(btn => {
       btn.addEventListener("click", () => {
         pills.forEach(b => {
-          b.className = "cat-pill px-3 py-1 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0";
+          b.className = "cat-pill px-3 py-1.5 rounded-full font-semibold bg-white border border-slate-200/80 text-slate-700 hover:text-slate-950 whitespace-nowrap transition-all shadow-sm flex-shrink-0";
         });
-        btn.className = "cat-pill active px-3 py-1 rounded-full font-bold bg-slate-950 text-white whitespace-nowrap transition-all shadow-sm flex-shrink-0";
+        btn.className = "cat-pill active px-3 py-1.5 rounded-full font-bold bg-slate-950 text-white whitespace-nowrap transition-all shadow-sm flex-shrink-0";
         currentCategory = btn.dataset.category;
         renderProducts();
       });

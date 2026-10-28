@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emma Engine | Operations & Affiliate Control Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(51, 65, 85, 0.8);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col bg-[#0B0F17] text-slate-200 antialiased selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- TOP APP BAR -->
+  <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-xl sticky top-0 z-40 px-5 py-3.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <!-- Brand & Persona -->
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <img src="/assets/emma/emma_desk.jpg" alt="Emma" class="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/80">
+          <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-slate-950"></span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm font-extrabold tracking-tight text-white">EMMA ENGINE</h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">AFFILIATE AUTO-PILOT</span>
+          </div>
+          <p class="text-xs text-slate-400 font-medium">@curated_byemma • Amazon US Tier-1 Traffic Engine</p>
+        </div>
+      </div>
+
+      <!-- Live Badges & Primary Actions -->
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-slate-300 font-medium">Threads: <strong class="text-emerald-400 font-semibold">Active</strong></span>
+        </div>
+
+        <a href="https://curatedbyemma.pages.dev" target="_blank" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition-colors">
+          <span>Live Lander</span>
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+        </a>
+
+        <button id="btn-quick-publish" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs shadow-lg shadow-amber-500/20 transition-all active:scale-95">
+          <span>🚀 Publish Next Thread</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-5 sm:p-6 flex flex-col gap-6">
+
+    <!-- METRICS GRID -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <!-- Metric 1: Slots -->
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+          <span>Master Catalog</span>
+          <span class="text-emerald-400 font-bold">100% Locked</span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl font-black text-white">10</span>
+          <span class="text-xs text-slate-400 font-semibold">Evergreen Slots (#1 - #10)</span>
+        </div>
+        <div class="mt-2 text-[11px] text-slate-500 flex items-center gap-1">
+          <span>★ 4.5+ Rating Minimum</span>
+        </div>
+      </div>
+
+      <!-- Metric 2: Broadcast Queue -->
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+          <span>Threads Broadcast</span>
+          <span id="stat-published-badge" class="text-amber-400 font-bold">1 Published</span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span id="stat-pending-count" class="text-2xl font-black text-white">5</span>
+          <span class="text-xs text-slate-400 font-semibold">Queued in Pipeline</span>
+        </div>
+        <div class="mt-2 text-[11px] text-slate-500">
+          Photo lifestyle attached
+        </div>
+      </div>
+
+      <!-- Metric 3: Affiliate Tag -->
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+          <span>Associate Tag</span>
+          <span class="text-emerald-400 font-bold">24-Hr Cookie</span>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-lg font-black mono text-amber-400">curatedbyem0f-20</span>
+        </div>
+        <div class="mt-2 text-[11px] text-slate-500">
+          Direct Amazon Associates Link
+        </div>
+      </div>
+
+      <!-- Metric 4: Cloudflare Pages -->
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+          <span>Bio Destination</span>
+          <span class="text-emerald-400 font-bold">● HTTP 200</span>
+        </div>
+        <div class="mt-2 truncate">
+          <a href="https://curatedbyemma.pages.dev" target="_blank" class="text-sm font-bold text-white hover:text-amber-400 transition-colors">curatedbyemma.pages.dev ↗</a>
+        </div>
+        <div class="mt-2 text-[11px] text-slate-500">
+          Cloudflare Pages Edge CDN
+        </div>
+      </div>
+    </section>
+
+    <!-- TABBED NAVIGATION -->
+    <nav class="flex items-center gap-2 border-b border-slate-800/80 pb-2 overflow-x-auto custom-scroll text-sm font-semibold">
+      <button class="tab-btn active px-4 py-2 rounded-xl bg-slate-800 text-white transition-colors" data-tab="tab-catalog">
+        📦 Product Catalog (#1 - #10)
+      </button>
+      <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-broadcast">
+        📣 Threads Broadcast Center
+      </button>
+      <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-simulator">
+        🎯 Pain-Point Hunter & Simulator
+      </button>
+      <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-persona">
+        👤 Emma Persona Rules
+      </button>
+      <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-lander">
+        📱 Mobile Lander Preview
+      </button>
+    </nav>
+
+    <!-- TAB 1: PRODUCT CATALOG -->
+    <section id="tab-catalog" class="tab-content flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white">Immutable Master Catalog</h2>
+          <p class="text-xs text-slate-400">10 high-conversion problem solvers. Slot numbers permanently map to video and Threads references.</p>
+        </div>
+        <div class="text-xs text-slate-400 font-medium">
+          Total: <strong class="text-white">10 Evergreen Products</strong>
+        </div>
+      </div>
+
+      <!-- Catalog Grid -->
+      <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- TAB 2: THREADS BROADCAST CENTER -->
+    <section id="tab-broadcast" class="tab-content hidden flex flex-col gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-bold text-white">Threads Profile Broadcast Queue</h2>
+          <p class="text-xs text-slate-400">Scheduled organic posts to build Emma's profile authority and drive profile visitors into the bio link.</p>
+        </div>
+        <button id="btn-broadcast-next" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md transition-all">
+          <span>🚀 Publish Next Unposted</span>
+        </button>
+      </div>
+
+      <div id="broadcast-list" class="flex flex-col gap-3">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- TAB 3: PAIN-POINT HUNTER & SIMULATOR -->
+    <section id="tab-simulator" class="tab-content hidden flex flex-col gap-5">
+      <div>
+        <h2 class="text-base font-bold text-white">Contextual Pain-Point Hunter Simulator</h2>
+        <p class="text-xs text-slate-400">Test how the bot understands natural human complaints and crafts honest, non-bot Emma replies.</p>
+      </div>
+
+      <!-- Quick Test Chips -->
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-semibold text-slate-400">Click a sample complaint to test:</span>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="My 7 month old wakes up crying every hour and won't go down. I am running on 2 hours of sleep.">
+            👶 "Baby crying at night & sleep regression"
+          </button>
+          <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="Golden retriever shedding is out of control. My black velvet couch looks like a sheep.">
+            🐕 "Dog hair covering velvet couch"
+          </button>
+          <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="Sitting in this cheap office chair 9 hours a day is literally destroying my lower spine.">
+            🪑 "Office chair lower back agony"
+          </button>
+          <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="Holding my phone for a 5 hour flight from NY to LA gave me a severe neck cramp.">
+            ✈️ "Neck cramp holding phone on airplane"
+          </button>
+          <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="My charging cables keep sliding off my nightstand and falling into the gap behind the bed.">
+            🔌 "Cables falling behind bed nightstand"
+          </button>
+        </div>
+      </div>
+
+      <!-- Input & Action -->
+      <div class="flex flex-col gap-2">
+        <label class="text-xs font-semibold text-slate-400">Input Complaint or Thread Text:</label>
+        <textarea id="sim-input" rows="3" class="w-full bg-slate-900 border border-slate-800 focus:border-amber-500 rounded-xl p-3.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition-colors" placeholder="Type or paste any Threads post here to see Emma's reply..."></textarea>
+        <div class="flex justify-end">
+          <button id="btn-run-sim" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors">
+            Run Intent Match & Generate Reply
+          </button>
+        </div>
+      </div>
+
+      <!-- Simulation Result Output Card -->
+      <div id="sim-result" class="hidden bg-slate-900/80 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold">MATCH FOUND</span>
+            <span id="res-slot-badge" class="px-2 py-0.5 rounded-md bg-slate-800 text-white font-extrabold text-xs">Slot #2</span>
+          </div>
+          <span id="res-product-title" class="text-xs font-bold text-slate-300 truncate max-w-[280px]">Fisher-Price Otter</span>
+        </div>
+
+        <div>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Emma's Generated Response:</span>
+          <div class="mt-2 p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 text-sm text-slate-200 leading-relaxed font-medium">
+            <p id="res-reply-text"></p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <span>✓ Zero direct affiliate links in comment</span>
+          <span>✓ Drives traffic to: <strong class="text-slate-300">"bio #[slot]"</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: EMMA PERSONA RULES -->
+    <section id="tab-persona" class="tab-content hidden flex flex-col gap-4">
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col gap-4">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+          <img src="/assets/emma/emma_couch.jpg" alt="Emma" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-slate-800">
+          <div>
+            <h3 class="text-base font-extrabold text-white">Emma (@curated_byemma)</h3>
+            <p class="text-xs text-slate-400">29 y/o Seattle-based consumer researcher • Honest, anti-hype product curator</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Banned Words -->
+          <div class="bg-red-500/5 border border-red-500/20 rounded-xl p-4">
+            <h4 class="text-xs font-bold text-red-400 mb-2 uppercase tracking-wider">🚫 Strict Banned Phrases (Shadowban Triggers)</h4>
+            <div class="flex flex-wrap gap-1.5 text-xs">
+              <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">link in bio</span>
+              <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">affiliate link</span>
+              <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">buy now</span>
+              <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">game-changer</span>
+              <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">run don't walk</span>
+              <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">revolutionary</span>
+            </div>
+          </div>
+
+          <!-- Signature Phrases -->
+          <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4">
+            <h4 class="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-wider">✨ Emma's Signature Authentic Triggers</h4>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+              <li>"sounds dramatic but..."</li>
+              <li>"the consensus favorite is..."</li>
+              <li>"saved my sanity"</li>
+              <li>"kept the exact one under #[SLOT] in my bio"</li>
+              <li>"zero sponsored fluff"</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Ethical Rules -->
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-slate-300 leading-relaxed space-y-2">
+          <h4 class="font-bold text-white uppercase tracking-wider text-[11px]">Ethical Persona Contract:</h4>
+          <p>1. <strong>Never lie:</strong> If Emma doesn't personally own it, she cites customer consensus, sister/mom/family experience, or high review counts.</p>
+          <p>2. <strong>Zero comment links:</strong> Never post raw URLs or Amazon links in comments (preserves account health and prevents algorithmic shadowbans).</p>
+          <p>3. <strong>Immutable slots:</strong> Products never get reordered. Slot #3 is always the Lumbar cushion. Slot #7 is always the Plane mount.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: MOBILE LANDER PREVIEW -->
+    <section id="tab-lander" class="tab-content hidden flex flex-col items-center gap-4">
+      <div class="w-full flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white">Live Mobile Landing Page</h2>
+          <p class="text-xs text-slate-400">Deployed live on Cloudflare Pages Edge CDN (<a href="https://curatedbyemma.pages.dev" target="_blank" class="text-amber-400 hover:underline">curatedbyemma.pages.dev</a>)</p>
+        </div>
+        <button onclick="document.getElementById('lander-frame').src='https://curatedbyemma.pages.dev?t=' + Date.now()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition-colors">
+          🔄 Refresh Frame
+        </button>
+      </div>
+
+      <!-- Phone Bezel Frame -->
+      <div class="relative w-[390px] h-[780px] bg-slate-900 rounded-[44px] p-3 shadow-2xl border-4 border-slate-800 ring-1 ring-slate-700/50 flex flex-col overflow-hidden">
+        <!-- Speaker / Dynamic Island -->
+        <div class="w-24 h-4 bg-slate-950 rounded-full mx-auto mb-2 flex-shrink-0"></div>
+        <!-- Iframe -->
+        <iframe id="lander-frame" src="https://curatedbyemma.pages.dev" class="w-full flex-1 rounded-[32px] border-0 bg-white"></iframe>
+      </div>
+    </section>
+
+    <!-- ACTIVITY LOGS CONSOLE -->
+    <section class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col gap-2">
+      <div class="flex items-center justify-between text-xs text-slate-400">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span class="font-bold text-slate-200">System Activity & Automation Logs</span>
+        </div>
+        <span class="mono text-[11px] text-slate-500">Auto-refreshing (3s)</span>
+      </div>
+      <div id="logs-container" class="mono text-xs text-slate-300 bg-slate-950 border border-slate-800/90 rounded-xl p-3 h-32 overflow-y-auto custom-scroll space-y-1">
+        <div class="text-slate-500">[System] Initializing Operations Console...</div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Tab Switching Logic
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => {
+          b.className = 'tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors';
+        });
+        btn.className = 'tab-btn active px-4 py-2 rounded-xl bg-slate-800 text-white transition-colors';
+
+        tabContents.forEach(tc => tc.classList.add('hidden'));
+        const target = document.getElementById(btn.dataset.tab);
+        if (target) target.classList.remove('hidden');
+      });
+    });
+
+    // Fetch and render catalog
+    async function loadCatalog() {
+      try {
+        const res = await fetch('/api/catalog');
+        const items = await res.json();
+        const container = document.getElementById('catalog-grid');
+        container.innerHTML = '';
+
+        items.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'bg-slate-900/70 border border-slate-800/90 rounded-2xl p-3.5 flex items-center gap-3.5 hover:border-slate-700 transition-colors';
+          card.innerHTML = `
+            <div class="relative w-16 h-16 rounded-xl bg-white p-1 flex-shrink-0 flex items-center justify-center overflow-hidden">
+              <img src="${p.image_url}" alt="${p.title}" class="w-full h-full object-contain">
+              <span class="absolute top-1 left-1 bg-slate-950 text-white text-[9px] font-black px-1.5 py-0.2 rounded">#${p.slot_number}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-1 mb-0.5">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">${p.category}</span>
+                <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">${p.bought_past_month}</span>
+              </div>
+              <h4 class="text-xs font-bold text-white truncate">${p.title}</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5 truncate">${p.target_pain_point}</p>
+              <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-800 text-[11px]">
+                <span class="text-amber-400 font-bold">★ ${p.rating} (${p.reviews_count.toLocaleString()})</span>
+                <a href="${p.affiliate_url}" target="_blank" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1">
+                  Check Link ↗
+                </a>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error('Failed to load catalog:', err);
+      }
+    }
+
+    // Fetch and render broadcast queue
+    async function loadBroadcast() {
+      try {
+        const res = await fetch('/api/broadcast');
+        const data = await res.json();
+        const container = document.getElementById('broadcast-list');
+        container.innerHTML = '';
+
+        let publishedCount = 0;
+        data.queue.forEach(item => {
+          if (item.published) publishedCount++;
+          const row = document.createElement('div');
+          row.className = `p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 transition-all ${
+            item.published 
+              ? 'bg-slate-900/30 border-slate-800/50 opacity-80' 
+              : 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
+          }`;
+
+          const imgPreview = item.image 
+            ? `<img src="/${item.image.replace('public/', '')}" class="w-14 h-14 rounded-xl object-cover ring-1 ring-slate-700 flex-shrink-0" alt="Preview">`
+            : `<div class="w-14 h-14 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-xs text-slate-600 font-mono flex-shrink-0">TEXT</div>`;
+
+          row.innerHTML = `
+            <div class="flex items-start gap-3.5 flex-1 min-w-0">
+              ${imgPreview}
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-xs font-bold text-white">${item.title}</span>
+                  ${item.published 
+                    ? '<span class="px-2 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">✓ Published</span>' 
+                    : '<span class="px-2 py-0.2 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold">⏳ Queued</span>'
+                  }
+                  <span class="text-[10px] font-mono text-slate-500">Slots: ${item.slots_mentioned.join(', ')}</span>
+                </div>
+                <p class="text-xs text-slate-300 line-clamp-2 leading-relaxed">${item.text}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
+              ${item.published 
+                ? '<span class="text-xs text-slate-500 font-medium">Live on profile</span>' 
+                : `<button class="btn-publish-single px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold border border-slate-700 transition-colors" data-id="${item.id}">Publish Now</button>`
+              }
+            </div>
+          `;
+          container.appendChild(row);
+        });
+
+        document.getElementById('stat-published-badge').innerText = `${publishedCount} Published`;
+        document.getElementById('stat-pending-count').innerText = `${data.queue.length - publishedCount}`;
+
+        // Bind single publish buttons
+        document.querySelectorAll('.btn-publish-single').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            btn.disabled = true;
+            btn.innerText = 'Publishing...';
+            await triggerPublish(id);
+          });
+        });
+
+      } catch (err) {
+        console.error('Failed to load broadcast:', err);
+      }
+    }
+
+    // Trigger publish job
+    async function triggerPublish(id = null) {
+      try {
+        const res = await fetch('/api/broadcast/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(id ? { id } : {})
+        });
+        const data = await res.json();
+        alert(data.message || 'Job started!');
+        setTimeout(loadBroadcast, 3000);
+      } catch (err) {
+        alert('Failed to trigger publish: ' + err);
+      }
+    }
+
+    document.getElementById('btn-quick-publish').addEventListener('click', () => triggerPublish());
+    document.getElementById('btn-broadcast-next').addEventListener('click', () => triggerPublish());
+
+    // Simulator Logic
+    const simInput = document.getElementById('sim-input');
+    const simResult = document.getElementById('sim-result');
+    const resSlotBadge = document.getElementById('res-slot-badge');
+    const resProductTitle = document.getElementById('res-product-title');
+    const resReplyText = document.getElementById('res-reply-text');
+
+    document.querySelectorAll('.sample-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        simInput.value = chip.dataset.text;
+        runSimulation();
+      });
+    });
+
+    document.getElementById('btn-run-sim').addEventListener('click', runSimulation);
+
+    async function runSimulation() {
+      const text = simInput.value.trim();
+      if (!text) return;
+
+      try {
+        const res = await fetch('/api/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        const data = await res.json();
+
+        if (data.matched) {
+          resSlotBadge.innerText = `Slot #${data.slot}`;
+          resProductTitle.innerText = data.product_title;
+          resReplyText.innerText = data.reply_text;
+          simResult.classList.remove('hidden');
+        } else {
+          alert('No relevant slot matched for this text.');
+        }
+      } catch (err) {
+        console.error('Simulation error:', err);
+      }
+    }
+
+    // Logs Poller
+    async function fetchLogs() {
+      try {
+        const res = await fetch('/api/logs');
+        const data = await res.json();
+        const container = document.getElementById('logs-container');
+        if (data.logs && data.logs.length > 0) {
+          container.innerHTML = data.logs.map(l => `<div>${l}</div>`).join('');
+          container.scrollTop = container.scrollHeight;
+        }
+      } catch (err) {}
+    }
+
+    // Initial load & Intervals
+    loadCatalog();
+    loadBroadcast();
+    fetchLogs();
+    setInterval(fetchLogs, 3000);
+    setInterval(loadBroadcast, 15000);
+  </script>
+</body>
+</html>

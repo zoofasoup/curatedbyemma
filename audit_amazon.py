@@ -282,5 +282,5 @@ def run_audit(affiliate_tag: str = "curator-20"):
     console.print(f"\n[bold green]✓ Master catalog saved to {output_path} with {len(audited_products)} audited products![/bold green]\n")
 
 if __name__ == "__main__":
-    tag = sys.argv[1] if len(sys.argv) > 1 else "findshunter-20"
+    tag = sys.argv[1] if len(sys.argv) > 1 else "curatedbyem0f-20"
     run_audit(tag)

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Emma's Curated Finds | Daily Problem Solvers</title>
+  <title>Emma's Picks | Finds That Actually Work</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,10 +14,10 @@
       -webkit-font-smoothing: antialiased;
     }
     .soft-card-shadow {
-      box-shadow: 0 4px 24px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
     }
     .soft-card-shadow:hover {
-      box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+      box-shadow: 0 12px 30px -4px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -28,39 +28,38 @@
   <!-- Main Container -->
   <div class="w-full max-w-[440px] flex flex-col items-center">
 
-    <!-- Profile Header (Minimalist & Clean) -->
-    <header class="w-full text-center mb-6 pt-2">
-      <div class="relative inline-block mb-3.5">
-        <div class="w-20 h-20 rounded-full p-[2px] bg-gradient-to-b from-slate-200 to-slate-300 shadow-md mx-auto overflow-hidden">
+    <!-- Profile Header (Warm, Natural, 100% Human) -->
+    <header class="w-full text-center mb-6 pt-1">
+      <div class="relative inline-block mb-3">
+        <div class="w-16 h-16 rounded-full p-[2px] bg-slate-200 shadow-sm mx-auto overflow-hidden">
           <img 
             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&h=240&q=80" 
             alt="Emma" 
             class="w-full h-full object-cover rounded-full"
           />
         </div>
-        <div class="absolute bottom-0 right-0 bg-slate-950 text-white rounded-full p-1 border-2 border-[#F6F7FA] shadow-sm flex items-center justify-center">
-          <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-          </svg>
-        </div>
       </div>
 
-      <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200/60 text-[11px] font-medium text-slate-600 mb-1.5">
-        <span>Verified Curator</span>
+      <!-- Human status pill -->
+      <div class="flex items-center justify-center gap-1.5 mb-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/80 text-[11px] font-medium text-slate-600 shadow-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Updated for this week
+        </span>
       </div>
 
-      <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Emma's Daily Finds</h1>
-      <p class="text-xs text-slate-500 mt-1 max-w-[320px] mx-auto leading-relaxed">
-        Researching products with 10k+ reviews that solve annoying daily problems. No sponsored fluff.
+      <h1 class="text-xl font-bold text-slate-900 tracking-tight">Things that actually worked.</h1>
+      <p class="text-xs text-slate-500 mt-1.5 max-w-[320px] mx-auto leading-relaxed">
+        A running master list of Amazon finds that genuinely fixed annoying daily problems. Zero sponsored posts, just stuff with crazy good reviews.
       </p>
 
-      <!-- Minimal Stats Bar -->
-      <div class="flex items-center justify-center gap-4 mt-3.5 pt-3 border-t border-slate-200/70 text-[11px] text-slate-500">
-        <div><span class="font-bold text-slate-900">10</span> Curated Finds</div>
+      <!-- Clean Social Proof Stats -->
+      <div class="flex items-center justify-center gap-4 mt-3.5 pt-3 border-t border-slate-200/60 text-[11px] text-slate-500">
+        <div><span class="font-bold text-slate-900">10</span> tested items</div>
         <div class="w-1 h-1 rounded-full bg-slate-300"></div>
-        <div><span class="font-bold text-amber-500">4.5★+</span> Rating</div>
+        <div><span class="font-bold text-slate-900">4.5★+</span> verified ratings</div>
         <div class="w-1 h-1 rounded-full bg-slate-300"></div>
-        <div><span class="font-bold text-emerald-600">100%</span> Honest</div>
+        <div><span class="font-bold text-slate-900">$8–$40</span> price range</div>
       </div>
     </header>
 
@@ -76,54 +75,54 @@
         <input 
           type="text" 
           id="search-input" 
-          placeholder="Search by problem, product, or slot (#1, baby, dog...)"
+          placeholder="What's bothering you? (e.g. dog hair, baby, back pain, #5...)"
           class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200/80 focus:border-slate-400 rounded-2xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/5 transition-all shadow-sm"
         />
       </div>
 
-      <!-- Category Filter Pills -->
+      <!-- Category Filter Pills (Conversational, not rigid) -->
       <div id="category-pills" class="flex gap-1.5 overflow-x-auto pb-1 text-[11px] no-scrollbar">
         <button class="cat-pill active px-3.5 py-1.5 rounded-full font-semibold bg-slate-950 text-white whitespace-nowrap transition-all shadow-sm" data-category="ALL">
-          All Finds
+          All 10 Picks
         </button>
         <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Pets">
-          Pets 🐕
+          Pet Hair 🐕
         </button>
         <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Sleep">
-          Sleep 😴
+          Sleep & Kids 😴
         </button>
         <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Back">
-          Posture 🪑
+          Desk & Back 🪑
         </button>
         <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Clean">
-          Cleaning 🧼
+          Deep Clean 🧼
         </button>
         <button class="cat-pill px-3.5 py-1.5 rounded-full font-medium bg-white border border-slate-200/80 text-slate-600 hover:text-slate-900 whitespace-nowrap transition-all shadow-sm" data-category="Travel">
-          Travel ✈️
+          Travel Hacks ✈️
         </button>
       </div>
     </section>
 
     <!-- Product Cards List -->
-    <main id="products-list" class="w-full flex flex-col gap-3.5 mb-10">
+    <main id="products-list" class="w-full flex flex-col gap-3 mb-10">
       <!-- Populated via Javascript -->
     </main>
 
     <!-- Empty State -->
     <div id="empty-state" class="hidden w-full text-center py-12 px-4 bg-white border border-slate-200/70 rounded-3xl mb-10 shadow-sm">
-      <div class="text-3xl mb-2">🔍</div>
-      <h3 class="text-sm font-bold text-slate-900">No matching finds</h3>
-      <p class="text-xs text-slate-500 mt-1">Try keywords like "hair", "baby", "clean", or a slot number like "#2".</p>
+      <div class="text-3xl mb-2">🤔</div>
+      <h3 class="text-sm font-bold text-slate-900">Couldn't find that one</h3>
+      <p class="text-xs text-slate-500 mt-1 max-w-[260px] mx-auto">Try typing a keyword like "sleep", "dog", "chair", or just a slot number like "#2".</p>
     </div>
 
     <!-- Transparent Footer & Mandatory Amazon Affiliate Disclosure -->
     <footer class="w-full text-center border-t border-slate-200/70 pt-6 pb-12 text-[11px] text-slate-400 leading-relaxed px-4">
-      <p class="font-semibold text-slate-600 mb-1">Affiliate Disclosure</p>
-      <p>
-        As an Amazon Associate I earn from qualifying purchases. Products listed are independently researched based on verified consumer feedback and high rating benchmarks.
+      <p class="font-medium text-slate-600 mb-1">Affiliate Disclosure</p>
+      <p class="max-w-[340px] mx-auto">
+        As an Amazon Associate I earn from qualifying purchases. If you pick something up through these links, I may earn a small referral fee at no extra cost to you. I only share things backed by thousands of real reviews.
       </p>
       <p class="mt-3 text-[10px] text-slate-400">
-        &copy; 2026 Emma's Curated Finds • Immutable Slots System
+        &copy; 2026 Emma's Curated Finds • Numbered Master List
       </p>
     </footer>
 
@@ -134,131 +133,131 @@
     const CATALOG = [
       {
         "slot": 1,
-        "category": "Pets & Fur",
+        "category": "Pet Mess",
         "cat_tag": "Pets",
-        "title": "PetLovers Extra Sticky Lint Roller (Mega 450 Sheets)",
-        "pain": "Stubborn dog & cat hair on couch and clothes",
+        "title": "PetLovers Extra-Sticky Lint Roller Set",
+        "human_note": "For when your couch looks like a second dog. Picks up fur vacuums leave behind.",
         "price": 12.99,
         "rating": 4.6,
-        "reviews": "39.3k reviews",
-        "velocity": "10K+ bought last month",
+        "reviews": "39k reviews",
+        "velocity": "10k+ bought recently",
         "image": "https://m.media-amazon.com/images/I/812M1RJAdEL._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B07GV57JYJ?tag=findshunter-20"
       },
       {
         "slot": 2,
-        "category": "Sleep & Kids",
+        "category": "Toddler Sleep",
         "cat_tag": "Sleep",
-        "title": "Fisher-Price Soothe ‘n Snuggle Otter Plush",
-        "pain": "Baby crying, restless toddlers who won't fall asleep",
+        "title": "Fisher-Price Breathing Rhythm Otter Plush",
+        "human_note": "The famous gentle breathing plush that actually calms restless babies down at night.",
         "price": 34.79,
         "rating": 4.7,
-        "reviews": "59.7k reviews",
-        "velocity": "5K+ bought last month",
+        "reviews": "60k reviews",
+        "velocity": "5k+ bought recently",
         "image": "https://m.media-amazon.com/images/I/61yMGP6pujL._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B07N1JP56L?tag=findshunter-20"
       },
       {
         "slot": 3,
-        "category": "Back & Posture",
+        "category": "Desk Setup",
         "cat_tag": "Back",
-        "title": "Ergonomic Memory Foam Lumbar Support Pillow",
-        "pain": "Lower back pain & slouching from sitting at desk",
+        "title": "Ergonomic Memory Foam Lumbar Support Cushion",
+        "human_note": "Saves your lower back from stiff 8-hour desk chairs without buying a $500 seat.",
         "price": 27.99,
         "rating": 4.4,
-        "reviews": "27.4k reviews",
-        "velocity": "10K+ bought last month",
+        "reviews": "27k reviews",
+        "velocity": "10k+ bought recently",
         "image": "https://m.media-amazon.com/images/I/81Qm1-Fja2L._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B074C9F45S?tag=findshunter-20"
       },
       {
         "slot": 4,
-        "category": "Kitchen Hacks",
+        "category": "Kitchen Hack",
         "cat_tag": "Kitchen",
-        "title": "TrendPlain Glass Olive Oil Sprayer for Air Fryer",
-        "pain": "Pouring too much oil & soggy, uneven air fryer meals",
+        "title": "TrendPlain Glass Olive Oil Mister Sprayer",
+        "human_note": "Even fine mist so your air fryer fries don't end up drowned in oil or soggy.",
         "price": 15.99,
         "rating": 4.6,
-        "reviews": "49.1k reviews",
-        "velocity": "2K+ bought last month",
+        "reviews": "49k reviews",
+        "velocity": "2k+ bought recently",
         "image": "https://m.media-amazon.com/images/I/71Sx9YQ00fL._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B0CY1S56JZ?tag=findshunter-20"
       },
       {
         "slot": 5,
-        "category": "Deep Clean",
+        "category": "Easy Cleaning",
         "cat_tag": "Clean",
-        "title": "Cordless Electric Spin Scrubber with Extension Arm",
-        "pain": "Back-breaking knee pain scrubbing tile & shower",
+        "title": "Cordless Electric Spin Scrubber with Extension Pole",
+        "human_note": "Zero kneeling or elbow grease. Cleans tile grout and bathtub scum in minutes.",
         "price": 39.99,
         "rating": 4.4,
-        "reviews": "8.9k reviews",
-        "velocity": "20K+ bought last month",
+        "reviews": "9k reviews",
+        "velocity": "20k+ bought recently",
         "image": "https://m.media-amazon.com/images/I/71GhDHqOwNL._AC_UY218_.jpg",
         "url": "https://www.amazon.com/dp/B0C1NJDTTX?tag=findshunter-20"
       },
       {
         "slot": 6,
-        "category": "Desk Clutter",
-        "cat_tag": "Desk",
-        "title": "Smartish Magnetic Cord Holder & Cable Wrangler",
-        "pain": "Charging cables sliding off desk and tangling",
+        "category": "Cable Clutter",
+        "cat_tag": "Back",
+        "title": "Smartish Magnetic Cable Wrangler & Organizer",
+        "human_note": "Stops your phone charger from sliding off the nightstand and behind the bed.",
         "price": 29.99,
         "rating": 4.6,
-        "reviews": "5.2k reviews",
-        "velocity": "1K+ bought last month",
+        "reviews": "5k reviews",
+        "velocity": "1k+ bought recently",
         "image": "https://m.media-amazon.com/images/I/7123kAuMpIL._AC_UY218_.jpg",
         "url": "https://www.amazon.com/dp/B07BB4YXHW?tag=findshunter-20"
       },
       {
         "slot": 7,
-        "category": "Travel & Commute",
+        "category": "Flight Essential",
         "cat_tag": "Travel",
-        "title": "Perilogics Universal Airplane Flight Phone Mount",
-        "pain": "Neck strain holding phone on long flights/trains",
+        "title": "Perilogics Airplane Tray-Table Phone Mount",
+        "human_note": "Clamps to the seat in front of you so your hands don't cramp watching movies.",
         "price": 21.59,
         "rating": 4.6,
-        "reviews": "22.9k reviews",
-        "velocity": "500+ bought last month",
+        "reviews": "23k reviews",
+        "velocity": "500+ bought recently",
         "image": "https://m.media-amazon.com/images/I/71P9DdPma2L._AC_UY218_.jpg",
         "url": "https://www.amazon.com/dp/B08TKPRKBN?tag=findshunter-20"
       },
       {
         "slot": 8,
-        "category": "Clothing Care",
+        "category": "Quick Steam",
         "cat_tag": "Travel",
-        "title": "OGHom Handheld Travel Garment Steamer",
-        "pain": "Wrinkled clothes on trips without ironing boards",
+        "title": "OGHom Compact Handheld Travel Garment Steamer",
+        "human_note": "Heats up in 30s. Melts wrinkles out of suitcase clothes without an ironing board.",
         "price": 35.99,
         "rating": 4.3,
-        "reviews": "1.6k reviews",
-        "velocity": "30K+ bought last month",
+        "reviews": "2k reviews",
+        "velocity": "30k+ bought recently",
         "image": "https://m.media-amazon.com/images/I/71vshmAdKuL._AC_UY218_.jpg",
         "url": "https://www.amazon.com/dp/B0FYF2X322?tag=findshunter-20"
       },
       {
         "slot": 9,
-        "category": "Adult Sleep",
+        "category": "Deep Sleep",
         "cat_tag": "Sleep",
-        "title": "TOPOINT Bluetooth 5.4 3D Blackout Sleep Mask",
-        "pain": "Snoring partners, street lights, morning migraines",
+        "title": "TOPOINT 3D Bluetooth Sleep Eye Mask",
+        "human_note": "100% pitch blackout with flat speakers that don't hurt your ears when side-sleeping.",
         "price": 23.97,
         "rating": 4.3,
-        "reviews": "13.0k reviews",
-        "velocity": "1K+ bought last month",
+        "reviews": "13k reviews",
+        "velocity": "1k+ bought recently",
         "image": "https://m.media-amazon.com/images/I/71V23F5n-hL._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B07TPL5K7W?tag=findshunter-20"
       },
       {
         "slot": 10,
-        "category": "Car Interior",
+        "category": "Car Clean",
         "cat_tag": "Clean",
-        "title": "PULIDIKI Universal Car Detailing Cleaning Putty",
-        "pain": "Dust, crumbs & gunk stuck in car vents & cup holders",
+        "title": "PULIDIKI Reusable Car Detailing Putty Gel",
+        "human_note": "Squishes deep into AC vents and cup holder seams to grab all the stubborn crumbs.",
         "price": 7.99,
         "rating": 4.1,
         "reviews": "101k reviews",
-        "velocity": "10K+ bought last month",
+        "velocity": "10k+ bought recently",
         "image": "https://m.media-amazon.com/images/I/61k1q5wVwXL._AC_UL320_.jpg",
         "url": "https://www.amazon.com/dp/B07SBFDZ6T?tag=findshunter-20"
       }
@@ -280,7 +279,7 @@
         const q = searchQuery.toLowerCase().trim();
         const matchesSearch = !q || 
           p.title.toLowerCase().includes(q) ||
-          p.pain.toLowerCase().includes(q) ||
+          p.human_note.toLowerCase().includes(q) ||
           p.category.toLowerCase().includes(q) ||
           `#${p.slot}`.includes(q) ||
           `${p.slot}` === q;
@@ -299,25 +298,25 @@
         card.href = p.url;
         card.target = "_blank";
         card.rel = "noopener noreferrer";
-        card.className = "group relative bg-white border border-slate-200/80 rounded-3xl p-3.5 transition-all duration-200 flex gap-3.5 items-center soft-card-shadow active:scale-[0.99]";
+        card.className = "group relative bg-white border border-slate-200/70 rounded-3xl p-3.5 transition-all duration-200 flex gap-3.5 items-center soft-card-shadow active:scale-[0.99]";
 
         card.innerHTML = `
-          <!-- Product Image in Soft Frame -->
+          <!-- Thumbnail in soft rounded frame -->
           <div class="relative flex-shrink-0 w-20 h-20 rounded-2xl bg-[#F8F9FA] p-1.5 border border-slate-100 flex items-center justify-center overflow-hidden">
             <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
-            <!-- Slot Badge on Top Left of Image -->
-            <span class="absolute top-1 left-1 bg-slate-900/85 backdrop-blur-sm text-white font-extrabold text-[10px] px-1.5 py-0.5 rounded-lg shadow-sm">
+            <!-- Sleek Slot Badge -->
+            <span class="absolute top-1 left-1 bg-slate-900/80 backdrop-blur-sm text-white font-bold text-[10px] px-1.5 py-0.5 rounded-lg shadow-sm">
               #${p.slot}
             </span>
           </div>
 
-          <!-- Product Details Center -->
+          <!-- Product Details -->
           <div class="flex-1 min-w-0 pr-1">
             <div class="flex items-center justify-between gap-1 mb-1">
               <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                 ${p.category}
               </span>
-              <!-- Soft Green Velocity Badge (like Ref 2) -->
+              <!-- Subtle Green Social Proof Badge -->
               <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100/80">
                 ${p.velocity}
               </span>
@@ -327,8 +326,9 @@
               ${p.title}
             </h2>
 
+            <!-- Human, relatable microcopy -->
             <p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
-              ${p.pain}
+              ${p.human_note}
             </p>
 
             <div class="flex items-center justify-between mt-2 pt-1 border-t border-slate-100/80">
@@ -337,8 +337,8 @@
                 <span class="text-[10px] font-medium text-slate-400">• ${p.rating}★ (${p.reviews})</span>
               </div>
 
-              <!-- Sleek Action Button -->
-              <div class="w-7 h-7 rounded-full bg-slate-100 group-hover:bg-slate-900 group-hover:text-white text-slate-600 flex items-center justify-center transition-colors">
+              <!-- Minimal circle arrow -->
+              <div class="w-7 h-7 rounded-full bg-slate-100 group-hover:bg-slate-900 group-hover:text-white text-slate-500 flex items-center justify-center transition-colors">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>

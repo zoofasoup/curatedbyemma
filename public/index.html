@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curated Problem Solvers | Honest Daily Finds</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .slot-pill {
+      box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 flex flex-col items-center">
+
+  <!-- Profile & Hero Header -->
+  <header class="w-full max-w-md text-center mb-6">
+    <div class="relative inline-block mb-3">
+      <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 to-amber-200 p-[2px] mx-auto shadow-xl">
+        <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-3xl">
+          🔍
+        </div>
+      </div>
+      <span class="absolute bottom-0 right-0 bg-emerald-500 text-[10px] font-bold text-slate-950 px-2 py-0.5 rounded-full border-2 border-slate-950">
+        VERIFIED
+      </span>
+    </div>
+
+    <h1 class="text-xl font-extrabold text-white tracking-tight">The Daily Finds</h1>
+    <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+      I research top-rated products that solve annoying daily problems. 10k+ reviews, zero sponsored fluff.
+    </p>
+
+    <!-- Stats Bar -->
+    <div class="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-slate-800/80 text-[11px] text-slate-300">
+      <div><span id="total-count" class="font-bold text-white">10</span> Curated Finds</div>
+      <div class="w-1 h-1 rounded-full bg-slate-700"></div>
+      <div><span class="font-bold text-amber-400">4.5★+</span> Rating</div>
+      <div class="w-1 h-1 rounded-full bg-slate-700"></div>
+      <div><span class="font-bold text-emerald-400">100%</span> Honest</div>
+    </div>
+  </header>
+
+  <!-- Search & Category Filters Bar -->
+  <section class="w-full max-w-md mb-5 flex flex-col gap-2.5">
+    <!-- Live Search Input -->
+    <div class="relative w-full">
+      <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+      <input 
+        type="text" 
+        id="search-input" 
+        placeholder="Search by problem, product, or slot (#1, baby, dog...)"
+        class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 focus:border-amber-500/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-all shadow-inner"
+      />
+    </div>
+
+    <!-- Category Filter Pills -->
+    <div id="category-pills" class="flex gap-1.5 overflow-x-auto pb-1 text-[11px] no-scrollbar">
+      <button class="cat-pill active px-3 py-1 rounded-full font-semibold bg-amber-500 text-slate-950 whitespace-nowrap transition-all" data-category="ALL">
+        All Finds
+      </button>
+      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Pets">
+        Pets 🐕
+      </button>
+      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Sleep">
+        Sleep 😴
+      </button>
+      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Back">
+        Posture 🪑
+      </button>
+      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Clean">
+        Clean 🧼
+      </button>
+      <button class="cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all" data-category="Travel">
+        Travel ✈️
+      </button>
+    </div>
+  </section>
+
+  <!-- Products List Container -->
+  <main id="products-list" class="w-full max-w-md flex flex-col gap-3 mb-10">
+    <!-- Populated by JS -->
+  </main>
+
+  <!-- Empty State (if search has 0 results) -->
+  <div id="empty-state" class="hidden w-full max-w-md text-center py-12 px-4 bg-slate-900/50 border border-slate-800 rounded-2xl mb-10">
+    <div class="text-3xl mb-2">🔍</div>
+    <h3 class="text-sm font-bold text-white">No problem solver found</h3>
+    <p class="text-xs text-slate-400 mt-1">Try searching for keywords like "crying", "hair", "desk", or a slot number like "#2".</p>
+  </div>
+
+  <!-- Amazon Associates Mandatory Legal Disclosure Footer -->
+  <footer class="w-full max-w-md text-center border-t border-slate-900 pt-6 pb-12 text-[11px] text-slate-500 leading-relaxed px-4">
+    <p class="font-semibold text-slate-400 mb-1">Affiliate Disclosure</p>
+    <p>
+      As an Amazon Associate I earn from qualifying purchases. Products listed are independently researched based on verified consumer feedback and high rating benchmarks.
+    </p>
+    <p class="mt-3 text-[10px] text-slate-600">
+      &copy; 2026 Curated Daily Finds • Immutable Slots System
+    </p>
+  </footer>
+
+  <!-- Catalog Data & Search Script -->
+  <script>
+    // IMMUTABLE SLOTS: Slot numbers must NEVER change once published!
+    const CATALOG = [
+      {
+        "slot": 1,
+        "category": "Pets & Fur",
+        "cat_tag": "Pets",
+        "title": "PetLovers Extra Sticky Lint Roller (Mega 450 Sheets)",
+        "pain": "Couch & clothes covered in stubborn dog/cat hair",
+        "price": 12.99,
+        "rating": 4.6,
+        "reviews": "39.3k reviews",
+        "velocity": "10K+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/812M1RJAdEL._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B07GV57JYJ?tag=findshunter-20"
+      },
+      {
+        "slot": 2,
+        "category": "Sleep & Kids",
+        "cat_tag": "Sleep",
+        "title": "Fisher-Price Soothe ‘n Snuggle Otter Plush",
+        "pain": "Baby crying, restless toddlers who won't fall asleep",
+        "price": 34.79,
+        "rating": 4.7,
+        "reviews": "59.7k reviews",
+        "velocity": "5K+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/61yMGP6pujL._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B07N1JP56L?tag=findshunter-20"
+      },
+      {
+        "slot": 3,
+        "category": "Back & Posture",
+        "cat_tag": "Back",
+        "title": "Ergonomic Memory Foam Lumbar Support Pillow",
+        "pain": "Lower back pain & slouching from sitting at desk",
+        "price": 27.99,
+        "rating": 4.4,
+        "reviews": "27.4k reviews",
+        "velocity": "10K+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/81Qm1-Fja2L._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B074C9F45S?tag=findshunter-20"
+      },
+      {
+        "slot": 4,
+        "category": "Kitchen Hacks",
+        "cat_tag": "Kitchen",
+        "title": "TrendPlain Glass Olive Oil Sprayer for Air Fryer",
+        "pain": "Pouring too much oil & soggy, uneven air fryer meals",
+        "price": 15.99,
+        "rating": 4.6,
+        "reviews": "49.1k reviews",
+        "velocity": "2K+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/71Sx9YQ00fL._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B0CY1S56JZ?tag=findshunter-20"
+      },
+      {
+        "slot": 5,
+        "category": "Deep Clean",
+        "cat_tag": "Clean",
+        "title": "Cordless Electric Spin Scrubber with Extension Arm",
+        "pain": "Back-breaking knee pain from scrubbing bathroom & tile",
+        "price": 39.99,
+        "rating": 4.4,
+        "reviews": "8.9k reviews",
+        "velocity": "20K+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/71GhDHqOwNL._AC_UY218_.jpg",
+        "url": "https://www.amazon.com/dp/B0C1NJDTTX?tag=findshunter-20"
+      },
+      {
+        "slot": 6,
+        "category": "Desk Clutter",
+        "cat_tag": "Desk",
+        "title": "Smartish Magnetic Cord Holder & Cable Wrangler",
+        "pain": "Charging cables falling behind desk and tangling",
+        "price": 29.99,
+        "rating": 4.6,
+        "reviews": "5.2k reviews",
+        "velocity": "1K+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/7123kAuMpIL._AC_UY218_.jpg",
+        "url": "https://www.amazon.com/dp/B07BB4YXHW?tag=findshunter-20"
+      },
+      {
+        "slot": 7,
+        "category": "Travel & Commute",
+        "cat_tag": "Travel",
+        "title": "Perilogics Universal Airplane Flight Phone Mount",
+        "pain": "Hands cramping & neck strain holding phone on flights",
+        "price": 21.59,
+        "rating": 4.6,
+        "reviews": "22.9k reviews",
+        "velocity": "500+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/71P9DdPma2L._AC_UY218_.jpg",
+        "url": "https://www.amazon.com/dp/B08TKPRKBN?tag=findshunter-20"
+      },
+      {
+        "slot": 8,
+        "category": "Clothing Care",
+        "cat_tag": "Travel",
+        "title": "OGHom Handheld Travel Garment Steamer",
+        "pain": "Wrinkled clothes while traveling without ironing boards",
+        "price": 35.99,
+        "rating": 4.3,
+        "reviews": "1.6k reviews",
+        "velocity": "30K+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/71vshmAdKuL._AC_UY218_.jpg",
+        "url": "https://www.amazon.com/dp/B0FYF2X322?tag=findshunter-20"
+      },
+      {
+        "slot": 9,
+        "category": "Adult Sleep",
+        "cat_tag": "Sleep",
+        "title": "TOPOINT Bluetooth 5.4 3D Blackout Sleep Mask",
+        "pain": "Snoring partners, street lights, morning migraines",
+        "price": 23.97,
+        "rating": 4.3,
+        "reviews": "13.0k reviews",
+        "velocity": "1K+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/71V23F5n-hL._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B07TPL5K7W?tag=findshunter-20"
+      },
+      {
+        "slot": 10,
+        "category": "Car Interior",
+        "cat_tag": "Clean",
+        "title": "PULIDIKI Universal Car Detailing Cleaning Putty",
+        "pain": "Dust, crumbs & gunk stuck in car AC vents & seams",
+        "price": 7.99,
+        "rating": 4.1,
+        "reviews": "101k reviews",
+        "velocity": "10K+ bought last month",
+        "image": "https://m.media-amazon.com/images/I/61k1q5wVwXL._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B07SBFDZ6T?tag=findshunter-20"
+      }
+    ];
+
+    const container = document.getElementById("products-list");
+    const emptyState = document.getElementById("empty-state");
+    const searchInput = document.getElementById("search-input");
+    const pills = document.querySelectorAll(".cat-pill");
+
+    let currentCategory = "ALL";
+    let searchQuery = "";
+
+    function renderProducts() {
+      container.innerHTML = "";
+      
+      const filtered = CATALOG.filter(p => {
+        // Category check
+        const matchesCategory = currentCategory === "ALL" || p.cat_tag === currentCategory;
+        
+        // Search query check
+        const q = searchQuery.toLowerCase().trim();
+        const matchesSearch = !q || 
+          p.title.toLowerCase().includes(q) ||
+          p.pain.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q) ||
+          `#${p.slot}`.includes(q) ||
+          `${p.slot}` === q;
+
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove("hidden");
+      } else {
+        emptyState.classList.add("hidden");
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement("a");
+        card.href = p.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+        card.className = "group relative bg-slate-900/90 hover:bg-slate-850 border border-slate-800/80 hover:border-amber-500/50 rounded-2xl p-3.5 transition-all duration-200 flex gap-3.5 items-center shadow-lg hover:scale-[1.01] active:scale-[0.99]";
+
+        card.innerHTML = `
+          <!-- Number Slot Badge -->
+          <div class="flex-shrink-0 flex flex-col items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-700/10 border border-amber-500/30 text-amber-400 font-extrabold text-base slot-pill">
+            #${p.slot}
+          </div>
+
+          <!-- Product Image -->
+          <div class="flex-shrink-0 w-16 h-16 rounded-lg bg-slate-950 p-1 border border-slate-800 flex items-center justify-center overflow-hidden">
+            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
+          </div>
+
+          <!-- Info Column -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5 mb-1">
+              <span class="text-[9px] font-semibold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                ${p.category}
+              </span>
+              <span class="text-[9px] text-emerald-400 font-medium">
+                ${p.velocity}
+              </span>
+            </div>
+
+            <h2 class="text-xs font-bold text-slate-100 group-hover:text-amber-300 truncate">
+              ${p.title}
+            </h2>
+
+            <p class="text-[10px] text-slate-400 truncate mt-0.5">
+              Solves: ${p.pain}
+            </p>
+
+            <div class="flex items-center gap-2 mt-1.5 text-[11px]">
+              <span class="font-extrabold text-white">$${p.price.toFixed(2)}</span>
+              <span class="text-slate-600">•</span>
+              <span class="text-amber-400 font-medium">${p.rating} ★</span>
+              <span class="text-[10px] text-slate-500">(${p.reviews})</span>
+            </div>
+          </div>
+
+          <!-- Action Arrow -->
+          <div class="flex-shrink-0 pr-1 text-slate-500 group-hover:text-amber-400 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // Search event
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      renderProducts();
+    });
+
+    // Category pills events
+    pills.forEach(btn => {
+      btn.addEventListener("click", () => {
+        pills.forEach(b => {
+          b.className = "cat-pill px-3 py-1 rounded-full font-medium bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap transition-all";
+        });
+        btn.className = "cat-pill active px-3 py-1 rounded-full font-semibold bg-amber-500 text-slate-950 whitespace-nowrap transition-all";
+        currentCategory = btn.dataset.category;
+        renderProducts();
+      });
+    });
+
+    // Initial render
+    renderProducts();
+  </script>
+</body>
+</html>

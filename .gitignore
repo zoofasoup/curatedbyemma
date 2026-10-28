@@ -1,0 +1,11 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Sensitive Sessions & Keys
+threads_session.json
+.env
+
+# Cloudflare & Wrangler
+.wrangler/

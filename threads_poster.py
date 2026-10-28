@@ -43,37 +43,37 @@ def post_new_thread(text: str, headless: bool = True):
         print(f"[!] Session file {SESSION_FILE} not found. Run 'python threads_poster.py login' first.")
         return False
 
-    print(f"\nPosting new thread: \"{text[:50]}...\"")
+    print(f"\nPosting new thread: \"{text}\"")
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=headless)
         context = browser.new_context(storage_state=SESSION_FILE)
         page = context.new_page()
 
-        page.goto("https://www.threads.net/")
-        page.wait_for_timeout(3000)
+        page.goto("https://www.threads.com/")
+        page.wait_for_timeout(3500)
 
         try:
-            # Click the 'Start a thread' button or dialog
-            start_btn = page.locator("div[role='button']:has-text('Start a thread'), div:has-text('What\'s new?')").first
-            if start_btn.is_visible():
-                start_btn.click()
-            else:
-                page.keyboard.press("KeyN") # Shortcut for new thread
-            
-            page.wait_for_timeout(1000)
+            # 1. Click 'New thread' composer trigger
+            compose_btn = page.locator("text=New thread").first
+            compose_btn.click()
+            page.wait_for_timeout(1500)
 
-            # Type text into the contenteditable div
-            editor = page.locator("div[contenteditable='true']").first
+            # 2. Type using real keyboard strokes (required for React / Lexical editor)
+            editor = page.locator("[contenteditable='true']").first
             editor.click()
-            editor.fill(text)
+            page.keyboard.type(text, delay=25)
             page.wait_for_timeout(1000)
 
-            # Click 'Post' button
-            post_button = page.locator("div[role='button']:has-text('Post')").last
-            post_button.click()
-            page.wait_for_timeout(3000)
+            # 3. Click the exact modal Post button (the one inside the active modal)
+            post_buttons = [b for b in page.locator("div[role='button']").all() if b.inner_text().strip() == "Post"]
+            if not post_buttons:
+                raise Exception("Could not find Post button")
+            
+            modal_post_btn = post_buttons[-1]
+            modal_post_btn.click()
+            page.wait_for_timeout(5000)
 
-            print("✓ Thread posted successfully!")
+            print("✓ Thread posted successfully to your profile!")
             browser.close()
             return True
         except Exception as e:
@@ -120,20 +120,22 @@ def reply_to_thread(thread_url: str, custom_text: str = None, headless: bool = T
                 browser.close()
                 return False
 
-        # 2. Click the reply box / button
+        # 2. Click the reply box / button and type
         try:
-            reply_btn = page.locator("div[role='button']:has-text('Reply'), svg[aria-label='Reply']").first
+            reply_btn = page.locator("svg[aria-label='Reply'], div[role='button']:has-text('Reply')").first
             reply_btn.click()
-            page.wait_for_timeout(1000)
+            page.wait_for_timeout(1500)
 
-            editor = page.locator("div[contenteditable='true']").first
+            editor = page.locator("[contenteditable='true']").first
             editor.click()
-            editor.fill(reply_text)
+            page.keyboard.type(reply_text, delay=25)
             page.wait_for_timeout(1000)
 
-            post_btn = page.locator("div[role='button']:has-text('Post')").last
-            post_btn.click()
-            page.wait_for_timeout(3000)
+            # Click modal Post button
+            post_buttons = [b for b in page.locator("div[role='button']").all() if b.inner_text().strip() == "Post"]
+            modal_post_btn = post_buttons[-1]
+            modal_post_btn.click()
+            page.wait_for_timeout(5000)
 
             print(f"✓ Successfully replied to thread: {thread_url}")
             browser.close()
@@ -159,14 +161,14 @@ Usage:
     if cmd == "login":
         login_and_save_session()
     elif cmd == "post":
-        msg = sys.argv[2] if len(sys.argv) > 2 else "testing automated post from vps"
-        post_new_thread(msg, headless=False)
+        msg = sys.argv[2] if len(sys.argv) > 2 else "curating top problem solvers ✨"
+        post_new_thread(msg, headless=True)
     elif cmd == "reply":
         if len(sys.argv) < 3:
             print("Please provide a thread URL to reply to.")
             sys.exit(1)
         url = sys.argv[2]
         custom = sys.argv[3] if len(sys.argv) > 3 else None
-        reply_to_thread(url, custom_text=custom, headless=False)
+        reply_to_thread(url, custom_text=custom, headless=True)
     else:
         print(f"Unknown command: {cmd}")

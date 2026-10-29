@@ -234,21 +234,21 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.send_json({"error": str(e)}, status=400)
 
     def handle_run_automation(self, data):
-        count = int(data.get("count", 5))
-        dry_run = bool(data.get("dry_run", False))
+        query = data.get("query", "office chair lower back pain")
+        scrolls = int(data.get("scrolls", 2))
 
         def worker():
-            add_log(f"⚡ Starting Reply Automation Batch (Target: {count} replies, dry_run={dry_run})...")
+            add_log(f"🚀 Starting GraphQL Sniffer Session for '{query}'...")
             try:
-                import reply_automation
-                sent = reply_automation.run_reply_automation(max_replies_this_run=count, dry_run=dry_run)
-                add_log(f"✓ Automation Batch Finished! Total replies completed: {sent}")
+                import threads_sniffer
+                found = threads_sniffer.run_graphql_sniffer(query=query, scrolls=scrolls, headless=True)
+                add_log(f"✓ Sniffer Session Finished! Added {len(found)} qualified drafts to Approval Queue.")
             except Exception as e:
-                add_log(f"[X] Automation failed: {e}")
+                add_log(f"[X] Sniffer run failed: {e}")
 
         t = threading.Thread(target=worker, daemon=True)
         t.start()
-        self.send_json({"status": "started", "target": count, "message": "Reply session started in background"})
+        self.send_json({"status": "started", "query": query, "message": "GraphQL sniffer running in background"})
 
     def handle_get_queue(self):
         try:

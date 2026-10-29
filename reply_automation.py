@@ -78,17 +78,17 @@ def run_reply_automation(max_replies_this_run=2, dry_run=False):
     conn = db.get_connection()
     cur = conn.cursor()
 
-    # Check daily limit (max 7 per day)
-    today = datetime.utcnow().strftime("%Y-%m-%d")
-    cur.execute("SELECT COUNT(*) as count FROM replies_sent WHERE ip_id = 'emma' AND DATE(sent_at) = DATE('now')")
+    # Check daily limit (Aggressive max capacity: 25 per day)
+    cur.execute("SELECT COUNT(*) as count FROM replies_sent WHERE ip_id = 'emma' AND DATE(sent_at) = DATE('now') AND status = 'sent'")
     today_count = cur.fetchone()["count"]
-    if today_count >= 7:
-        print(f"[*] Daily limit of 7 replies reached for today ({today_count} sent). Halting to protect account.")
+    DAILY_MAX = 25
+    if today_count >= DAILY_MAX:
+        print(f"[*] Aggressive daily limit reached for today ({today_count}/{DAILY_MAX} sent). Cooling down to protect account.")
         conn.close()
         return 0
 
-    print(f"[*] Starting Honest Reply Automation at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"[*] Today's replies sent so far: {today_count}/7. Target this run: {max_replies_this_run}")
+    print(f"[*] Starting High-Velocity Reply Automation at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"[*] Today's replies sent so far: {today_count}/{DAILY_MAX}. Target this batch: {max_replies_this_run}")
 
     replies_completed = 0
 
@@ -201,10 +201,10 @@ def run_reply_automation(max_replies_this_run=2, dry_run=False):
 
                     replies_completed += 1
                     
-                    # Cooldown between replies if sending more than 1
+                    # Cooldown between replies if sending more than 1 (human-like pacing)
                     if replies_completed < max_replies_this_run and not dry_run:
-                        cooldown_secs = random.randint(30, 60)
-                        print(f"  [⏱] Sleeping for {cooldown_secs}s before next reply...")
+                        cooldown_secs = random.randint(180, 360) # 3 to 6 mins
+                        print(f"  [⏱] Sleeping for {cooldown_secs}s ({cooldown_secs // 60}m) to bypass Meta rate limit...")
                         time.sleep(cooldown_secs)
 
             except Exception as e:

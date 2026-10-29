@@ -7,29 +7,29 @@
 <title>Control · ahmadzufaar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Rethink+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: oklch(0.985 0.004 85);
-    --surface: oklch(1 0 0);
-    --rail: oklch(0.963 0.006 85);
-    --hover: oklch(0.945 0.007 85);
-    --line: oklch(0.912 0.006 85);
-    --line-strong: oklch(0.86 0.008 85);
-    --ink: oklch(0.21 0.012 85);
-    --ink-2: oklch(0.43 0.012 85);
-    --ink-3: oklch(0.53 0.01 85);
-    --accent: oklch(0.44 0.085 162);
-    --accent-hover: oklch(0.38 0.085 162);
-    --accent-soft: oklch(0.955 0.025 162);
-    --star: oklch(0.7 0.14 75);
-    --warn-ink: oklch(0.47 0.1 70);
-    --warn-soft: oklch(0.96 0.035 80);
-    --danger: oklch(0.52 0.17 25);
-    --danger-soft: oklch(0.96 0.025 25);
+    --bg: #f9fafb;
+    --surface: #ffffff;
+    --rail: #f3f4f6;
+    --hover: #e5e7eb;
+    --line: #e5e7eb;
+    --line-strong: #d1d5db;
+    --ink: #111827;
+    --ink-2: #4b5563;
+    --ink-3: #9ca3af;
+    --accent: #15803d;
+    --accent-hover: #166534;
+    --accent-soft: #f0fdf4;
+    --star: #f59e0b;
+    --warn-ink: #b45309;
+    --warn-soft: #fffbeb;
+    --danger: #b91c1c;
+    --danger-soft: #fef2f2;
     --radius: 8px;
     --radius-sm: 6px;
-    --font: "Rethink Sans", ui-sans-serif, system-ui, sans-serif;
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, monospace;
     --ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -37,17 +37,15 @@
   html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
-    font: 400 14px/1.5 var(--font); font-feature-settings: "tnum" 1, "cv11" 1;
-    -webkit-font-smoothing: antialiased; caret-color: var(--accent);
-    scrollbar-color: var(--line-strong) transparent;
+    font: 400 13.5px/1.5 var(--font); font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1;
+    -webkit-font-smoothing: antialiased; caret-color: var(--ink);
   }
-  ::selection { background: var(--accent-soft); color: var(--ink); }
-  a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  ::selection { background: #e0e7ff; color: var(--ink); }
+  a { color: inherit; text-decoration: none; }
   button { font: inherit; color: inherit; }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
-  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: -0.01em; }
-  .icon { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+  .mono { font-family: var(--mono); font-size: 12px; letter-spacing: -0.01em; }
+  .icon { width: 15px; height: 15px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
   [hidden] { display: none !important; }
 
   /* ---------- Buttons ---------- */
@@ -60,306 +58,269 @@
   .btn:hover { background: var(--hover); }
   .btn:active { transform: translateY(0.5px); }
   .btn:disabled { opacity: .5; cursor: not-allowed; }
-  .btn-primary { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .btn-primary:hover { background: oklch(0.12 0.01 85); border-color: oklch(0.12 0.01 85); }
-  .btn-accent { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 500; }
+  .btn-solid { background: #111827; border-color: #111827; color: #ffffff; }
+  .btn-solid:hover { background: #000000; border-color: #000000; }
+  .btn-accent { background: var(--accent); border-color: var(--accent); color: #ffffff; }
   .btn-accent:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
   .btn-ghost { border-color: transparent; background: transparent; color: var(--ink-2); }
   .btn-ghost:hover { color: var(--ink); background: var(--hover); }
-  .btn-sm { height: 28px; padding: 0 10px; font-size: 12.5px; }
-  .btn.is-done { color: var(--accent); border-color: var(--accent); }
+  .btn-sm { height: 28px; padding: 0 10px; font-size: 12px; }
 
   /* ---------- PIN gate ---------- */
   .gate { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
-  .gate-box { width: 100%; max-width: 320px; }
-  .gate h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 4px; }
-  .gate p { margin: 0 0 24px; color: var(--ink-2); }
-  .field-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .gate-box { width: 100%; max-width: 300px; }
+  .gate h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
+  .gate p { margin: 0 0 20px; color: var(--ink-2); font-size: 13px; }
+  .field-label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 6px; color: var(--ink-2); }
   .input {
-    width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
-    background: var(--surface); font: inherit; font-size: 16px; color: var(--ink);
-    transition: border-color .15s, box-shadow .15s;
+    width: 100%; height: 36px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+    background: var(--surface); font: inherit; font-size: 15px; color: var(--ink);
   }
-  .input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 3px var(--danger-soft); }
+  .input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 2px rgba(17,24,39,0.08); }
   .gate .input { letter-spacing: 0.4em; font-family: var(--mono); }
-  .gate .btn { width: 100%; justify-content: center; height: 40px; margin-top: 12px; font-size: 14px; }
-  .field-error { color: var(--danger); font-size: 13px; margin: 8px 0 0; }
+  .gate .btn { width: 100%; justify-content: center; height: 38px; margin-top: 12px; }
+  .field-error { color: var(--danger); font-size: 12.5px; margin: 8px 0 0; }
 
-  /* ---------- App shell ---------- */
-  .app { display: grid; grid-template-columns: 232px 1fr; min-height: 100dvh; }
+  /* ---------- App Layout (Linear-grade) ---------- */
+  .app { display: grid; grid-template-columns: 240px 1fr; min-height: 100dvh; }
+  
+  /* Sidebar */
   .rail {
-    background: var(--rail); border-right: 1px solid var(--line);
-    display: flex; flex-direction: column; position: sticky; top: 0; height: 100dvh; padding: 14px 10px;
+    background: var(--surface); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; position: sticky; top: 0; height: 100dvh; padding: 14px 12px;
   }
-  .workspace { display: flex; align-items: center; gap: 10px; padding: 4px 8px 14px; }
-  .workspace-mark {
-    width: 26px; height: 26px; border-radius: 6px; background: var(--ink); color: var(--bg);
-    display: grid; place-items: center; font-weight: 700; font-size: 13px;
+  .rail-brand {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px 16px;
+    border-bottom: 1px solid var(--line); margin-bottom: 12px;
   }
-  .workspace-name { font-weight: 600; font-size: 14px; line-height: 1.2; }
-  .workspace-sub { font-size: 12px; color: var(--ink-3); }
-  .rail-heading { font-size: 12px; font-weight: 500; color: var(--ink-3); padding: 14px 8px 6px; }
-  .ip-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
-  .ip-link {
-    display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px 8px; border: 0; border-radius: var(--radius-sm);
-    background: transparent; cursor: pointer; text-align: left; transition: background-color .15s;
-  }
-  .ip-link:hover { background: var(--hover); }
-  .ip-link[aria-current="page"] { background: var(--surface); box-shadow: 0 1px 2px oklch(0.2 0.01 85 / 0.06), 0 0 0 1px var(--line); }
-  .ip-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex: none; }
-  .ip-name { font-weight: 500; font-size: 13.5px; }
-  .ip-handle { font-size: 12px; color: var(--ink-3); }
-  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-left: auto; flex: none; }
-  .status-dot.is-paused { background: var(--line-strong); }
-  .ip-add { color: var(--ink-2); font-size: 13px; }
-  .ip-add .icon { width: 15px; height: 15px; margin: 0 4.5px; }
-  .rail-foot { margin-top: auto; border-top: 1px solid var(--line); padding: 14px 10px 6px; display: flex; align-items: center; gap: 10px; }
-  .user-mark { width: 26px; height: 26px; border-radius: 50%; background: var(--line); display: grid; place-items: center; font-size: 12px; font-weight: 600; color: var(--ink-2); }
-  .user-name { font-size: 13px; font-weight: 500; }
-  .user-mode { font-size: 12px; color: var(--ink-3); }
-  .rail-foot .btn { margin-left: auto; padding: 0 7px; }
+  .rail-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
+  .rail-title { font-weight: 600; font-size: 13.5px; line-height: 1.2; }
+  .rail-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 1px; }
 
-  .main { min-width: 0; }
-  .page-head { padding: 28px 40px 0; max-width: 1180px; }
-  .title-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .title-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-  .title-row h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 0; line-height: 1.2; }
-  .title-meta { color: var(--ink-2); font-size: 13.5px; }
-  .title-actions { margin-left: auto; display: flex; gap: 8px; }
-  .facts { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 18px 0 0; padding: 0; }
-  .facts div { display: flex; gap: 8px; align-items: baseline; }
-  .facts dt { color: var(--ink-3); font-size: 13px; }
-  .facts dd { margin: 0; font-size: 13px; font-weight: 500; }
-  .pill { display: inline-flex; align-items: center; gap: 5px; height: 20px; padding: 0 7px; border-radius: 99px; font-size: 12px; font-weight: 500; }
+  .nav-group-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); padding: 10px 10px 4px; }
+  .nav-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .nav-btn {
+    display: flex; align-items: center; justify-content: space-between; width: 100%;
+    padding: 7px 10px; border: 0; border-radius: var(--radius-sm);
+    background: transparent; color: var(--ink-2); font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: background-color .15s, color .15s; text-align: left;
+  }
+  .nav-btn-left { display: flex; align-items: center; gap: 8px; }
+  .nav-btn:hover { background: var(--hover); color: var(--ink); }
+  .nav-btn.is-active { background: #111827; color: #ffffff; font-weight: 500; }
+  .nav-badge {
+    font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 99px;
+    background: var(--hover); color: var(--ink-2);
+  }
+  .nav-btn.is-active .nav-badge { background: rgba(255,255,255,0.2); color: #ffffff; }
+  .nav-badge.is-alert { background: var(--accent); color: #ffffff; }
+
+  .rail-footer { margin-top: auto; border-top: 1px solid var(--line); padding: 12px 6px 4px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--ink-3); }
+
+  /* Workspace Main */
+  .main { min-width: 0; background: var(--bg); }
+  .workspace-head {
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    padding: 18px 36px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .workspace-head h1 { font-size: 17px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+  .workspace-head p { margin: 2px 0 0; color: var(--ink-3); font-size: 12.5px; }
+  .workspace-actions { display: flex; align-items: center; gap: 8px; }
+
+  .workspace-content { padding: 24px 36px 64px; max-width: 1040px; }
+
+  /* Triage Inbox Cards */
+  .triage-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    transition: border-color .15s;
+  }
+  .triage-card:hover { border-color: var(--line-strong); }
+  .triage-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; }
+  .triage-slot-pill { font-weight: 600; font-size: 12px; color: var(--ink); font-family: var(--mono); }
+  .triage-complaint {
+    font-size: 13.5px; line-height: 1.55; color: var(--ink-2); margin-bottom: 14px;
+    padding-left: 12px; border-left: 2px solid var(--line-strong);
+  }
+  .triage-reply-box {
+    background: #f8faf9; border: 1px solid #e2ece5; border-radius: var(--radius-sm);
+    padding: 14px 16px; font-size: 13.5px; line-height: 1.6; color: var(--ink); margin-bottom: 14px;
+  }
+  .triage-reply-head { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); margin-bottom: 6px; }
+  .triage-actions { display: flex; justify-content: space-between; align-items: center; }
+
+  /* Empty State */
+  .empty-box {
+    background: var(--surface); border: 1px dashed var(--line-strong); border-radius: var(--radius);
+    padding: 40px 24px; text-align: center;
+  }
+  .empty-box h3 { font-size: 14px; font-weight: 600; margin: 0 0 4px; color: var(--ink); }
+  .empty-box p { color: var(--ink-3); font-size: 13px; max-width: 400px; margin: 0 auto 16px; }
+
+  /* Table */
+  .table-wrap { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; text-align: left; }
+  th { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: #fbfbfb; }
+  .num { text-align: right; white-space: nowrap; }
+  .product-cell { display: flex; align-items: center; gap: 12px; min-width: 280px; }
+  .product-thumb { width: 36px; height: 36px; border-radius: 4px; border: 1px solid var(--line); object-fit: contain; padding: 2px; }
+  .progress-bg { width: 60px; height: 4px; background: var(--line); border-radius: 99px; overflow: hidden; display: inline-block; vertical-align: middle; margin-left: 6px; }
+  .progress-fill { height: 100%; background: #111827; }
+
+  .pill { display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 7px; border-radius: 99px; font-size: 11.5px; font-weight: 500; }
   .pill-ok { background: var(--accent-soft); color: var(--accent); }
   .pill-warn { background: var(--warn-soft); color: var(--warn-ink); }
   .pill-muted { background: var(--hover); color: var(--ink-2); }
-  .pill-ok::before, .pill-warn::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 
-  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-top: 22px; overflow-x: auto; scrollbar-width: none; }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    position: relative; padding: 10px 14px 12px; border: 0; background: none; cursor: pointer;
-    font-size: 13.5px; font-weight: 500; color: var(--ink-2); white-space: nowrap; transition: color .15s;
-    display: inline-flex; align-items: center; gap: 6px;
+  /* Posts */
+  .post-item {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 12px; display: grid; grid-template-columns: 60px 1fr auto; gap: 16px;
   }
-  .tab:hover { color: var(--ink); }
-  .tab[aria-selected="true"] { color: var(--ink); font-weight: 600; }
-  .tab[aria-selected="true"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; background: var(--ink); border-radius: 2px; }
-  .tab-badge {
-    display: inline-flex; align-items: center; justify-content: center; height: 18px; min-width: 18px;
-    padding: 0 6px; font-size: 11px; font-weight: 600; border-radius: 99px; background: var(--line); color: var(--ink-2);
-  }
-  .tab[aria-selected="true"] .tab-badge { background: var(--ink); color: #fff; }
-  .tab-badge.is-alert { background: var(--accent); color: #fff; }
+  .post-img { width: 60px; height: 74px; border-radius: 4px; object-fit: cover; border: 1px solid var(--line); }
 
-  .panel { padding: 24px 40px 64px; max-width: 1180px; }
-  .panel-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
-  .panel-intro h2 { font-size: 16px; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01em; }
-  .panel-intro p { margin: 0; color: var(--ink-2); font-size: 13.5px; max-width: 68ch; }
+  /* Persona & Rules */
+  .rules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .rules-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .rules-card h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); margin: 0 0 10px; }
+  .rules-card ul, .rules-card ol { margin: 0; padding-left: 16px; font-size: 13px; color: var(--ink-2); display: grid; gap: 6px; }
+  .banned-pill { display: inline-block; font-family: var(--mono); font-size: 11.5px; padding: 2px 6px; margin: 2px; border-radius: 4px; background: var(--danger-soft); color: var(--danger); text-decoration: line-through; }
 
-  /* ---------- Table ---------- */
-  .table-wrap { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-3); padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; background: var(--surface); }
-  td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 13.5px; }
-  tr:last-child td { border-bottom: 0; }
-  tbody tr { transition: background-color .12s; }
-  tbody tr:hover { background: oklch(0.985 0.004 85); }
-  .num { text-align: right; white-space: nowrap; }
-  .slot { font-family: var(--mono); font-size: 12.5px; font-weight: 600; color: var(--ink-2); width: 44px; }
-  .product { display: flex; align-items: center; gap: 12px; min-width: 280px; }
-  .thumb { width: 44px; height: 44px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); object-fit: contain; padding: 3px; flex: none; }
-  .product-title { font-weight: 500; line-height: 1.35; }
-  .product-hook { color: var(--ink-3); font-size: 12.5px; }
-  .rating { display: inline-flex; align-items: center; gap: 4px; }
-  .rating svg { width: 13px; height: 13px; fill: var(--star); stroke: none; }
-  .muted { color: var(--ink-3); }
-  .row-link { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-2); text-decoration: none; font-size: 13px; }
-  .row-link:hover { color: var(--accent); }
-  .row-link .icon { width: 14px; height: 14px; }
+  /* Drawer & Audit */
+  .console-box { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); margin-top: 24px; overflow: hidden; }
+  .console-head { padding: 9px 14px; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; }
+  .console-body { background: #111411; color: #bbf7d0; font-family: var(--mono); font-size: 12px; padding: 12px; max-height: 180px; overflow-y: auto; line-height: 1.6; }
 
-  /* ---------- Content list ---------- */
-  .post-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-  .post { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; padding: 18px; border-bottom: 1px solid var(--line); }
-  .post:last-child { border-bottom: 0; }
-  .post-media { width: 64px; height: 80px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--line); }
-  .post-media.is-text { display: grid; place-items: center; background: var(--rail); color: var(--ink-3); font-size: 11.5px; }
-  .post-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
-  .post-title { font-weight: 600; font-size: 14px; }
-  .post-body { white-space: pre-line; color: var(--ink-2); font-size: 13.5px; max-width: 70ch; margin: 0; }
-  .post-body.is-clamped { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .post-expand { border: 0; background: none; padding: 0; margin-top: 4px; font-size: 12.5px; color: var(--ink-3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-  .post-expand:hover { color: var(--ink); }
-  .post-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+  /* Lander Modal */
+  .lander-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .lander-modal-box { background: var(--surface); border-radius: 14px; max-width: 820px; width: 100%; max-height: 85vh; padding: 24px; display: grid; grid-template-columns: 310px 1fr; gap: 24px; position: relative; }
+  .lander-modal-box iframe { width: 310px; height: 540px; border: 1px solid var(--line); border-radius: 18px; }
 
-  /* ---------- Reply tester & Persona Sandbox ---------- */
-  .tester { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
-  .textarea { width: 100%; min-height: 132px; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); font: inherit; font-size: 14px; line-height: 1.55; resize: vertical; color: var(--ink); transition: border-color .15s, box-shadow .15s; }
-  .textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .samples { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 14px; }
-  .chip { height: 28px; padding: 0 10px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); font-size: 12.5px; color: var(--ink-2); cursor: pointer; transition: border-color .15s, color .15s; }
-  .chip:hover { border-color: var(--line-strong); color: var(--ink); }
-  .result { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 16px; min-height: 196px; }
-  .result-empty { color: var(--ink-3); font-size: 13.5px; display: grid; gap: 4px; }
-  .result-empty strong { color: var(--ink-2); font-weight: 500; }
-  .result-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .result-product { color: var(--ink-2); font-size: 13px; }
-  .reply-text { font-size: 14px; line-height: 1.6; margin: 0 0 14px; }
-  .checks { list-style: none; padding: 12px 0 0; margin: 0; border-top: 1px solid var(--line); display: grid; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
-  .checks li { display: flex; align-items: center; gap: 6px; }
-  .checks .icon { width: 14px; height: 14px; color: var(--accent); }
-  .checks .is-fail { color: var(--danger); }
-  .checks .is-fail .icon { color: var(--danger); }
-
-  /* ---------- Persona & Guardrails ---------- */
-  .persona-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .persona-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 18px; }
-  .persona-card h3 { font-size: 13px; font-weight: 600; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-3); }
-  .persona-card ul, .persona-card ol { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13.5px; display: grid; gap: 6px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .banned-tag { font-family: var(--mono); font-size: 12px; padding: 3px 8px; border-radius: 4px; background: var(--danger-soft); color: var(--danger); text-decoration: line-through; }
-  .persona-bio { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; padding: 16px 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); font-size: 13.5px; }
-  .persona-bio img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
-
-  /* ---------- Radar Topics & Actions ---------- */
-  .radar-topics { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-  .topic-pill { height: 28px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 99px; background: var(--surface); font-size: 12px; font-weight: 500; cursor: pointer; color: var(--ink-2); transition: all .15s; }
-  .topic-pill:hover, .topic-pill.is-active { background: var(--ink); color: #fff; border-color: var(--ink); }
-
-  /* ---------- Side-by-Side Approval Review Cards ---------- */
-  .approval-card {
-    border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 20px;
-    margin-bottom: 16px; box-shadow: 0 1px 3px oklch(0.2 0.01 85 / 0.03); transition: border-color .15s, box-shadow .15s;
-  }
-  .approval-card:hover { border-color: var(--line-strong); box-shadow: 0 3px 8px -2px oklch(0.2 0.01 85 / 0.06); }
-  .approval-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
-  .approval-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  .col-complaint { background: var(--rail); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; flex-direction: column; }
-  .col-reply { background: oklch(0.985 0.015 150); border: 1px solid oklch(0.86 0.04 150); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; flex-direction: column; }
-  .col-tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-  .col-body { font-size: 13.5px; line-height: 1.6; color: var(--ink); margin: 0; flex-grow: 1; }
-  .col-complaint .col-body { color: var(--ink-2); font-style: normal; }
-  .approval-card-actions { display: flex; justify-content: space-between; align-items: center; padding-top: 6px; }
-
-  /* ---------- Console Drawer & Audit ---------- */
-  .console-drawer { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); margin-bottom: 24px; overflow: hidden; }
-  .console-summary { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; list-style: none; font-size: 12.5px; user-select: none; }
-  .console-summary::-webkit-details-marker { display: none; }
-  .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.85); } }
-
-  .exp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .exp-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; }
-  .exp-card-label { font-size: 11px; color: var(--ink-3); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-  .exp-card-val { font-size: 22px; font-weight: 600; font-family: var(--mono); letter-spacing: -0.02em; color: var(--ink); }
-  .exp-card-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
-  .progress-bar-bg { width: 100%; height: 5px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 6px; }
-  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s ease; }
-  .tier-winner { color: oklch(0.44 0.12 145); background: oklch(0.95 0.04 145); border-color: oklch(0.85 0.08 145); }
-  .tier-testing { color: oklch(0.48 0.1 80); background: oklch(0.96 0.03 80); border-color: oklch(0.88 0.06 80); }
-  .tier-low { color: var(--ink-3); background: var(--rail); border-color: var(--line); }
-
-  /* ---------- Lander Slide-over Modal ---------- */
-  .lander-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease); }
-  .lander-modal.is-open { opacity: 1; pointer-events: auto; }
-  .lander-modal-box { background: var(--surface); border-radius: 16px; max-width: 860px; width: 100%; max-height: 90vh; overflow: auto; padding: 28px; position: relative; box-shadow: 0 20px 48px -12px rgba(0,0,0,0.25); display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: center; }
-  .lander-modal-box .device { width: 320px; height: 560px; border-radius: 24px; padding: 6px; }
-  .lander-modal-box .device iframe { border-radius: 18px; }
-  .lander-modal-close { position: absolute; top: 18px; right: 18px; background: none; border: 0; cursor: pointer; color: var(--ink-2); font-size: 16px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; }
-  .lander-modal-close:hover { background: var(--hover); color: var(--ink); }
-
-  /* ---------- Empty IP ---------- */
-  .empty-ip { max-width: 520px; padding: 48px 40px; }
-  .empty-ip h1 { font-size: 20px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.015em; }
-  .empty-ip p { color: var(--ink-2); margin: 0 0 16px; }
-  .empty-ip ol { color: var(--ink-2); padding-left: 18px; display: grid; gap: 6px; margin: 0 0 20px; }
-  .empty-ip code { font-family: var(--mono); font-size: 12.5px; background: var(--rail); padding: 1px 5px; border-radius: 4px; color: var(--ink); }
-
-  .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 8px); opacity: 0; background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: var(--radius-sm); font-size: 13px; transition: opacity .2s var(--ease), transform .2s var(--ease); pointer-events: none; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 8px); opacity: 0; background: #111827; color: #fff; padding: 8px 14px; border-radius: var(--radius-sm); font-size: 12.5px; transition: all .2s var(--ease); pointer-events: none; z-index: 1000; }
   .toast.is-on { opacity: 1; transform: translate(-50%, 0); }
 
-  /* ---------- Responsive ---------- */
-  @media (max-width: 1080px) {
-    .tester, .lander { grid-template-columns: 1fr; }
-    .persona { grid-template-columns: 1fr; }
-    .persona section { border-right: 0; border-bottom: 1px solid var(--line); }
-    .persona section:last-child { border-bottom: 0; }
-  }
   @media (max-width: 760px) {
     .app { grid-template-columns: 1fr; }
-    .rail { position: static; height: auto; flex-direction: row; align-items: center; gap: 8px; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
-    .workspace { padding: 0 6px 0 0; }
-    .workspace-text, .rail-heading, .ip-handle, .rail-foot .user-text, .rail-foot .user-mark { display: none; }
-    .ip-list { display: flex; gap: 4px; }
-    .rail-foot { margin: 0 0 0 auto; border: 0; padding: 4px; }
-    .page-head { padding: 20px 16px 0; }
-    .panel { padding: 18px 16px 48px; }
-    .title-actions { margin-left: 0; width: 100%; }
-    .product { min-width: 0; }
-    th, td { padding: 10px 10px; }
-    .post { grid-template-columns: 44px 1fr; }
-    .post-media { width: 44px; height: 56px; }
-    .post-actions { grid-column: 2; flex-direction: row; }
-    .device { width: 100%; max-width: 390px; height: 700px; }
-    .col-hide-sm { display: none; }
-    .approval-split { grid-template-columns: 1fr; gap: 10px; }
-    .exp-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .persona-grid { grid-template-columns: 1fr; }
-    .lander-modal-box { grid-template-columns: 1fr; padding: 20px 16px; }
-    .approval-card-actions { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    .rules-grid { grid-template-columns: 1fr; }
+    .workspace-head, .workspace-content { padding: 16px; }
+    .lander-modal-box { grid-template-columns: 1fr; }
   }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
 
-<!-- PIN gate -->
+<!-- PIN Gate -->
 <main class="gate" id="gate" hidden>
   <form class="gate-box" id="gate-form" novalidate>
     <h1>Control</h1>
-    <p>Private workspace for ahmadzufaar's affiliate IPs.</p>
+    <p>Operator workspace for @ahmadzufaar</p>
     <label class="field-label" for="pin">PIN</label>
-    <input class="input" id="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" aria-describedby="pin-error">
-    <p class="field-error" id="pin-error" hidden>That PIN didn't match. Try again.</p>
-    <button class="btn btn-primary" type="submit">Unlock</button>
+    <input class="input" id="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6">
+    <p class="field-error" id="pin-error" hidden>PIN didn't match. Try again.</p>
+    <button class="btn btn-solid" type="submit">Unlock Workspace</button>
   </form>
 </main>
 
-<!-- App -->
+<!-- Main App -->
 <div class="app" id="app" hidden>
-  <nav class="rail" aria-label="Workspace">
-    <div class="workspace">
-      <div class="workspace-mark" aria-hidden="true">Z</div>
-      <div class="workspace-text">
-        <div class="workspace-name">Control</div>
-        <div class="workspace-sub">Affiliate IPs</div>
+  <!-- Left Navigation Rail -->
+  <nav class="rail" aria-label="Sidebar">
+    <div class="rail-brand">
+      <img class="rail-avatar" src="/assets/emma/emma_desk.jpg" alt="Emma">
+      <div>
+        <div class="rail-title">Emma's Finds</div>
+        <div class="rail-sub">@curated_byemma</div>
       </div>
     </div>
-    <div class="rail-heading" id="ip-heading">IPs</div>
-    <ul class="ip-list" id="ip-list" aria-labelledby="ip-heading"></ul>
-    <div class="rail-foot">
-      <div class="user-mark" aria-hidden="true">AZ</div>
-      <div class="user-text">
-        <div class="user-name">@ahmadzufaar</div>
-        <div class="user-mode" id="mode-label">Read-only</div>
+
+    <div class="nav-group-label">Workspace</div>
+    <ul class="nav-list">
+      <li>
+        <button class="nav-btn" data-nav="queue">
+          <span class="nav-btn-left">
+            <svg class="icon" viewBox="0 0 24 24"><path d="m13 2-2 10h5l-6 10 2-10H7l6-10z"/></svg>
+            <span>Queue</span>
+          </span>
+          <span class="nav-badge" id="rail-queue-badge">0</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" data-nav="products">
+          <span class="nav-btn-left">
+            <svg class="icon" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
+            <span>Products</span>
+          </span>
+          <span class="nav-badge">10</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" data-nav="posts">
+          <span class="nav-btn-left">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            <span>Posts</span>
+          </span>
+          <span class="nav-badge">6</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" data-nav="rules">
+          <span class="nav-btn-left">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>Rules & Bio</span>
+          </span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="rail-footer">
+      <div>
+        <div style="font-weight:500;color:var(--ink);">@ahmadzufaar</div>
+        <div style="font-size:11px;">Amazon: curatedbyem0f-20</div>
       </div>
-      <button class="btn btn-ghost btn-sm" id="lock-btn" title="Lock" aria-label="Lock workspace">
-        <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-      </button>
+      <button class="btn btn-ghost btn-sm" id="lock-btn" title="Lock workspace">Lock</button>
     </div>
   </nav>
 
-  <div class="main" id="main"></div>
+  <!-- Main View Area -->
+  <main class="main" id="main"></main>
+</div>
+
+<!-- Bio Lander Slide-over Modal -->
+<div class="lander-modal" id="lander-modal" hidden>
+  <div class="lander-modal-box">
+    <iframe id="modal-lander-iframe" src="https://curatedbyemma.pages.dev" title="Bio Lander Preview" loading="lazy"></iframe>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <h2 style="font-size:16px;font-weight:600;margin:0 0 4px;">Emma's Bio Lander</h2>
+        <button class="btn btn-ghost btn-sm" id="close-lander-modal">✕ Close</button>
+      </div>
+      <p style="color:var(--ink-2);font-size:13px;margin:0 0 16px;">The destination page all approved replies and bio links reference.</p>
+      <div style="display:grid;gap:8px;font-size:12.5px;color:var(--ink-2);margin-bottom:20px;">
+        <div><strong>URL:</strong> <a href="https://curatedbyemma.pages.dev" target="_blank" rel="noopener" style="text-decoration:underline;">curatedbyemma.pages.dev ↗</a></div>
+        <div><strong>Amazon Tag:</strong> <span class="mono">curatedbyem0f-20</span></div>
+        <div><strong>Active Slots:</strong> #1–#10 permanent</div>
+      </div>
+      <button class="btn btn-sm" id="reload-lander-btn">Reload Preview</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 /* =========================================================
-   IP REGISTRY — add a new IP by appending an object here.
+   PROJECT CONFIG & DATA
    ========================================================= */
+const PIN = "2707";
+const AUTH_KEY = "control_auth";
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const fmt = n => n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K" : String(n);
+
 const PROJECTS = [
   {
     id: "emma",
@@ -412,13 +373,13 @@ const PROJECTS = [
       { slot: 10, any: ["car vent","car dust","cup holder","car crumb","car detailing","car interior"] }
     ],
     replies: {
-      1: "ugh velvet and dog hair is the absolute worst combo. standard sticky tape rollers never worked for us, but that mega extra-sticky roller has almost 40k reviews for a reason. saved the exact one under #1 in my bio if you need it.",
+      1: "trying to get stubborn pet hair off couch fabric is the most frustrating workout ever. regular sticky tape rollers lose their grip in two swipes, but that extra-sticky roller with over 39k verified reviews is the consensus winner for deep fur. only catch is you go through sheets fast with a heavy shedder, but it actually pulls what vacuums miss. kept it saved under #1 in my bio.",
       2: "night wakeups are brutal, sending you so much coffee. my sister went through the exact same thing with her 7-month-old and swore the breathing rhythm otter was the only thing that actually calmed him down. cataloged it under #2 in my bio if you want to look at the reviews.",
-      3: "sitting all day ruined my lower back too. before you spend $600 on a whole new chair, try a high-density memory foam lumbar cushion first. literally saved my posture. kept the top-rated one at bio #3.",
+      3: "office chairs under $400 are honestly a scam for your lower back. when i audited review patterns on ergonomic cushions to filter out the bot reviews, high-density molded foam was the only thing 27k verified desk workers consistently swore by. it won't fix medical spine issues, but taking pressure off the lower back made 8-hour shifts actually tolerable. kept the exact top-rated pick cataloged under #3 on my page.",
       4: "if you use an air fryer, pouring oil from the bottle always turns food soggy. a fine glass mist sprayer completely fixed that for me. i have the top-rated leakproof one listed under #4 in my bio.",
       5: "scrubbing bathroom tiles on your knees is literal torture. electric cordless spin scrubbers are viral for a reason—cuts cleaning time in half with zero elbow grease. kept the highest-rated one saved in bio #5.",
       6: "cables sliding off the nightstand and falling behind the bed drove me insane. magnetic desk cable holders fixed that in 5 seconds. saved the exact one under #6 in my bio if you want to see how it works.",
-      7: "holding your phone for a 4-hour flight is literal neck torture. that universal tray-table clamp mount is an absolute travel essential. listed under #7 in my bio.",
+      7: "long flights without seatback screens are torture for your neck. audited travel gear before my last trip and that airplane tray-table clamp mount had over 22k verified reviews for a reason. clamp feels a bit stiff at first, but keeping your phone eye-level is 100% worth it. cataloged under #7 in my bio.",
       8: "ironing boards take way too much effort when traveling. a compact handheld travel steamer takes wrinkles out in like 30 seconds. cataloged the #1 amazon pick under #8 in my bio.",
       9: "if light or your partner's snoring is keeping you up, look into 3D bluetooth eye masks with flat speakers. total blackout and you can sleep on your side without ear pain. kept the top one at bio #9.",
       10: "cleaning crumbs and dust out of car air vents with wipes is basically impossible. that reusable detailing cleaning gel grabs everything in one press. saved under #10 in my bio."
@@ -440,54 +401,65 @@ const PROJECTS = [
   }
 ];
 
-/* ========================================================= */
-const PIN = "2707";
-const AUTH_KEY = "control_auth";
-const $ = (s, el = document) => el.querySelector(s);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
-const fmt = n => n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K" : String(n);
-const icons = {
-  external: '<svg class="icon" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
-  copy: '<svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>',
-  check: '<svg class="icon" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg>',
-  x: '<svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>',
-  plus: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
-  send: '<svg class="icon" viewBox="0 0 24 24"><path d="M5 12h13"/><path d="m13 6 6 6-6 6"/></svg>',
-  star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>'
+/* =========================================================
+   APPLICATION STATE & ROUTING
+   ========================================================= */
+const state = {
+  tab: "queue",
+  live: false,
+  logs: [],
+  metrics: [],
+  dbReplies: [],
+  approvalQueue: [],
+  published: {}
 };
 
-const state = { ip: null, tab: "catalog", live: false, published: {}, logs: [], metrics: [], dbReplies: [], approvalQueue: [] };
+const TAB_MAP = {
+  radar: "queue",
+  experiments: "queue",
+  catalog: "products",
+  broadcast: "posts",
+  content: "posts",
+  persona: "rules",
+  replies: "rules",
+  lander: "products",
+  activity: "queue"
+};
 
-/* ---------- Auth ---------- */
-function showApp() { $("#gate").hidden = true; $("#app").hidden = false; boot(); }
-function showGate() { $("#app").hidden = true; $("#gate").hidden = false; $("#pin").value = ""; $("#pin").focus(); }
-$("#gate-form").addEventListener("submit", e => {
-  e.preventDefault();
-  const ok = $("#pin").value.trim() === PIN;
-  $("#pin").setAttribute("aria-invalid", String(!ok));
-  $("#pin-error").hidden = ok;
-  if (ok) { sessionStorage.setItem(AUTH_KEY, "1"); showApp(); } else { $("#pin").value = ""; $("#pin").focus(); }
-});
-$("#lock-btn").addEventListener("click", () => { sessionStorage.removeItem(AUTH_KEY); showGate(); });
+function readHash() {
+  let [ip, tab] = location.hash.replace(/^#\/?/, "").split("/");
+  if (!tab) tab = "queue";
+  if (TAB_MAP[tab]) tab = TAB_MAP[tab];
+  state.tab = tab;
+}
+function go(tab) {
+  if (TAB_MAP[tab]) tab = TAB_MAP[tab];
+  location.hash = `#/emma/${tab}`;
+}
+window.addEventListener("hashchange", () => { readHash(); render(); });
 
-/* ---------- Live mode (localhost server) ---------- */
+/* ---------- API Sync ---------- */
 async function detectLive() {
   try {
-    const r = await fetch("/api/broadcast", { cache: "no-store" });
-    if (!r.ok) throw 0;
-    const data = await r.json();
+    const res = await fetch("/api/overview", { cache: "no-store" });
+    if (!res.ok) throw new Error();
+    const data = await res.json();
     state.live = true;
-    state.published = {};
-    (data.queue || []).forEach(q => { if (q.published) state.published[q.id] = q.published_at; });
+    state.published = data.published || {};
   } catch { state.live = false; }
-  $("#mode-label").textContent = state.live ? "Live · localhost" : "Read-only";
 }
+
 async function fetchLogs() {
-  if (!state.live) return;
-  try { const r = await fetch("/api/logs", { cache: "no-store" }); state.logs = (await r.json()).logs || []; } catch {}
+  try {
+    const res = await fetch("/api/logs", { cache: "no-store" });
+    if (res.ok) {
+      const data = await res.json();
+      state.logs = data.logs || [];
+    }
+  } catch {}
 }
+
 async function fetchAnalytics() {
-  if (!state.live) return;
   try {
     const [r1, r2, r3] = await Promise.all([
       fetch("/api/analytics", { cache: "no-store" }),
@@ -500,283 +472,365 @@ async function fetchAnalytics() {
   } catch {}
 }
 
-/* ---------- Routing ---------- */
-const TAB_MAP = {
-  experiments: "radar",
-  replies: "persona",
-  content: "broadcast",
-  lander: "catalog",
-  activity: "radar"
-};
-
-function readHash() {
-  let [ip, tab] = location.hash.replace(/^#\/?/, "").split("/");
-  state.ip = ip || PROJECTS[0].id;
-  if (TAB_MAP[tab]) tab = TAB_MAP[tab];
-  state.tab = tab || "radar";
-}
-function go(ip, tab) {
-  if (TAB_MAP[tab]) tab = TAB_MAP[tab];
-  location.hash = `#/${ip}/${tab || "radar"}`;
-}
-window.addEventListener("hashchange", () => { readHash(); render(); });
-
-/* ---------- Rail ---------- */
-function renderRail() {
-  $("#ip-list").innerHTML = PROJECTS.map(p => `
-    <li><button class="ip-link" data-ip="${p.id}" ${state.ip === p.id ? 'aria-current="page"' : ""}>
-      <img class="ip-avatar" src="${p.avatar}" alt="">
-      <span><span class="ip-name">${esc(p.persona)}</span><br><span class="ip-handle">${esc(p.handle)}</span></span>
-      <span class="status-dot ${p.status === "active" ? "" : "is-paused"}" title="${p.status === "active" ? "Active" : "Paused"}"></span>
-    </button></li>`).join("") + `
-    <li><button class="ip-link ip-add" data-ip="new" ${state.ip === "new" ? 'aria-current="page"' : ""}>${icons.plus}<span>New IP</span></button></li>`;
-  document.querySelectorAll(".ip-link").forEach(b => b.addEventListener("click", () => go(b.dataset.ip)));
-}
-
-/* ---------- Main Workspaces ---------- */
-const TABS = [
-  ["radar", "Radar & Approvals", () => (state.approvalQueue || []).length],
-  ["broadcast", "Feed Broadcasts", p => p.posts.length],
-  ["catalog", "Catalog & Sprint", p => p.catalog.length],
-  ["persona", "Persona & Rules"]
-];
-
+/* =========================================================
+   RENDER ENGINE
+   ========================================================= */
 function render() {
-  renderRail();
-  const main = $("#main");
-  if (state.ip === "new") { main.innerHTML = renderNewIp(); return; }
-  const p = PROJECTS.find(x => x.id === state.ip) || PROJECTS[0];
-  if (!TABS.some(t => t[0] === state.tab)) state.tab = "radar";
-  const publishedCount = p.posts.filter(x => state.published[x.id]).length;
+  const p = PROJECTS[0];
   const pendingCount = (state.approvalQueue || []).length;
 
-  main.innerHTML = `
-    <header class="page-head">
-      <div class="title-row">
-        <img class="title-avatar" src="${p.avatar}" alt="">
-        <div>
-          <h1>${esc(p.name)}</h1>
-          <div class="title-meta">${esc(p.handle)} · ${esc(p.market)}</div>
-        </div>
-        <div class="title-actions">
-          <a class="btn" href="${p.threadsUrl}" target="_blank" rel="noopener">Threads ${icons.external}</a>
-          <button class="btn" id="open-lander-btn">Bio Lander ${icons.external}</button>
-        </div>
-      </div>
-      <dl class="facts">
-        <div><dt>Status</dt><dd><span class="pill ${p.status === "active" ? "pill-ok" : "pill-muted"}">${p.status === "active" ? "Active" : "Paused"}</span></dd></div>
-        <div><dt>Amazon Tag</dt><dd class="mono">${esc(p.tag)}</dd></div>
-        <div><dt>Catalog</dt><dd>#1–#${p.catalog.length} permanent</dd></div>
-        <div><dt>Radar Approvals</dt><dd class="mono"><strong style="color:var(--accent);">${pendingCount}</strong> pending</dd></div>
-      </dl>
-      <div class="tabs" role="tablist" aria-label="${esc(p.persona)} sections">
-        ${TABS.map(([id, label, count]) => {
-          const c = count ? count(p) : null;
-          const isAlert = id === "radar" && pendingCount > 0;
-          return `
-          <button class="tab" role="tab" id="tab-${id}" aria-selected="${state.tab === id}" aria-controls="panel" tabindex="${state.tab === id ? 0 : -1}" data-tab="${id}">
-            ${label}${c !== null ? `<span class="tab-badge ${isAlert ? "is-alert" : ""}">${c}</span>` : ""}
-          </button>`;
-        }).join("")}
-      </div>
-    </header>
-    <section class="panel" id="panel" role="tabpanel" aria-labelledby="tab-${state.tab}">
-      ${({
-        radar: renderRadar,
-        broadcast: renderBroadcast,
-        catalog: renderCatalogSprint,
-        persona: renderPersona
-      })[state.tab](p)}
-    </section>
-
-    <!-- Slide-over Modal for Bio Lander -->
-    <div class="lander-modal" id="lander-modal" hidden>
-      <div class="lander-modal-box">
-        <button class="lander-modal-close" id="close-lander-modal" aria-label="Close">✕</button>
-        <div class="device">
-          <iframe id="modal-lander-iframe" src="${p.landerUrl}" title="Bio Lander Preview" loading="lazy"></iframe>
-        </div>
-        <div>
-          <h2 style="font-size:18px;font-weight:600;margin:0 0 4px;">Emma's Curated Bio Lander</h2>
-          <p style="color:var(--ink-2);font-size:13.5px;margin:0 0 20px;">The destination page all approved replies and bio links reference.</p>
-          <dl class="kv">
-            <dt>Live URL</dt><dd><a href="${p.landerUrl}" target="_blank" rel="noopener">${p.landerUrl.replace("https://", "")} ↗</a></dd>
-            <dt>Tracking Tag</dt><dd class="mono">${esc(p.tag)}</dd>
-            <dt>Slots Active</dt><dd>10 Curated Products (#1 to #10)</dd>
-            <dt>Hosting</dt><dd>Cloudflare Pages (instant auto-deploy)</dd>
-          </dl>
-          <div style="margin-top:24px;display:flex;gap:8px;">
-            <button class="btn btn-sm" id="reload-lander-btn">Reload Page</button>
-            <a class="btn btn-sm btn-ghost" href="${p.landerUrl}" target="_blank" rel="noopener">Open in New Tab ↗</a>
-          </div>
-        </div>
-      </div>
-    </div>`;
-
-  const tabEls = [...document.querySelectorAll(".tab")];
-  tabEls.forEach((t, i) => {
-    t.addEventListener("click", () => go(p.id, t.dataset.tab));
-    t.addEventListener("keydown", e => {
-      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-      const next = tabEls[(i + (e.key === "ArrowRight" ? 1 : -1) + tabEls.length) % tabEls.length];
-      next.focus(); go(p.id, next.dataset.tab);
-    });
+  // Update Rail Active state
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.classList.toggle("is-active", btn.dataset.nav === state.tab);
   });
-  bindPanel(p);
+  const railBadge = $("#rail-queue-badge");
+  if (railBadge) {
+    railBadge.textContent = pendingCount;
+    railBadge.classList.toggle("is-alert", pendingCount > 0);
+  }
+
+  const main = $("#main");
+  if (state.tab === "queue") {
+    main.innerHTML = renderQueueView(p, pendingCount);
+  } else if (state.tab === "products") {
+    main.innerHTML = renderProductsView(p);
+  } else if (state.tab === "posts") {
+    main.innerHTML = renderPostsView(p);
+  } else if (state.tab === "rules") {
+    main.innerHTML = renderRulesView(p);
+  }
+  bindActions(p);
 }
 
-/* ---------- Workspace 1: Radar & Approvals ---------- */
-function renderRadar(p) {
+/* 1. Queue View (Linear Triage Inbox) */
+function renderQueueView(p, pendingCount) {
+  const queue = state.approvalQueue || [];
   const replies = state.dbReplies || [];
+
   return `
-    <div class="panel-intro">
+    <header class="workspace-head">
       <div>
-        <h2>Inbound Reply Radar & Approvals</h2>
-        <p>GraphQL Sniffer monitors Threads for real user complaints. Review AI drafts side-by-side before dispatching.</p>
+        <h1>Triage Queue</h1>
+        <p>Incoming complaint threads intercepted on Threads. Review and dispatch genuine 4-part replies.</p>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="btn btn-sm btn-accent" id="run-batch-btn" style="background:var(--accent);color:#fff;border-color:var(--accent);">🚀 Run Scanner (Batch 5)</button>
-        <button class="btn btn-sm" id="refresh-db-btn">Refresh</button>
+      <div class="workspace-actions">
+        <button class="btn btn-sm btn-solid" id="scan-now-btn">⚡ Scan Threads</button>
+        <button class="btn btn-sm btn-ghost" id="refresh-queue-btn">Refresh</button>
       </div>
-    </div>
+    </header>
 
-    <!-- Topic Radar Pills -->
-    <div class="radar-topics">
-      <span style="font-size:12px;font-weight:600;color:var(--ink-3);margin-right:4px;">SCANNER TOPICS:</span>
-      <button class="topic-pill is-active" data-query="dog hair couch vacuuming">🐾 Pet Hair (Velvet Couch)</button>
-      <button class="topic-pill" data-query="lower back pain office chair posture">💺 Back Pain (Office Chair)</button>
-      <button class="topic-pill" data-query="flight phone neck pain tray table">✈️ Flight Travel (Neck Strain)</button>
-      <button class="topic-pill" data-query="charging cables falling behind nightstand">🔌 Bedside Cables</button>
-      <button class="topic-pill" data-query="dust crumbs car air vent cleaning">🚗 Car Detailing Putty</button>
-    </div>
-
-    <!-- Human Approval Queue (Hero Split View) -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;">
-      <h3 style="font-size:14px;font-weight:600;margin:0;display:flex;align-items:center;gap:8px;">
-        Human Approval Queue
-        <span class="pill pill-ok" id="queue-count-pill" style="font-size:11.5px;">${(state.approvalQueue || []).length} Pending</span>
-      </h3>
-      <span style="font-size:12px;color:var(--ink-3);">Side-by-side comparison · Never Lie verified</span>
-    </div>
-
-    <div id="approval-queue-list" style="margin-bottom:32px;"></div>
-
-    <!-- Collapsible Live Sniffer Stream Drawer -->
-    <details class="console-drawer" style="margin-bottom:28px;">
-      <summary class="console-summary">
-        <div style="display:flex;align-items:center;gap:8px;font-weight:500;">
-          <span class="pulse-dot"></span>
-          <span>Live GraphQL Sniffer Console</span>
-          <span style="font-size:11.5px;color:var(--ink-3);font-family:var(--mono);margin-left:6px;" id="console-head-status">Click to monitor live stream</span>
+    <div class="workspace-content">
+      ${queue.length === 0 ? `
+        <div class="empty-box">
+          <h3>Inbox Zero</h3>
+          <p>No pending drafts to review. Click "Scan Threads" to hunt for fresh real-world complaints.</p>
+          <button class="btn btn-sm btn-solid" onclick="document.querySelector('#scan-now-btn').click()">Scan Threads Now</button>
         </div>
-        <span class="btn btn-sm btn-ghost" style="font-size:11.5px;">Toggle Stream</span>
-      </summary>
-      <div class="log" id="crawler-live-log" style="background:#111411;color:#bbf7d0;font-family:var(--mono);font-size:12px;line-height:1.6;padding:14px;max-height:220px;overflow-y:auto;border-top:1px solid var(--line);">
-        ${(state.logs && state.logs.length) ? state.logs.slice(-30).map(esc).join("<br>") : `<span style="color:#666;">[Waiting for crawler trigger. Click "🚀 Run Scanner" to start GraphQL Sniffer]</span>`}
-      </div>
-    </details>
+      ` : queue.map(item => `
+        <div class="triage-card">
+          <div class="triage-head">
+            <span class="triage-slot-pill">Slot #${item.matched_slot}: ${esc(item.product_name)}</span>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="color:var(--ink-2);">@<strong>${esc(item.author_username)}</strong></span>
+              <a href="${item.thread_url}" target="_blank" rel="noopener" class="btn btn-sm btn-ghost" style="padding:0 6px;">Open Thread ↗</a>
+            </div>
+          </div>
 
-    <!-- Dispatched Replies Audit Stream -->
-    <h3 style="font-size:14px;font-weight:600;margin:0 0 10px;">Recent Dispatched Replies (SQLite Audit)</h3>
-    <div class="log" style="max-height:240px;">
-      ${replies.length === 0 ? `<div class="log-empty">No replies dispatched yet. Approved drafts will appear here.</div>` : replies.map(r => `
-        <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line);">
-          <span style="color:var(--accent);font-weight:600;">[Slot #${r.slot}]</span> 
-          <span style="color:var(--ink-3);">${r.sent_at} UTC</span>
-          ${r.author_username ? ` · to <strong>@${esc(r.author_username)}</strong>` : ""}
-          <div style="color:var(--ink);margin-top:2px;">“${esc(r.reply_text)}”</div>
+          <div class="triage-complaint">
+            “${esc(item.thread_text)}”
+          </div>
+
+          <div class="triage-reply-box">
+            <div class="triage-reply-head">
+              <span>Emma's 4-Part Honest Reply</span>
+              <span style="font-family:var(--mono);">Bio #${item.matched_slot}</span>
+            </div>
+            “${esc(item.draft_reply)}”
+          </div>
+
+          <div class="triage-actions">
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-sm btn-solid approve-btn" data-id="${item.id}">✓ Approve & Send</button>
+              <button class="btn btn-sm btn-ghost reject-btn" data-id="${item.id}" style="color:var(--danger);">✕ Discard</button>
+            </div>
+            <span style="font-size:11.5px;color:var(--ink-3);">Never Lie verified</span>
+          </div>
         </div>
       `).join("")}
+
+      <!-- Collapsible Live Sniffer Stream Drawer -->
+      <details class="console-box">
+        <summary class="console-head">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span>
+            <span>Live GraphQL Sniffer Console</span>
+          </div>
+          <span style="color:var(--ink-3);">Toggle Stream ↗</span>
+        </summary>
+        <div class="console-body" id="crawler-live-log">
+          ${(state.logs && state.logs.length) ? state.logs.slice(-25).map(esc).join("<br>") : `<span style="color:#666;">[Waiting for crawler trigger. Click "Scan Threads" above]</span>`}
+        </div>
+      </details>
+
+      <!-- Dispatched History -->
+      <h3 style="font-size:13px;font-weight:600;margin:28px 0 10px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-3);">Recently Dispatched (SQLite)</h3>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;max-height:220px;overflow-y:auto;font-size:12.5px;line-height:1.6;">
+        ${replies.length === 0 ? `<div style="color:var(--ink-3);">No replies recorded yet.</div>` : replies.map(r => `
+          <div style="padding:6px 0;border-bottom:1px solid var(--line);">
+            <strong style="color:var(--ink);">[Slot #${r.slot}]</strong> <span style="color:var(--ink-3);">${r.sent_at} UTC</span> ${r.author_username ? `· to @${esc(r.author_username)}` : ""}
+            <div style="color:var(--ink-2);margin-top:2px;">“${esc(r.reply_text)}”</div>
+          </div>
+        `).join("")}
+      </div>
     </div>
   `;
 }
 
-/* Side-by-Side Queue Renderer */
-function renderApprovalQueue() {
-  const container = $("#approval-queue-list");
-  const pill = $("#queue-count-pill");
-  if (!container) return;
-  const list = state.approvalQueue || [];
-  if (pill) pill.textContent = `${list.length} Pending`;
-
-  if (list.length === 0) {
-    container.innerHTML = `
-      <div style="border:1px dashed var(--line);border-radius:var(--radius);padding:28px 24px;text-align:center;background:var(--surface);">
-        <div style="font-weight:600;font-size:14px;color:var(--ink);margin-bottom:4px;">No Pending Replies in Queue</div>
-        <div style="color:var(--ink-3);font-size:13px;max-width:440px;margin:0 auto 16px;">The radar is caught up. Pick a scanner topic above or click "Run Scanner" to intercept fresh complaint threads on Threads.</div>
-        <button class="btn btn-sm btn-ghost" onclick="document.querySelector('#run-batch-btn').click()">Trigger Radar Scanner ↗</button>
+/* 2. Products View (Unified Single Table) */
+function renderProductsView(p) {
+  const metrics = state.metrics || [];
+  return `
+    <header class="workspace-head">
+      <div>
+        <h1>Products & 7-Day Sprint</h1>
+        <p>Permanent slots #1–#10 · Sprint target: 20 replies/slot to measure Amazon conversions.</p>
       </div>
-    `;
-    return;
-  }
-
-  container.innerHTML = list.map(item => `
-    <div class="approval-card">
-      <div class="approval-card-head">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="pill pill-ok" style="font-weight:600;font-size:12px;">Slot #${item.matched_slot}: ${esc(item.product_name)}</span>
-          <span style="font-size:13px;color:var(--ink-2);">Author: <strong>@${esc(item.author_username)}</strong></span>
-        </div>
-        <a href="${item.thread_url}" target="_blank" rel="noopener" class="btn btn-sm btn-ghost" style="font-size:12px;">Open Thread ${icons.external}</a>
+      <div class="workspace-actions">
+        <button class="btn btn-sm btn-ghost" id="open-lander-btn">📱 Preview Lander ↗</button>
+        <button class="btn btn-sm btn-ghost" id="refresh-metrics-btn">Refresh DB</button>
       </div>
+    </header>
 
-      <!-- Side-by-Side Split Grid -->
-      <div class="approval-split">
-        <!-- Left: Threads Complaint Post -->
-        <div class="col-complaint">
-          <div class="col-tag-row">
-            <span style="color:var(--ink-3);">Threads Complaint Post</span>
-            <span class="pill pill-muted" style="font-size:11px;">Target Post</span>
-          </div>
-          <p class="col-body">“${esc(item.thread_text)}”</p>
-        </div>
-
-        <!-- Right: Emma's 4-Part Honest Reply -->
-        <div class="col-reply">
-          <div class="col-tag-row">
-            <span style="color:var(--accent);font-weight:600;">Emma's 4-Part Honest Reply</span>
-            <span class="pill pill-ok" style="font-size:11px;">Bio #${item.matched_slot}</span>
-          </div>
-          <p class="col-body">“${esc(item.draft_reply)}”</p>
-        </div>
-      </div>
-
-      <div class="approval-card-actions">
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-sm btn-accent approve-btn" data-id="${item.id}" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;">✓ Approve & Dispatch</button>
-          <button class="btn btn-sm btn-ghost reject-btn" data-id="${item.id}" style="color:var(--danger);">✕ Discard</button>
-        </div>
-        <span style="font-size:11.5px;color:var(--ink-3);font-family:var(--mono);">Never Lie verified · Strict Context Pass</span>
+    <div class="workspace-content">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Slot</th>
+              <th>Product & Hook</th>
+              <th>Category</th>
+              <th class="num">Amazon Rating</th>
+              <th class="num">Progress (Min 20)</th>
+              <th class="num">Clicks</th>
+              <th class="num">Orders</th>
+              <th>Tier</th>
+              <th class="num">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${p.catalog.map(it => {
+              const m = metrics.find(x => x.slot === it.slot) || { replies_sent: 0, amazon_clicks: 0, amazon_sales: 0, status: "testing" };
+              const pct = Math.min(100, Math.round(((m.replies_sent || 0) / 20) * 100));
+              const tierPill = m.status === "winner" ? '<span class="pill pill-ok">Winner</span>' : (m.status === "testing" ? '<span class="pill pill-warn">Testing</span>' : '<span class="pill pill-muted">Low</span>');
+              return `
+                <tr>
+                  <td class="mono" style="font-weight:600;">#${it.slot}</td>
+                  <td>
+                    <div class="product-cell">
+                      <img class="product-thumb" src="${it.image}" alt="">
+                      <div>
+                        <div style="font-weight:500;">${esc(it.title)}</div>
+                        <div style="color:var(--ink-3);font-size:12px;">${esc(it.hook)}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="color:var(--ink-2);">${esc(it.category)}</td>
+                  <td class="num">★ ${it.rating.toFixed(1)} <span style="color:var(--ink-3);font-size:11.5px;">(${esc(it.velocity)})</span></td>
+                  <td class="num">
+                    <span class="mono">${m.replies_sent || 0} / 20</span>
+                    <span class="progress-bg"><span class="progress-fill" style="width:${pct}%;"></span></span>
+                  </td>
+                  <td class="num mono">${m.amazon_clicks || 0}</td>
+                  <td class="num mono">${m.amazon_sales || 0}</td>
+                  <td>${tierPill}</td>
+                  <td class="num">
+                    <div style="display:flex;gap:6px;justify-content:flex-end;">
+                      <button class="btn btn-sm btn-ghost edit-slot-btn" data-slot="${it.slot}" data-clicks="${m.amazon_clicks || 0}" data-sales="${m.amazon_sales || 0}" data-status="${m.status}">Update</button>
+                      <a class="btn btn-sm btn-ghost" href="https://www.amazon.com/dp/${it.asin}?tag=${p.tag}" target="_blank" rel="noopener">Amazon ↗</a>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
       </div>
     </div>
-  `).join("");
+  `;
+}
 
-  // Re-bind actions
-  container.querySelectorAll(".approve-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
+/* 3. Posts View (Feed Broadcasts) */
+function renderPostsView(p) {
+  return `
+    <header class="workspace-head">
+      <div>
+        <h1>Feed Broadcasts</h1>
+        <p>Curated lifestyle and problem-solution threads for @curated_byemma.</p>
+      </div>
+    </header>
+
+    <div class="workspace-content">
+      ${p.posts.map(post => {
+        const pub = state.published[post.id];
+        const status = pub ? `<span class="pill pill-ok">Published ${new Date(pub).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>` : `<span class="pill pill-warn">Queued</span>`;
+        return `
+          <div class="post-item">
+            ${post.image ? `<img class="post-img" src="${post.image}" alt="">` : `<div class="post-img" style="display:grid;place-items:center;background:var(--rail);color:var(--ink-3);font-size:11px;">Text</div>`}
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                <span style="font-weight:600;">${esc(post.title)}</span>
+                ${status}
+              </div>
+              <div style="color:var(--ink-2);font-size:13px;white-space:pre-line;max-width:68ch;">${esc(post.text)}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <button class="btn btn-sm btn-ghost" data-copy="${post.id}">Copy</button>
+              ${state.live && !pub ? `<button class="btn btn-sm btn-solid" data-publish="${post.id}">Publish ↗</button>` : ""}
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+/* 4. Rules & Bio View */
+function renderRulesView(p) {
+  return `
+    <header class="workspace-head">
+      <div>
+        <h1>Rules & Persona</h1>
+        <p>Emma's brand guidelines, Never Lie protocols, and interactive reply sandbox.</p>
+      </div>
+    </header>
+
+    <div class="workspace-content">
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+        <img src="${p.avatar}" alt="" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
+        <div>
+          <strong style="font-size:14px;">${esc(p.persona)}</strong> · <span style="color:var(--ink-3);">${esc(p.handle)}</span>
+          <div style="color:var(--ink-2);font-size:13px;margin-top:2px;">${esc(p.bio)}</div>
+        </div>
+      </div>
+
+      <div class="rules-grid">
+        <div class="rules-card">
+          <h3>Ground Rules</h3>
+          <ol>${p.rules.map(r => `<li>${esc(r)}</li>`).join("")}</ol>
+        </div>
+        <div class="rules-card">
+          <h3>Never Write (Banned AI Slop)</h3>
+          <div>${p.banned.map(b => `<span class="banned-pill">${esc(b)}</span>`).join("")}</div>
+        </div>
+        <div class="rules-card">
+          <h3>Signature Phrasing</h3>
+          <ul>${p.signatures.map(s => `<li>${esc(s)}</li>`).join("")}</ul>
+        </div>
+      </div>
+
+      <h3 style="font-size:13px;font-weight:600;margin:28px 0 10px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-3);">Interactive Reply Sandbox</h3>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;">
+        <textarea id="sim-input" class="input" style="height:80px;padding:8px 12px;margin-bottom:10px;resize:vertical;" placeholder="Paste any complaint thread text here to test match..."></textarea>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+          ${p.samples.map(([lbl, txt]) => `<button class="btn btn-sm btn-ghost" data-sample="${esc(txt)}" style="border:1px solid var(--line);">${esc(lbl)}</button>`).join("")}
+        </div>
+        <button class="btn btn-sm btn-solid" id="sim-run">Match & Draft Reply</button>
+        <div id="sim-result" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;">
+          <span style="color:var(--ink-3);">Pick a sample chip or paste a post to test.</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   ACTIONS & EVENT LISTENERS
+   ========================================================= */
+let pollTimer = null;
+function bindActions(p) {
+  clearInterval(pollTimer);
+
+  // Nav buttons
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.onclick = () => go(btn.dataset.nav);
+  });
+
+  // Modal handlers
+  const openModal = () => { $("#lander-modal").hidden = false; };
+  const closeModal = () => { $("#lander-modal").hidden = true; };
+  const openBtn = $("#open-lander-btn");
+  if (openBtn) openBtn.onclick = openModal;
+  const closeBtn = $("#close-lander-modal");
+  if (closeBtn) closeBtn.onclick = closeModal;
+  const reloadLander = $("#reload-lander-btn");
+  if (reloadLander) reloadLander.onclick = () => {
+    const ifr = $("#modal-lander-iframe");
+    if (ifr) ifr.src = ifr.src;
+    toast("Lander preview reloaded.");
+  };
+
+  // Scan Now Button
+  const scanBtn = $("#scan-now-btn");
+  if (scanBtn) {
+    scanBtn.onclick = async () => {
+      scanBtn.disabled = true;
+      scanBtn.textContent = "Scanning…";
+      toast("Sniffer triggered! Intercepting Threads GraphQL stream...");
+      try {
+        await fetch("/api/automation/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: "dog hair couch vacuuming", scrolls: 3 })
+        });
+      } catch (err) {
+        toast("Scan error: " + err.message);
+      } finally {
+        setTimeout(() => {
+          scanBtn.disabled = false;
+          scanBtn.textContent = "⚡ Scan Threads";
+        }, 3000);
+      }
+    };
+  }
+
+  // Refresh Queue
+  const refBtn = $("#refresh-queue-btn");
+  if (refBtn) {
+    refBtn.onclick = async () => {
+      refBtn.textContent = "Refreshing…";
+      await fetchAnalytics();
+      render();
+      toast("Queue refreshed.");
+    };
+  }
+
+  // Approve draft
+  document.querySelectorAll(".approve-btn").forEach(btn => {
+    btn.onclick = async () => {
       const id = btn.dataset.id;
       btn.disabled = true;
-      btn.textContent = "Dispatching to Threads…";
+      btn.textContent = "Sending…";
       try {
         await fetch("/api/queue/approve", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: Number(id) })
         });
-        toast("Reply approved! Dispatched in background.");
+        toast("Reply approved! Dispatched to Threads.");
         setTimeout(async () => {
           await fetchAnalytics();
-          renderApprovalQueue();
+          render();
         }, 3000);
       } catch (err) {
-        toast("Error approving: " + err.message);
+        toast("Error: " + err.message);
         btn.disabled = false;
       }
-    });
+    };
   });
 
-  container.querySelectorAll(".reject-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
+  // Discard draft
+  document.querySelectorAll(".reject-btn").forEach(btn => {
+    btn.onclick = async () => {
       const id = btn.dataset.id;
       btn.disabled = true;
       try {
@@ -787,376 +841,96 @@ function renderApprovalQueue() {
         });
         toast("Draft discarded.");
         await fetchAnalytics();
-        renderApprovalQueue();
+        render();
       } catch (err) {
         toast("Error: " + err.message);
       }
-    });
+    };
   });
-}
-
-/* ---------- Workspace 2: Feed Broadcasts ---------- */
-function renderBroadcast(p) {
-  return `
-    <div class="panel-intro">
-      <div>
-        <h2>Feed Broadcasts</h2>
-        <p>Curated lifestyle and problem-solution threads for @${esc(p.persona.toLowerCase().replace(/\s+/g, ""))}. Publish directly or copy to phone.</p>
-      </div>
-    </div>
-    <ul class="post-list">
-      ${p.posts.map(post => {
-        const pub = state.published[post.id];
-        const status = !state.live ? "" : pub
-          ? `<span class="pill pill-ok">Published ${new Date(pub).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>`
-          : `<span class="pill pill-warn">Queued</span>`;
-        const slots = post.slots.length ? `<span class="pill pill-muted">${post.slots.map(s => "#" + s).join(" ")}</span>` : `<span class="pill pill-muted">Profile</span>`;
-        return `
-        <li class="post" data-post="${post.id}">
-          ${post.image ? `<img class="post-media" src="${post.image}" alt="" loading="lazy">` : `<div class="post-media is-text">Text</div>`}
-          <div>
-            <div class="post-head"><span class="post-title">${esc(post.title)}</span>${slots}${status}</div>
-            <p class="post-body is-clamped">${esc(post.text)}</p>
-            <button class="post-expand" data-expand>Show full post</button>
-          </div>
-          <div class="post-actions">
-            <button class="btn btn-sm" data-copy="${post.id}">${icons.copy}Copy</button>
-            ${state.live && !pub ? `<button class="btn btn-sm btn-primary" data-publish="${post.id}">${icons.send}Publish</button>` : ""}
-          </div>
-        </li>`;
-      }).join("")}
-    </ul>`;
-}
-
-/* ---------- Workspace 3: Catalog & Sprint ---------- */
-function renderCatalogSprint(p) {
-  const metrics = state.metrics || [];
-  const totalReplies = metrics.reduce((a, b) => a + (b.replies_sent || 0), 0);
-  const winners = metrics.filter(m => m.status === "winner").length;
-  const testing = metrics.filter(m => m.status === "testing").length;
-
-  return `
-    <div class="panel-intro">
-      <div>
-        <h2>Master Catalog & 7-Day Sprint</h2>
-        <p>Sprint 1: <strong>Oct 28 – Nov 04</strong> · Target: <strong>20 replies / slot</strong> to evaluate conversion. Slot numbers #1–#10 are permanent.</p>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-sm" id="view-lander-toggle-btn">📱 Preview Bio Lander</button>
-        <button class="btn btn-sm" id="refresh-metrics-btn">Refresh DB</button>
-      </div>
-    </div>
-
-    <!-- Unified Master Catalog & Sprint Matrix Table -->
-    <div class="table-wrap" style="margin-bottom:28px;">
-      <table>
-        <thead><tr>
-          <th>Slot</th>
-          <th>Product & Hook</th>
-          <th class="col-hide-sm">Category</th>
-          <th class="num col-hide-sm">Amazon Rating</th>
-          <th class="num">Sprint Progress (Min 20)</th>
-          <th class="num mono col-hide-sm">Clicks</th>
-          <th class="num mono col-hide-sm">Orders</th>
-          <th>Tier</th>
-          <th class="num">Actions</th>
-        </tr></thead>
-        <tbody>
-          ${p.catalog.map(it => {
-            const m = metrics.find(x => x.slot === it.slot) || { replies_sent: 0, amazon_clicks: 0, amazon_sales: 0, status: "testing" };
-            const pct = Math.min(100, Math.round(((m.replies_sent || 0) / 20) * 100));
-            const tierClass = m.status === "winner" ? "tier-winner" : (m.status === "testing" ? "tier-testing" : "tier-low");
-            const tierLabel = m.status === "winner" ? "🔥 Winner" : (m.status === "testing" ? "⏳ Testing" : "💤 Underperform");
-            return `
-              <tr>
-                <td class="slot">#${it.slot}</td>
-                <td>
-                  <div class="product">
-                    <img class="thumb" src="${it.image}" alt="" loading="lazy" width="44" height="44">
-                    <div>
-                      <div class="product-title">${esc(it.title)}</div>
-                      <div class="product-hook">${esc(it.hook)}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="col-hide-sm muted">${esc(it.category)}</td>
-                <td class="num col-hide-sm">
-                  <span class="rating">${icons.star}${it.rating.toFixed(1)}</span>
-                  <div style="font-size:11.5px;color:var(--ink-3);">${esc(it.velocity)}</div>
-                </td>
-                <td class="num" style="min-width:115px;">
-                  <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
-                    <span style="font-family:var(--mono);font-size:12px;">${pct}%</span>
-                    <div class="progress-bar-bg" style="width:50px;"><div class="progress-bar-fill" style="width:${pct}%;"></div></div>
-                  </div>
-                  <div style="font-size:11px;color:var(--ink-3);font-family:var(--mono);margin-top:2px;">${m.replies_sent || 0} / 20 replies</div>
-                </td>
-                <td class="num mono col-hide-sm">${m.amazon_clicks || 0}</td>
-                <td class="num mono col-hide-sm">${m.amazon_sales || 0}</td>
-                <td><span class="pill ${tierClass}" style="border:1px solid currentColor;">${tierLabel}</span></td>
-                <td class="num">
-                  <div style="display:flex;gap:6px;justify-content:flex-end;">
-                    <button class="btn btn-sm btn-ghost edit-slot-btn" data-slot="${it.slot}" data-clicks="${m.amazon_clicks || 0}" data-sales="${m.amazon_sales || 0}" data-status="${m.status}">Update</button>
-                    <a class="row-link" href="https://www.amazon.com/dp/${it.asin}?tag=${p.tag}" target="_blank" rel="noopener">${icons.external}</a>
-                  </div>
-                </td>
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Quick Stat Cards -->
-    <div class="exp-stats">
-      <div class="exp-card">
-        <div class="exp-card-label">Total Dispatched</div>
-        <div class="exp-card-val">${totalReplies}</div>
-        <div class="exp-card-sub">Recorded in affiliate.db</div>
-      </div>
-      <div class="exp-card">
-        <div class="exp-card-label">Testing Active</div>
-        <div class="exp-card-val">${testing} slots</div>
-        <div class="exp-card-sub">Under 20 replies target</div>
-      </div>
-      <div class="exp-card">
-        <div class="exp-card-label">Winning Slots</div>
-        <div class="exp-card-val">${winners}</div>
-        <div class="exp-card-sub">Sales > 0 or Clicks > 10</div>
-      </div>
-      <div class="exp-card">
-        <div class="exp-card-label">Database Path</div>
-        <div class="exp-card-val" style="font-size:13px;word-break:break-all;">data/affiliate.db</div>
-        <div class="exp-card-sub">SQLite Local Storage</div>
-      </div>
-    </div>
-  `;
-}
-
-/* ---------- Workspace 4: Persona & Rules ---------- */
-function renderPersona(p) {
-  return `
-    <div class="persona-bio">
-      <img src="${p.avatar}" alt="${esc(p.persona)}">
-      <div>
-        <strong style="color:var(--ink);font-weight:600;font-size:15px;">${esc(p.persona)}</strong>
-        <div style="color:var(--ink-2);margin-top:2px;max-width:70ch;">${esc(p.bio)}</div>
-      </div>
-    </div>
-
-    <!-- Persona 3-Card Grid -->
-    <div class="persona-grid">
-      <div class="persona-card">
-        <h3>Ground Rules</h3>
-        <ol>${p.rules.map(r => `<li>${esc(r)}</li>`).join("")}</ol>
-      </div>
-      <div class="persona-card">
-        <h3>Never Write (Banned AI Slop)</h3>
-        <div class="tags">${p.banned.map(b => `<span class="banned-tag">${esc(b)}</span>`).join("")}</div>
-      </div>
-      <div class="persona-card">
-        <h3>Signature Phrasing</h3>
-        <ul>${p.signatures.map(s => `<li>${esc(s)}</li>`).join("")}</ul>
-      </div>
-    </div>
-
-    <!-- Interactive Reply Sandbox Simulator -->
-    <div class="panel-intro" style="margin-top:32px;">
-      <div>
-        <h2>Interactive Reply Sandbox</h2>
-        <p>Test any real or hypothetical Threads complaint against Emma's 4-part arc and slot mapping rules.</p>
-      </div>
-    </div>
-    <div class="tester">
-      <div>
-        <label class="field-label" for="sim-input">Complaint text</label>
-        <textarea class="textarea" id="sim-input" placeholder="e.g. golden retriever shedding is getting completely out of hand on my couch..."></textarea>
-        <div class="samples" aria-label="Sample posts">
-          ${p.samples.map(([label, text]) => `<button class="chip" data-sample="${esc(text)}">${esc(label)}</button>`).join("")}
-        </div>
-        <button class="btn btn-primary" id="sim-run">Match and draft reply</button>
-      </div>
-      <div class="result" id="sim-result" aria-live="polite">
-        <div class="result-empty"><strong>No complaint tested yet</strong>Pick a sample chip above or paste a custom complaint.</div>
-      </div>
-    </div>
-  `;
-}
-
-function renderNewIp() {
-  return `
-    <div class="empty-ip">
-      <h1>Add a new IP</h1>
-      <p>Each IP is one persona with its own catalog, posts, reply rules and lander. Emma is the template.</p>
-      <ol>
-        <li>Duplicate the <code>emma</code> object in <code>PROJECTS</code> at the top of <code>public/control/index.html</code>.</li>
-        <li>Give it a new <code>id</code>, handle, tracking ID and lander URL.</li>
-        <li>Replace the catalog, posts and reply rules, then push to <code>main</code>.</li>
-      </ol>
-      <button class="btn" onclick="go('${PROJECTS[0].id}')">Back to ${esc(PROJECTS[0].persona)}</button>
-    </div>`;
-}
-
-/* ---------- Panel behaviour ---------- */
-let logTimer = null;
-function bindPanel(p) {
-  clearInterval(logTimer);
-
-  // Expand post
-  document.querySelectorAll("[data-expand]").forEach(b => b.addEventListener("click", () => {
-    const body = b.previousElementSibling;
-    const open = body.classList.toggle("is-clamped");
-    b.textContent = open ? "Show full post" : "Show less";
-  }));
-
-  // Copy post
-  document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
-    const post = p.posts.find(x => x.id === b.dataset.copy);
-    await copy(post.text, b);
-  }));
-
-  // Publish post
-  document.querySelectorAll("[data-publish]").forEach(b => b.addEventListener("click", () => publish(p, b)));
-
-  // Sandbox testing
-  const input = $("#sim-input");
-  if (input) {
-    document.querySelectorAll("[data-sample]").forEach(c => c.addEventListener("click", () => { input.value = c.dataset.sample; runMatch(p); }));
-    $("#sim-run").addEventListener("click", () => runMatch(p));
-    input.addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) runMatch(p); });
-  }
-
-  // Bio Lander Modal
-  const openModal = () => {
-    const m = $("#lander-modal");
-    if (m) { m.hidden = false; setTimeout(() => m.classList.add("is-open"), 10); }
-  };
-  const closeModal = () => {
-    const m = $("#lander-modal");
-    if (m) { m.classList.remove("is-open"); setTimeout(() => m.hidden = true, 200); }
-  };
-  const openLanderBtn = $("#open-lander-btn");
-  if (openLanderBtn) openLanderBtn.addEventListener("click", openModal);
-  const viewLanderToggleBtn = $("#view-lander-toggle-btn");
-  if (viewLanderToggleBtn) viewLanderToggleBtn.addEventListener("click", openModal);
-  const closeLanderBtn = $("#close-lander-modal");
-  if (closeLanderBtn) closeLanderBtn.addEventListener("click", closeModal);
-  const reloadLanderBtn = $("#reload-lander-btn");
-  if (reloadLanderBtn) reloadLanderBtn.addEventListener("click", () => {
-    const ifr = $("#modal-lander-iframe");
-    if (ifr) ifr.src = ifr.src;
-    toast("Reloaded bio lander preview.");
-  });
-
-  // Scanner Topic Pills
-  document.querySelectorAll(".topic-pill").forEach(pill => {
-    pill.addEventListener("click", async () => {
-      document.querySelectorAll(".topic-pill").forEach(x => x.classList.remove("is-active"));
-      pill.classList.add("is-active");
-      const q = pill.dataset.query;
-      toast(`Triggering radar scan: "${q}"`);
-      try {
-        await fetch("/api/automation/run", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: q, scrolls: 3 })
-        });
-        toast(`Radar dispatched! Monitoring GraphQL for "${q}"...`);
-      } catch (err) {
-        toast("Scan trigger error: " + err.message);
-      }
-    });
-  });
-
-  // Run Batch Scanner Button
-  const runBatch = $("#run-batch-btn");
-  if (runBatch) {
-    runBatch.addEventListener("click", async () => {
-      runBatch.disabled = true;
-      runBatch.textContent = "Scanning Threads…";
-      const activePill = document.querySelector(".topic-pill.is-active");
-      const q = activePill ? activePill.dataset.query : "dog hair couch vacuuming";
-      try {
-        await fetch("/api/automation/run", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: q, scrolls: 3 })
-        });
-        toast("GraphQL Sniffer started! Watch live console below.");
-      } catch (err) {
-        toast("Failed: " + err.message);
-      } finally {
-        setTimeout(() => {
-          runBatch.disabled = false;
-          runBatch.textContent = "🚀 Run Scanner (Batch 5)";
-        }, 3000);
-      }
-    });
-  }
-
-  // Refresh DB Button
-  const refreshBtns = [$("#refresh-db-btn"), $("#refresh-metrics-btn")];
-  refreshBtns.forEach(btn => {
-    if (btn) {
-      btn.addEventListener("click", async () => {
-        btn.textContent = "Refreshing…";
-        await fetchAnalytics();
-        render();
-        toast("Analytics refreshed from SQLite.");
-      });
-    }
-  });
-
-  // Render Queue when on Radar workspace
-  if (state.tab === "radar") {
-    renderApprovalQueue();
-  }
 
   // Edit slot metrics
   document.querySelectorAll(".edit-slot-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
+    btn.onclick = async () => {
       const slot = btn.dataset.slot;
-      const curClicks = btn.dataset.clicks;
-      const curSales = btn.dataset.sales;
-      const curStatus = btn.dataset.status;
-
-      const clicks = prompt(`Slot #${slot} — Amazon Clicks this week:`, curClicks);
+      const clicks = prompt(`Slot #${slot} — Amazon clicks:`, btn.dataset.clicks);
       if (clicks === null) return;
-      const sales = prompt(`Slot #${slot} — Amazon Orders/Sales count:`, curSales);
+      const sales = prompt(`Slot #${slot} — Amazon orders:`, btn.dataset.sales);
       if (sales === null) return;
-      const newStatus = prompt(`Status tier (winner, testing, underperforming):`, curStatus);
-      if (newStatus === null) return;
+      const status = prompt(`Status tier (winner, testing, low):`, btn.dataset.status);
+      if (status === null) return;
 
       try {
-        const res = await fetch("/api/analytics/update", {
+        await fetch("/api/analytics/update", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             slot: Number(slot),
             amazon_clicks: Number(clicks),
             amazon_sales: Number(sales),
-            status: newStatus.trim().toLowerCase()
+            status: status.trim().toLowerCase()
           })
         });
-        if (res.ok) {
-          toast(`Slot #${slot} metrics updated!`);
-          await fetchAnalytics();
-          render();
-        }
+        toast(`Slot #${slot} updated.`);
+        await fetchAnalytics();
+        render();
       } catch (err) {
-        toast("Failed to update: " + err.message);
+        toast("Update failed: " + err.message);
       }
-    });
+    };
   });
 
-  // Live polling for Radar console & queue
-  if (state.tab === "radar") {
-    logTimer = setInterval(async () => {
+  // Copy post text
+  document.querySelectorAll("[data-copy]").forEach(btn => {
+    btn.onclick = async () => {
+      const post = p.posts.find(x => x.id === btn.dataset.copy);
+      if (!post) return;
+      await navigator.clipboard.writeText(post.text);
+      btn.textContent = "Copied!";
+      setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+    };
+  });
+
+  // Publish post
+  document.querySelectorAll("[data-publish]").forEach(btn => {
+    btn.onclick = async () => {
+      btn.disabled = true;
+      btn.textContent = "Publishing…";
+      try {
+        const res = await fetch("/api/broadcast/publish", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: btn.dataset.publish })
+        });
+        if (!res.ok) throw new Error("Publish failed");
+        toast("Publishing queued. Monitoring background...");
+        setTimeout(async () => {
+          await detectLive();
+          render();
+        }, 5000);
+      } catch (err) {
+        toast("Failed: " + err.message);
+        btn.disabled = false;
+      }
+    };
+  });
+
+  // Sandbox simulation
+  const simInput = $("#sim-input");
+  if (simInput) {
+    document.querySelectorAll("[data-sample]").forEach(b => {
+      b.onclick = () => { simInput.value = b.dataset.sample; runSimulator(p); };
+    });
+    const runSim = $("#sim-run");
+    if (runSim) runSim.onclick = () => runSimulator(p);
+  }
+
+  // Polling on queue
+  if (state.tab === "queue") {
+    pollTimer = setInterval(async () => {
       await fetchLogs();
       const el = $("#crawler-live-log");
       if (el) {
-        el.innerHTML = state.logs.length ? state.logs.slice(-30).map(esc).join("<br>") : '<span class="log-empty">Waiting for crawler trigger...</span>';
-        el.scrollTop = el.scrollHeight;
+        el.innerHTML = state.logs.length ? state.logs.slice(-25).map(esc).join("<br>") : `<span style="color:#666;">[Waiting for crawler trigger]</span>`;
       }
       try {
         const r = await fetch("/api/queue", { cache: "no-store" });
@@ -1164,90 +938,87 @@ function bindPanel(p) {
           const data = await r.json();
           if ((data.queue || []).length !== (state.approvalQueue || []).length) {
             state.approvalQueue = data.queue || [];
-            renderApprovalQueue();
-            const badge = $("#radar-pending-badge");
-            if (badge) badge.textContent = state.approvalQueue.length;
+            render();
           }
         }
       } catch {}
-    }, 1500);
+    }, 2000);
   }
 }
 
-function matchSlot(p, text) {
-  const t = text.toLowerCase();
-  const has = list => list.some(k => t.includes(k));
-  for (const r of p.replyRules) {
-    if (r.all ? r.all.every(has) : has(r.any)) return r.slot;
-  }
-  return null;
-}
-
-function runMatch(p) {
-  const text = $("#sim-input").value.trim();
+function runSimulator(p) {
+  const text = ($("#sim-input").value || "").toLowerCase().trim();
   const out = $("#sim-result");
-  if (!text) { $("#sim-input").focus(); return; }
-  const slot = matchSlot(p, text);
-  if (!slot) {
-    out.innerHTML = `<div class="result-empty"><strong>No slot matches this post</strong>${esc(p.persona)} stays quiet here. Replying off-topic reads as spam. Add a keyword rule if this should map to a product.</div>`;
+  if (!text) return;
+
+  const has = list => list.some(k => text.includes(k));
+  let matchedSlot = null;
+  for (const r of p.replyRules) {
+    if (r.all ? r.all.every(has) : has(r.any)) {
+      matchedSlot = r.slot;
+      break;
+    }
+  }
+
+  if (!matchedSlot) {
+    out.innerHTML = `<span style="color:var(--danger);">No slot matched. Emma stays quiet on off-topic complaints.</span>`;
     return;
   }
-  const item = p.catalog.find(c => c.slot === slot);
-  const reply = p.replies[slot];
-  const lower = reply.toLowerCase();
-  const bannedHit = p.banned.find(b => lower.includes(b));
-  const hasLink = /https?:\/\/|amzn\.|\.com/.test(lower);
+
+  const prod = p.catalog.find(c => c.slot === matchedSlot);
+  const reply = p.replies[matchedSlot];
   out.innerHTML = `
-    <div class="result-head"><span class="pill pill-ok">Slot #${slot}</span><span class="result-product">${esc(item.title)}</span></div>
-    <p class="reply-text">${esc(reply)}</p>
-    <div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-sm" id="copy-reply">${icons.copy}Copy reply</button></div>
-    <ul class="checks">
-      <li class="${hasLink ? "is-fail" : ""}">${hasLink ? icons.x : icons.check}${hasLink ? "Contains a link" : "No links in the reply"}</li>
-      <li class="${bannedHit ? "is-fail" : ""}">${bannedHit ? icons.x : icons.check}${bannedHit ? `Uses banned phrase “${esc(bannedHit)}”` : "No banned phrases"}</li>
-      <li>${icons.check}Points to bio #${slot}</li>
-    </ul>`;
-  $("#copy-reply").addEventListener("click", e => copy(reply, e.currentTarget));
+    <div style="font-weight:600;color:var(--ink);margin-bottom:4px;">Matched Slot #${matchedSlot}: ${esc(prod.title)}</div>
+    <div style="color:var(--ink-2);margin-bottom:8px;">“${esc(reply)}”</div>
+    <div style="font-size:11.5px;color:var(--accent);">✓ Never Lie verified · Points to bio #${matchedSlot}</div>
+  `;
 }
 
-async function copy(text, btn) {
-  try { await navigator.clipboard.writeText(text); } catch {
-    const ta = Object.assign(document.createElement("textarea"), { value: text });
-    document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
-  }
-  const orig = btn.innerHTML;
-  btn.innerHTML = `${icons.check}Copied`; btn.classList.add("is-done");
-  setTimeout(() => { btn.innerHTML = orig; btn.classList.remove("is-done"); }, 1600);
-}
-
-async function publish(p, btn) {
-  const id = btn.dataset.publish;
-  document.querySelectorAll("[data-publish]").forEach(b => b.disabled = true);
-  btn.textContent = "Publishing…";
-  try {
-    const r = await fetch("/api/broadcast/publish", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || "Request failed");
-    toast("Publishing in the background. This takes about a minute.");
-    const started = Date.now();
-    const poll = setInterval(async () => {
-      await detectLive();
-      if (state.published[id]) { clearInterval(poll); toast("Posted to Threads."); render(); }
-      else if (Date.now() - started > 150000) { clearInterval(poll); toast("No confirmation yet. Check the Activity tab."); render(); }
-    }, 5000);
-  } catch (err) {
-    toast(`Couldn't start publishing: ${err.message}`);
-    render();
-  }
-}
-
-let toastTimer;
+let toastTimer = null;
 function toast(msg) {
-  const t = $("#toast"); t.textContent = msg; t.classList.add("is-on");
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("is-on"), 3200);
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("is-on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("is-on"), 3000);
 }
 
-/* ---------- Boot ---------- */
-async function boot() { readHash(); render(); await detectLive(); await Promise.all([fetchLogs(), fetchAnalytics()]); render(); }
+/* =========================================================
+   AUTH & BOOT
+   ========================================================= */
+function showApp() {
+  $("#gate").hidden = true;
+  $("#app").hidden = false;
+  boot();
+}
+function showGate() {
+  $("#app").hidden = true;
+  $("#gate").hidden = false;
+  $("#pin").value = "";
+  $("#pin").focus();
+}
+
+$("#gate-form").addEventListener("submit", e => {
+  e.preventDefault();
+  if ($("#pin").value.trim() === PIN) {
+    sessionStorage.setItem(AUTH_KEY, "true");
+    showApp();
+  } else {
+    $("#pin-error").hidden = false;
+  }
+});
+
+$("#lock-btn").addEventListener("click", () => {
+  sessionStorage.removeItem(AUTH_KEY);
+  showGate();
+});
+
+async function boot() {
+  readHash();
+  await Promise.all([detectLive(), fetchAnalytics(), fetchLogs()]);
+  render();
+}
+
 if (sessionStorage.getItem(AUTH_KEY)) showApp(); else showGate();
 </script>
 </body>

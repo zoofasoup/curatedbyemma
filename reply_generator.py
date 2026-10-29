@@ -15,6 +15,24 @@ import os
 import sys
 import json
 import re
+import urllib.request
+import urllib.error
+
+def load_env():
+    """Load key-values from local .env if present."""
+    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if os.path.exists(env_path):
+        with open(env_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    k = k.strip()
+                    v = v.strip().strip('"').strip("'")
+                    if k not in os.environ:
+                        os.environ[k] = v
+
+load_env()
 
 CATALOG_SPECS = {
     1: {
@@ -311,7 +329,8 @@ def evaluate_and_draft_local(post_text, author="user"):
     # Slot 1: Pet hair on furniture/clothes
     has_pet = any(w in text_lower for w in ["dog hair", "cat hair", "retriever", "pet hair", "pet fur", "dog shedding", "cat shedding", "fur everywhere", "shedding is out of control", "dog hairs"])
     has_furniture = any(w in text_lower for w in ["couch", "sofa", "cushion", "velvet", "car seat", "rug", "armchair", "blanket", "vacuuming", "vacuum"])
-    if has_pet and has_furniture:
+    has_floor_or_injury = any(w in text_lower for w in ["under the couch", "under the sofa", "threw my back", "back out", "spasm", "floor", "hardwood"])
+    if has_pet and has_furniture and not has_floor_or_injury:
         matched_slot = 1
 
     # Slot 2: Baby / Toddler sleep
@@ -380,9 +399,118 @@ def evaluate_and_draft_local(post_text, author="user"):
         "verdict": "ACCEPT",
         "slot": matched_slot,
         "product_name": spec["name"],
-        "reply_draft": chosen_template
+        "reply_draft": chosen_template,
+        "source": "heuristic_fallback"
     }
+
+def generate_reply_llm(post_text, author="user", timeout=25):
+    """
+    Contextual LLM evaluator and reply crafter powered by OpenRouter.
+    Reads user context, enforces strict 'Never Lie', and generates custom 4-part replies.
+    """
+    api_key = os.environ.get("OPENROUTER_API_KEY", "").strip()
+    if not api_key:
+        return None
+
+    model = os.environ.get("OPENROUTER_MODEL", "google/gemini-2.5-flash").strip()
+
+    catalog_lines = []
+    for s, data in CATALOG_SPECS.items():
+        catalog_lines.append(
+            f"Slot #{s}: {data['name']} (Category: {data['category']})\n"
+            f"  - Verified Reviews: {data['reviews']:,} (Rating: {data['rating']}★)\n"
+            f"  - What it fixes: {data['honest_pros']}\n"
+            f"  - Limitations/Cons (NEVER LIE): {data['honest_caveats']}\n"
+            f"  - Bio anchor: #{s}"
+        )
+    catalog_prompt = "\n\n".join(catalog_lines)
+
+    system_instruction = f"""You are Emma (@curated_byemma), a 29-year-old practical consumer researcher in Seattle. You review everyday viral Amazon products and give completely honest, down-to-earth recommendations on Threads.
+
+RULES:
+1. STRICT "NEVER LIE" & CONTEXT RELEVANCE:
+   - Does one of your 10 catalog items GENUINELY solve this user's exact problem?
+   - If someone's problem is NOT solved by your products (e.g. medical spine injury, thrown-out back spasms while vacuuming floor under couch, wanting robot vacuums, dog chewing walls), you MUST REJECT.
+   - Do NOT force a product recommendation if it does not fit! A sofa lint roller does NOT vacuum floors or heal lower back spasms!
+   - Hard REJECT: memorials, family grief, sports games, politics, brand giveaways, spam.
+2. 4-PART HONEST ARC (if ACCEPTED):
+   - Part 1: Real empathy referencing their SPECIFIC situation, vocabulary, and pain (never generic boilerplate).
+   - Part 2: Honest audit citing verified Amazon consensus and review count.
+   - Part 3: Honest caveat/con (what it doesn't do or real limitations).
+   - Part 4: Casual anchor to bio: "kept it saved under #[slot] in my bio" (or "cataloged under #[slot] on my page").
+   - Tone: Lowercase casual, friendly, authentic peer, zero marketing jargon, NO links/URLs, max 2-4 sentences.
+3. OUTPUT FORMAT:
+   Return strictly valid JSON:
+   {{
+     "verdict": "ACCEPT" or "REJECT",
+     "reason": "Clear 1-sentence reasoning",
+     "slot": 1-10 or null,
+     "reply_draft": "Your customized 4-part honest reply"
+   }}
+
+EMMA'S 10-SLOT CATALOG:
+{catalog_prompt}
+"""
+
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_instruction},
+            {"role": "user", "content": f"Target Author: @{author}\nTarget Post Content:\n\"\"\"{post_text}\"\"\""}
+        ],
+        "response_format": {"type": "json_object"},
+        "temperature": 0.4
+    }
+
+    req = urllib.request.Request(
+        "https://openrouter.ai/api/v1/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://curatedbyemma.com",
+            "X-Title": "CuratedByEmma"
+        }
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            content = res_data["choices"][0]["message"]["content"]
+            parsed = json.loads(content)
+            if parsed.get("verdict") == "ACCEPT" and parsed.get("slot"):
+                slot_id = int(parsed["slot"])
+                spec = CATALOG_SPECS.get(slot_id)
+                prod_name = spec["name"] if spec else f"Product #{slot_id}"
+                return {
+                    "verdict": "ACCEPT",
+                    "slot": slot_id,
+                    "product_name": prod_name,
+                    "reply_draft": parsed.get("reply_draft", ""),
+                    "reason": parsed.get("reason", "Accepted by LLM"),
+                    "source": f"openrouter/{model}"
+                }
+            else:
+                return {
+                    "verdict": "REJECT",
+                    "reason": parsed.get("reason", "Context does not match genuine product solution"),
+                    "source": f"openrouter/{model}"
+                }
+    except Exception as e:
+        print(f"[!] OpenRouter LLM call error: {e}. Falling back to local heuristic.")
+        return None
+
+def evaluate_and_draft(post_text, author="user"):
+    """
+    Master evaluator:
+    1. Uses OpenRouter LLM for human-level contextual understanding if OPENROUTER_API_KEY is set.
+    2. Falls back to local heuristics if API key is missing or network fails.
+    """
+    res = generate_reply_llm(post_text, author=author)
+    if res is not None:
+        return res
+    return evaluate_and_draft_local(post_text, author=author)
 
 if __name__ == "__main__":
     t = "My phone charging cables keep sliding off my nightstand and falling into the gap behind the bed."
-    print(evaluate_and_draft_local(t))
+    print(evaluate_and_draft(t))

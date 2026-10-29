@@ -19,16 +19,16 @@ import reply_generator
 SESSION_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "threads_session.json")
 
 SLOT_SEARCH_QUERIES = {
-    1: "dog hair couch vacuuming",
-    2: "baby won't sleep crying",
-    3: "office chair lower back pain",
-    4: "air fryer soggy oil",
-    5: "scrubbing tile grout bathtub",
-    6: "charging cables falling behind nightstand",
-    7: "flight neck pain phone",
-    8: "wrinkled clothes hotel travel",
-    9: "earbuds hurt side sleeping",
-    10: "dust crumbs car air vent"
+    1: ["dog hair couch", "cat fur sofa", "pet hair blanket", "pet shedding couch"],
+    2: ["baby wont sleep", "toddler sleep regression", "baby crying all night"],
+    3: ["desk chair back pain", "office chair lumbar", "wfh lower back pain"],
+    4: ["air fryer oil", "air fryer soggy", "airfryer greasy"],
+    5: ["scrubbing shower tile", "bathroom grout cleaning", "bathtub scrubbing"],
+    6: ["charging cables falling", "nightstand cables", "cords falling behind bed"],
+    7: ["holding phone flight", "airplane tray phone mount", "plane neck cramp phone"],
+    8: ["travel clothes wrinkled", "hotel iron ruined", "steamer travel clothes"],
+    9: ["earbuds hurt side sleeping", "sleeping with earbuds", "sleep mask speakers"],
+    10: ["car air vent dust", "crumbs car console", "car vent cleaning gel"]
 }
 
 def stream_log(msg, callback=None):
@@ -133,11 +133,60 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
         page.goto(target_url, wait_until="domcontentloaded", timeout=25000)
         page.wait_for_timeout(3500)
 
-        # Perform human-like scrolls to trigger pagination GraphQL requests
+        # 1. Extract SSR posts from embedded script tags (Threads initial state)
+        try:
+            script_tags = page.locator('script[type="application/json"]').all()
+            for s in script_tags:
+                raw_json = s.inner_text()
+                if "caption" in raw_json or "text_post_app_info" in raw_json:
+                    try:
+                        parsed_json = json.loads(raw_json)
+                        ssr_posts = extract_posts_from_graphql(parsed_json)
+                        if ssr_posts:
+                            log(f"📦 Intercepted SSR Page Payload: Found {len(ssr_posts)} initial post(s)!")
+                            intercepted_raw_posts.extend(ssr_posts)
+                    except Exception:
+                        pass
+        except Exception as e:
+            log(f"Notice: SSR script pass: {e}")
+
+        # 2. Perform human-like scrolls to trigger pagination GraphQL requests
         for s in range(1, scrolls + 1):
             log(f"📜 Scrolling feed chunk ({s}/{scrolls})...")
             page.mouse.wheel(0, 3500)
             page.wait_for_timeout(2500)
+
+        # 3. Direct DOM fallback extraction to guarantee no posts are missed
+        try:
+            articles = page.locator("article, div[data-pressable-container='true']").all()
+            dom_found = 0
+            for art in articles:
+                try:
+                    art_text = art.inner_text().strip()
+                    if len(art_text) < 25:
+                        continue
+                    author_link = art.locator("a[href^='/@']").first
+                    u_name = author_link.get_attribute("href").lstrip("/@").split("/")[0] if author_link.count() > 0 else ""
+                    post_a = art.locator("a[href*='/post/']").first
+                    p_href = post_a.get_attribute("href") if post_a.count() > 0 else ""
+                    full_p_url = f"https://www.threads.net{p_href}" if p_href.startswith("/") else p_href
+                    if u_name and u_name != "curated_byemma" and len(art_text) > 30:
+                        intercepted_raw_posts.append({
+                            "id": str(abs(hash(art_text))),
+                            "username": u_name,
+                            "text": art_text,
+                            "like_count": 0,
+                            "reply_count": 0,
+                            "taken_at": int(time.time()),
+                            "url": full_p_url or f"https://www.threads.net/@{u_name}"
+                        })
+                        dom_found += 1
+                except Exception:
+                    pass
+            if dom_found > 0:
+                log(f"📄 Captured {dom_found} post(s) from rendered page DOM.")
+        except Exception:
+            pass
 
         log(f"✅ Scraping phase finished. Total raw posts intercepted: {len(intercepted_raw_posts)}")
         browser.close()
@@ -173,8 +222,8 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
 
         log(f"--- Checking @{author} ({engagement_tier} | Score: {opportunity_score} | {likes} likes, {replies} replies) ---")
 
-        # 2. Strict Context & Never Lie Evaluation
-        eval_res = reply_generator.evaluate_and_draft_local(text, author=author)
+        # 2. Context & Never Lie Evaluation (OpenRouter LLM with local fallback)
+        eval_res = reply_generator.evaluate_and_draft(text, author=author)
         if eval_res["verdict"] == "REJECT":
             log(f"❌ REJECTED: {eval_res.get('reason')}")
             continue
@@ -182,8 +231,9 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
         slot = eval_res["slot"]
         prod_name = eval_res["product_name"]
         draft = eval_res["reply_draft"]
+        source = eval_res.get("source", "heuristic")
 
-        log(f"✅ ACCEPTED! Slot #{slot}: {prod_name}")
+        log(f"✅ ACCEPTED by {source}! Slot #{slot}: {prod_name}")
         log(f"📝 Reply Draft: \"{draft[:80]}...\"")
 
         added = db.add_to_queue(
@@ -218,23 +268,25 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
 def run_query_rotation(slots=None, scrolls=2, headless=True, log_callback=None):
     """
     Rotates queries across the specified slots (default: all 10 slots).
-    Safely captures opportunities for each product in Emma's catalog.
+    Picks diverse real-world search phrases so crawler never gets stuck on the same posts.
     """
     target_slots = slots if slots else list(range(1, 11))
     total_found = 0
     for s in target_slots:
-        query = SLOT_SEARCH_QUERIES.get(s)
-        if not query:
-            continue
-        stream_log(f"\n==========================================", callback=log_callback)
-        stream_log(f"🎯 SPRINT ROTATOR: Slot #{s} -> Query '{query}'", callback=log_callback)
-        stream_log(f"==========================================", callback=log_callback)
-        try:
-            candidates = run_graphql_sniffer(query=query, scrolls=scrolls, headless=headless, log_callback=log_callback)
-            total_found += len(candidates)
-            time.sleep(3) # safe delay between queries
-        except Exception as e:
-            stream_log(f"⚠️ Error querying slot #{s} ('{query}'): {e}", callback=log_callback)
+        query_candidates = SLOT_SEARCH_QUERIES.get(s, [])
+        if isinstance(query_candidates, str):
+            query_candidates = [query_candidates]
+        # Pick 1-2 search phrases per slot to get broad coverage
+        for query in query_candidates[:2]:
+            stream_log(f"\n==========================================", callback=log_callback)
+            stream_log(f"🎯 SPRINT ROTATOR: Slot #{s} -> Query '{query}'", callback=log_callback)
+            stream_log(f"==========================================", callback=log_callback)
+            try:
+                candidates = run_graphql_sniffer(query=query, scrolls=scrolls, headless=headless, log_callback=log_callback)
+                total_found += len(candidates)
+                time.sleep(2)
+            except Exception as e:
+                stream_log(f"⚠️ Error querying slot #{s} ('{query}'): {e}", callback=log_callback)
     return total_found
 
 if __name__ == "__main__":

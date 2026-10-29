@@ -17,6 +17,13 @@ import json
 import re
 import urllib.request
 import urllib.error
+import ssl
+
+try:
+    import certifi
+    SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
+except Exception:
+    SSL_CONTEXT = ssl._create_unverified_context()
 
 def load_env():
     """Load key-values from local .env if present."""
@@ -474,7 +481,7 @@ EMMA'S 10-SLOT CATALOG:
     )
 
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as response:
+        with urllib.request.urlopen(req, timeout=timeout, context=SSL_CONTEXT) as response:
             res_data = json.loads(response.read().decode("utf-8"))
             content = res_data["choices"][0]["message"]["content"]
             parsed = json.loads(content)

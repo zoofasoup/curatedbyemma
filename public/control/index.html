@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emma Engine | Operations Control Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 9999px; }
+  </style>
+</head>
+<body class="min-h-full flex flex-col bg-[#0B0F17] text-slate-200 antialiased selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- PIN LOCK OVERLAY -->
+  <div id="lock-screen" class="fixed inset-0 z-50 bg-[#0B0F17] flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl flex flex-col items-center text-center">
+      <div class="relative mb-4">
+        <img src="/assets/emma/emma_desk.jpg" alt="Emma" class="w-16 h-16 rounded-full object-cover ring-2 ring-emerald-500/80 shadow-lg">
+        <span class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 rounded-full ring-2 ring-slate-900"></span>
+      </div>
+      
+      <h2 class="text-base font-extrabold text-white tracking-tight">EMMA ENGINE</h2>
+      <p class="text-xs text-slate-400 mt-1 mb-6">Restricted Operations Access • Enter 4-Digit PIN</p>
+
+      <form id="pin-form" class="w-full flex flex-col items-center gap-3">
+        <input 
+          type="password" 
+          id="pin-input" 
+          maxlength="6"
+          placeholder="••••" 
+          class="w-full text-center tracking-[0.5em] text-2xl font-black py-3 px-4 bg-slate-950 border border-slate-700/80 focus:border-amber-500 rounded-2xl text-white focus:outline-none transition-all shadow-inner"
+          autofocus
+        />
+        <p id="pin-error" class="hidden text-xs text-rose-400 font-semibold">Incorrect PIN. Try again.</p>
+        <button 
+          type="submit" 
+          class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20 transition-all active:scale-95"
+        >
+          Unlock Operations Control 🔐
+        </button>
+      </form>
+
+      <p class="text-[10px] text-slate-500 mt-6">&copy; 2026 Emma's Daily Finds • Confidential</p>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER (Unlocked) -->
+  <div id="dashboard-app" class="hidden flex-1 flex flex-col">
+
+    <!-- TOP HEADER BAR -->
+    <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-xl sticky top-0 z-40 px-5 py-3.5">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <!-- Brand & Persona -->
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <img src="/assets/emma/emma_desk.jpg" alt="Emma" class="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/80">
+            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-slate-950"></span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-sm font-extrabold tracking-tight text-white">EMMA ENGINE</h1>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">OPERATIONS PORTAL</span>
+            </div>
+            <p class="text-xs text-slate-400 font-medium">@curated_byemma • Amazon US Tier-1 Affiliate Engine</p>
+          </div>
+        </div>
+
+        <!-- Live Badges & Quick Links -->
+        <div class="flex items-center gap-2.5">
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-slate-300 font-medium">Tag: <strong class="text-amber-400 mono font-semibold">curatedbyem0f-20</strong></span>
+          </div>
+
+          <a href="/" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition-colors">
+            <span>Live Lander ↗</span>
+          </a>
+
+          <button id="btn-lock" title="Lock Dashboard" class="p-2 rounded-xl bg-slate-800/80 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 border border-slate-700 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+
+      <!-- METRICS GRID -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <!-- Metric 1: Slots -->
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+            <span>Master Catalog</span>
+            <span class="text-emerald-400 font-bold">100% Locked</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-2xl font-black text-white">10</span>
+            <span class="text-xs text-slate-400 font-semibold">Evergreen Slots (#1 - #10)</span>
+          </div>
+          <div class="mt-2 text-[11px] text-slate-500">
+            ★ 4.5+ Rating Minimum
+          </div>
+        </div>
+
+        <!-- Metric 2: Content Bank -->
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+            <span>Broadcast Bank</span>
+            <span class="text-amber-400 font-bold">6 Curated</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-2xl font-black text-white">6</span>
+            <span class="text-xs text-slate-400 font-semibold">Threads Content Posts</span>
+          </div>
+          <div class="mt-2 text-[11px] text-slate-500">
+            With 35mm photo assets
+          </div>
+        </div>
+
+        <!-- Metric 3: Affiliate Tag -->
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+            <span>Associate StoreID</span>
+            <span class="text-emerald-400 font-bold">24-Hr Cookie</span>
+          </div>
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-lg font-black mono text-amber-400">curatedbyem0f-20</span>
+          </div>
+          <div class="mt-2 text-[11px] text-slate-500">
+            Official Amazon US Associates
+          </div>
+        </div>
+
+        <!-- Metric 4: Cloudflare Pages -->
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
+            <span>Bio Destination</span>
+            <span class="text-emerald-400 font-bold">● Active CDN</span>
+          </div>
+          <div class="mt-2 truncate">
+            <a href="/" target="_blank" class="text-sm font-bold text-white hover:text-amber-400 transition-colors">curatedbyemma.pages.dev ↗</a>
+          </div>
+          <div class="mt-2 text-[11px] text-slate-500">
+            Global Edge Network
+          </div>
+        </div>
+      </section>
+
+      <!-- TABBED NAVIGATION -->
+      <nav class="flex items-center gap-2 border-b border-slate-800/80 pb-2 overflow-x-auto custom-scroll text-sm font-semibold">
+        <button class="tab-btn active px-4 py-2 rounded-xl bg-slate-800 text-white transition-colors" data-tab="tab-catalog">
+          📦 Product Catalog (#1 - #10)
+        </button>
+        <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-broadcast">
+          📣 Threads Content Bank
+        </button>
+        <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-simulator">
+          🎯 Pain-Point Hunter Simulator
+        </button>
+        <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-persona">
+          👤 Emma Persona Rules
+        </button>
+        <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-lander">
+          📱 Mobile Lander Preview
+        </button>
+      </nav>
+
+      <!-- TAB 1: PRODUCT CATALOG -->
+      <section id="tab-catalog" class="tab-content flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-bold text-white">Immutable Master Catalog (#1 - #10)</h2>
+            <p class="text-xs text-slate-400">All 10 evergreen problem solvers tagged with <code class="text-amber-400 mono">curatedbyem0f-20</code>.</p>
+          </div>
+          <span class="text-xs text-slate-400">10 Verified Products</span>
+        </div>
+
+        <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <!-- Injected via JavaScript -->
+        </div>
+      </section>
+
+      <!-- TAB 2: THREADS CONTENT BANK -->
+      <section id="tab-broadcast" class="tab-content hidden flex flex-col gap-4">
+        <div>
+          <h2 class="text-base font-bold text-white">Threads Content Bank & Organic Scripts</h2>
+          <p class="text-xs text-slate-400">Ready-to-post curated storytelling threads. Use the "Copy Text" button to post anytime from mobile or desktop.</p>
+        </div>
+
+        <div id="broadcast-list" class="flex flex-col gap-3">
+          <!-- Injected via JavaScript -->
+        </div>
+      </section>
+
+      <!-- TAB 3: PAIN-POINT SIMULATOR -->
+      <section id="tab-simulator" class="tab-content hidden flex flex-col gap-5">
+        <div>
+          <h2 class="text-base font-bold text-white">Contextual Pain-Point Hunter Simulator</h2>
+          <p class="text-xs text-slate-400">Runs directly in-browser. Paste any complaint to preview Emma's authentic, non-bot reply and target slot.</p>
+        </div>
+
+        <!-- Sample Chips -->
+        <div class="flex flex-col gap-2">
+          <span class="text-xs font-semibold text-slate-400">Quick Test Samples (Click to test):</span>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="My 7 month old wakes up crying every hour and won't go down. I am running on 2 hours of sleep.">
+              👶 "Baby crying at night"
+            </button>
+            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="Golden retriever shedding is out of control. My black velvet couch looks like a sheep.">
+              🐕 "Dog hair covering couch"
+            </button>
+            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="Sitting in this cheap office chair 9 hours a day is literally destroying my lower spine.">
+              🪑 "Office chair lower back agony"
+            </button>
+            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="Holding my phone for a 5 hour flight from NY to LA gave me a severe neck cramp.">
+              ✈️ "Neck cramp holding phone on plane"
+            </button>
+            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="My charging cables keep sliding off my nightstand and falling into the gap behind the bed.">
+              🔌 "Cables falling behind nightstand"
+            </button>
+          </div>
+        </div>
+
+        <!-- Textarea & Action -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-semibold text-slate-400">Input Complaint or Thread Text:</label>
+          <textarea id="sim-input" rows="3" class="w-full bg-slate-900 border border-slate-800 focus:border-amber-500 rounded-xl p-3.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition-colors" placeholder="Type or paste any Threads post here..."></textarea>
+          <div class="flex justify-end">
+            <button id="btn-run-sim" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors">
+              Run Match & Generate Reply
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulation Result Card -->
+        <div id="sim-result" class="hidden bg-slate-900/80 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold">MATCH FOUND</span>
+              <span id="res-slot-badge" class="px-2 py-0.5 rounded-md bg-slate-800 text-white font-extrabold text-xs">Slot #2</span>
+            </div>
+            <span id="res-product-title" class="text-xs font-bold text-slate-300 truncate max-w-[280px]">Fisher-Price Otter</span>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Emma's Generated Response:</span>
+              <button id="btn-copy-reply" class="text-[11px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                📋 Copy Reply
+              </button>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 text-sm text-slate-200 leading-relaxed font-medium">
+              <p id="res-reply-text"></p>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <span>✓ Zero direct links in comment</span>
+            <span>✓ Traffic hook: <strong class="text-slate-300">"bio #[slot]"</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: EMMA PERSONA RULES -->
+      <section id="tab-persona" class="tab-content hidden flex flex-col gap-4">
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col gap-4">
+          <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+            <img src="/assets/emma/emma_couch.jpg" alt="Emma" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-slate-800">
+            <div>
+              <h3 class="text-base font-extrabold text-white">Emma (@curated_byemma)</h3>
+              <p class="text-xs text-slate-400">29 y/o Seattle-based consumer researcher • Candid, anti-hype product curator</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Banned Words -->
+            <div class="bg-red-500/5 border border-red-500/20 rounded-xl p-4">
+              <h4 class="text-xs font-bold text-red-400 mb-2 uppercase tracking-wider">🚫 Strict Banned Phrases (Shadowban Triggers)</h4>
+              <div class="flex flex-wrap gap-1.5 text-xs">
+                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">link in bio</span>
+                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">affiliate link</span>
+                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">buy now</span>
+                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">game-changer</span>
+                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">run don't walk</span>
+                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">revolutionary</span>
+              </div>
+            </div>
+
+            <!-- Signature Phrases -->
+            <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4">
+              <h4 class="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-wider">✨ Signature Authentic Triggers</h4>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                <li>"sounds dramatic but..."</li>
+                <li>"the consensus favorite is..."</li>
+                <li>"saved my sanity"</li>
+                <li>"kept the exact one under #[SLOT] in my bio"</li>
+                <li>"zero sponsored fluff"</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Ethical Rules -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-slate-300 leading-relaxed space-y-2">
+            <h4 class="font-bold text-white uppercase tracking-wider text-[11px]">Ethical Persona Contract:</h4>
+            <p>1. <strong>Never lie:</strong> If Emma doesn't personally own it, cite customer consensus, sister/mom/family experience, or high review counts.</p>
+            <p>2. <strong>Zero comment links:</strong> Never post raw URLs or Amazon links in comments (preserves account health and prevents algorithmic shadowbans).</p>
+            <p>3. <strong>Immutable slots:</strong> Products never get reordered. Slot #3 is always the Lumbar cushion. Slot #7 is always the Plane mount.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: MOBILE LANDER PREVIEW -->
+      <section id="tab-lander" class="tab-content hidden flex flex-col items-center gap-4">
+        <div class="w-full flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-bold text-white">Live Mobile Landing Page</h2>
+            <p class="text-xs text-slate-400">Deployed live on Cloudflare Pages Edge CDN (<a href="/" target="_blank" class="text-amber-400 hover:underline">curatedbyemma.pages.dev</a>)</p>
+          </div>
+          <button onclick="document.getElementById('lander-frame').src='/?t=' + Date.now()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition-colors">
+            🔄 Refresh Frame
+          </button>
+        </div>
+
+        <!-- Phone Bezel Frame -->
+        <div class="relative w-[390px] h-[780px] bg-slate-900 rounded-[44px] p-3 shadow-2xl border-4 border-slate-800 ring-1 ring-slate-700/50 flex flex-col overflow-hidden">
+          <div class="w-24 h-4 bg-slate-950 rounded-full mx-auto mb-2 flex-shrink-0"></div>
+          <iframe id="lander-frame" src="/" class="w-full flex-1 rounded-[32px] border-0 bg-white"></iframe>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // --- AUTHENTICATION & PIN CHECK (PIN: 2707) ---
+    const CORRECT_PIN = "2707";
+    const lockScreen = document.getElementById("lock-screen");
+    const dashboardApp = document.getElementById("dashboard-app");
+    const pinForm = document.getElementById("pin-form");
+    const pinInput = document.getElementById("pin-input");
+    const pinError = document.getElementById("pin-error");
+    const btnLock = document.getElementById("btn-lock");
+
+    function checkAuth() {
+      if (sessionStorage.getItem("emma_control_auth") === CORRECT_PIN) {
+        lockScreen.classList.add("hidden");
+        dashboardApp.classList.remove("hidden");
+      } else {
+        lockScreen.classList.remove("hidden");
+        dashboardApp.classList.add("hidden");
+        pinInput.value = "";
+        pinInput.focus();
+      }
+    }
+
+    pinForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (pinInput.value.trim() === CORRECT_PIN) {
+        sessionStorage.setItem("emma_control_auth", CORRECT_PIN);
+        pinError.classList.add("hidden");
+        checkAuth();
+      } else {
+        pinError.classList.remove("hidden");
+        pinInput.value = "";
+        pinInput.focus();
+      }
+    });
+
+    btnLock.addEventListener("click", () => {
+      sessionStorage.removeItem("emma_control_auth");
+      checkAuth();
+    });
+
+    checkAuth();
+
+    // --- TAB SWITCHING LOGIC ---
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => {
+          b.className = 'tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors';
+        });
+        btn.className = 'tab-btn active px-4 py-2 rounded-xl bg-slate-800 text-white transition-colors';
+
+        tabContents.forEach(tc => tc.classList.add('hidden'));
+        const target = document.getElementById(btn.dataset.tab);
+        if (target) target.classList.remove('hidden');
+      });
+    });
+
+    // --- MASTER CATALOG DATA ---
+    const CATALOG = [
+      {
+        "slot": 1,
+        "category": "Pets & Fur",
+        "title": "PetLovers Extra-Sticky Pet Hair Lint Roller (5 Pack)",
+        "pain_point": "Pet hair covering couch, clothes, rugs",
+        "hook": "Traps embedded fur regular vacuums miss",
+        "rating": 4.6,
+        "reviews": "39,300",
+        "velocity": "10k+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/812M1RJAdEL._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B07GV57JYJ?tag=curatedbyem0f-20"
+      },
+      {
+        "slot": 2,
+        "category": "Sleep & Kids",
+        "title": "Fisher-Price Soothe & Snuggle Calming Otter Plush",
+        "pain_point": "Baby crying, toddler sleep struggles, exhaustion",
+        "hook": "Rhythmic breathing calms fussy babies to sleep",
+        "rating": 4.7,
+        "reviews": "59,700",
+        "velocity": "5k+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/61yMGP6pujL._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B07N1JP56L?tag=curatedbyem0f-20"
+      },
+      {
+        "slot": 3,
+        "category": "Back & Posture",
+        "title": "Ergonomic Memory Foam Lumbar Support Pillow",
+        "pain_point": "Lower back pain from long sitting / desk work",
+        "hook": "Instant lower-back relief during long desk hours",
+        "rating": 4.4,
+        "reviews": "27,400",
+        "velocity": "10k+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/81Qm1-Fja2L._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B074C9F45S?tag=curatedbyem0f-20"
+      },
+      {
+        "slot": 4,
+        "category": "Kitchen Frustrations",
+        "title": "TrendPlain Glass Olive Oil Sprayer for Cooking",
+        "pain_point": "Pouring too much oil, uneven spraying on air fryer",
+        "hook": "Even, clog-free mist for air fryers & salads",
+        "rating": 4.6,
+        "reviews": "49,100",
+        "velocity": "2k+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/71Sx9YQ00fL._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B0CY1S56JZ?tag=curatedbyem0f-20"
+      },
+      {
+        "slot": 5,
+        "category": "Deep Clean",
+        "title": "Cordless Electric Power Spin Scrubber with Extension",
+        "pain_point": "Tiring bathroom scrub, tile grime, bathtub cleaning",
+        "hook": "Cleans tile & tub grout with zero scrubbing",
+        "rating": 4.4,
+        "reviews": "8,900",
+        "velocity": "20k+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/71GhDHqOwNL._AC_UY218_.jpg",
+        "url": "https://www.amazon.com/dp/B0C1NJDTTX?tag=curatedbyem0f-20"
+      },
+      {
+        "slot": 6,
+        "category": "Desk & Clutter",
+        "title": "Smartish Magnetic Desktop Cable Wrangler Organizer",
+        "pain_point": "Tangled charging cables dropping off desk & nightstands",
+        "hook": "Stops cords from dropping behind desks",
+        "rating": 4.6,
+        "reviews": "5,200",
+        "velocity": "1k+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/7123kAuMpIL._AC_UY218_.jpg",
+        "url": "https://www.amazon.com/dp/B07BB4YXHW?tag=curatedbyem0f-20"
+      },
+      {
+        "slot": 7,
+        "category": "Travel & Commute",
+        "title": "Perilogics Universal Airplane Flight Phone Mount",
+        "pain_point": "Holding phone during flights/trains, neck strain",
+        "hook": "Hands-free screen on any plane tray",
+        "rating": 4.6,
+        "reviews": "22,900",
+        "velocity": "500+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/71P9DdPma2L._AC_UY218_.jpg",
+        "url": "https://www.amazon.com/dp/B08TKPRKBN?tag=curatedbyem0f-20"
+      },
+      {
+        "slot": 8,
+        "category": "Travel & Clothing",
+        "title": "OGHom Compact Handheld Garment Steamer",
+        "pain_point": "Wrinkled clothes from luggage, no iron board in hotels",
+        "hook": "Smooths wrinkles in 60s with zero iron",
+        "rating": 4.3,
+        "reviews": "2,400",
+        "velocity": "30k+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/71vshmAdKuL._AC_UY218_.jpg",
+        "url": "https://www.amazon.com/dp/B0FYF2X322?tag=curatedbyem0f-20"
+      },
+      {
+        "slot": 9,
+        "category": "Deep Sleep",
+        "title": "TOPOINT 3D Contoured Bluetooth Sleep Eye Mask",
+        "pain_point": "Room light waking, snoring partner, sleep earphone pain",
+        "hook": "100% blackout with thin flat sleep audio",
+        "rating": 4.3,
+        "reviews": "13,200",
+        "velocity": "1k+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/71a4Pm7uBCL._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B07TPL5K7W?tag=curatedbyem0f-20"
+      },
+      {
+        "slot": 10,
+        "category": "Car Detailing",
+        "title": "PULIDIKI Reusable Car Interior Cleaning Putty Gel",
+        "pain_point": "Dust and crumbs trapped in tight car AC vents & seams",
+        "hook": "Pulls dust & crumbs from tight AC vents",
+        "rating": 4.1,
+        "reviews": "101,000",
+        "velocity": "10k+ bought in past month",
+        "image": "https://m.media-amazon.com/images/I/71WpCXsPbML._AC_UL320_.jpg",
+        "url": "https://www.amazon.com/dp/B07SBFDZ6T?tag=curatedbyem0f-20"
+      }
+    ];
+
+    function renderCatalog() {
+      const container = document.getElementById("catalog-grid");
+      container.innerHTML = "";
+      CATALOG.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "bg-slate-900/70 border border-slate-800/90 rounded-2xl p-3.5 flex items-center gap-3.5 hover:border-slate-700 transition-colors";
+        card.innerHTML = `
+          <div class="relative w-16 h-16 rounded-xl bg-white p-1 flex-shrink-0 flex items-center justify-center overflow-hidden">
+            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain">
+            <span class="absolute top-1 left-1 bg-slate-950 text-white text-[9px] font-black px-1.5 py-0.2 rounded">#${p.slot}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1 mb-0.5">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">${p.category}</span>
+              <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">${p.velocity}</span>
+            </div>
+            <h4 class="text-xs font-bold text-white truncate">${p.title}</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5 truncate">${p.hook}</p>
+            <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-800 text-[11px]">
+              <span class="text-amber-400 font-bold">★ ${p.rating} (${p.reviews})</span>
+              <a href="${p.url}" target="_blank" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1">
+                Amazon Link ↗
+              </a>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // --- BROADCAST CONTENT BANK ---
+    const BROADCASTS = [
+      {
+        "id": "intro_manifesto",
+        "title": "Emma's Curation Manifesto",
+        "text": `testing viral amazon products so you don't waste your money.
+
+my 3 rules before anything makes the list:
+1. 4.5★ rating minimum
+2. 5k+ verified reviews (zero fake review bots)
+3. actually solves an everyday headache
+
+master list of 10 audited problem solvers is updated on my page ✨`,
+        "image": "/assets/emma/emma_desk.jpg",
+        "slots": ["#1 - #10"]
+      },
+      {
+        "id": "desk_lumbar_slot3",
+        "title": "Desk Back Pain / Lumbar Relief (Slot #3)",
+        "text": `sitting in an office chair 8+ hours a day was slowly wrecking my lower back.
+
+before spending $700 on a new chair, tried an ergonomic high-density memory foam cushion backed by 27k reviews.
+
+3 weeks in and genuinely zero aches. kept the exact one under #3 on my page.`,
+        "image": "/assets/emma/emma_cafe.jpg",
+        "slots": ["#3"]
+      },
+      {
+        "id": "travel_flight_mount_slot7",
+        "title": "Airplane Tray-Table Phone Mount (Slot #7)",
+        "text": `if you have a flight coming up, please do not hold your phone for 4 hours with severe neck strain.
+
+that $21 universal airplane tray-table clamp mount is the single best travel hack i've tested all year. hands-free movie setup right at eye level.
+
+cataloged under #7 on my profile list.`,
+        "image": null,
+        "slots": ["#7"]
+      },
+      {
+        "id": "pet_hair_couch_slot1",
+        "title": "Pet Hair & Couch Relief (Slot #1)",
+        "text": `vacuuming only gets about 60% of pet hair off couches and car seats. regular lint rollers run out in 2 minutes.
+
+that extra-sticky 5-pack with 40k reviews is the only thing that actually pulls up deep stubborn fur.
+
+saved under #1 on my page.`,
+        "image": "/assets/emma/emma_couch.jpg",
+        "slots": ["#1"]
+      },
+      {
+        "id": "daily_sanity_savers_roundup",
+        "title": "3 Daily Sanity Savers Roundup (Slots #6, #4, #2)",
+        "text": `3 random amazon problem solvers that genuinely saved my sanity this week:
+
+1) magnetic cable wrangler so charging cords stop sliding off the nightstand (#6)
+2) glass oil sprayer that actually mists without clogging your air fryer (#4)
+3) the breathing otter plush that calms fussy babies to sleep (#2)
+
+all numbered on my page if you want to check the verified reviews.`,
+        "image": null,
+        "slots": ["#6", "#4", "#2"]
+      },
+      {
+        "id": "spin_scrubber_deepclean_slot5",
+        "title": "Deep Clean Without Kneeling (Slot #5)",
+        "text": `scrubbing tile grout and tubs on your knees is literal torture.
+
+electric power spin scrubbers are viral for a reason—cuts deep cleaning time in half with zero elbow grease.
+
+cataloged the highest-rated one with extension pole under #5 on my page.`,
+        "image": "/assets/emma/emma_kitchen.jpg",
+        "slots": ["#5"]
+      }
+    ];
+
+    function renderBroadcasts() {
+      const container = document.getElementById("broadcast-list");
+      container.innerHTML = "";
+      BROADCASTS.forEach(b => {
+        const row = document.createElement("div");
+        row.className = "p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 transition-all";
+
+        const imgPreview = b.image 
+          ? `<img src="${b.image}" class="w-14 h-14 rounded-xl object-cover ring-1 ring-slate-700 flex-shrink-0" alt="Preview">`
+          : `<div class="w-14 h-14 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-xs text-slate-600 font-mono flex-shrink-0">TEXT</div>`;
+
+        row.innerHTML = `
+          <div class="flex items-start gap-3.5 flex-1 min-w-0">
+            ${imgPreview}
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-bold text-white">${b.title}</span>
+                <span class="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">Target: ${b.slots.join(', ')}</span>
+              </div>
+              <p class="text-xs text-slate-300 line-clamp-2 leading-relaxed">${b.text}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
+            <button class="btn-copy-post px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold border border-slate-700 transition-colors flex items-center gap-1" data-text="${encodeURIComponent(b.text)}">
+              📋 Copy Text
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      // Bind copy buttons
+      document.querySelectorAll('.btn-copy-post').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = decodeURIComponent(btn.dataset.text);
+          navigator.clipboard.writeText(text);
+          const orig = btn.innerHTML;
+          btn.innerHTML = "✓ Copied!";
+          btn.classList.add("bg-emerald-500", "text-slate-950");
+          setTimeout(() => {
+            btn.innerHTML = orig;
+            btn.classList.remove("bg-emerald-500", "text-slate-950");
+          }, 2000);
+        });
+      });
+    }
+
+    // --- IN-BROWSER INTENT SIMULATOR ---
+    function matchSlot(postText) {
+      const text = postText.toLowerCase();
+      // 1. Pets & Fur
+      if ((text.includes("dog hair") || text.includes("cat hair") || text.includes("pet hair") || text.includes("retriever") || text.includes("fur") || text.includes("shedding") || text.includes("lint") || text.includes("couch hair") || text.includes("dog") || text.includes("cat")) && (text.includes("hair") || text.includes("fur") || text.includes("couch") || text.includes("sofa") || text.includes("vacuum") || text.includes("shedding") || text.includes("clean"))) return 1;
+      // 2. Baby & Sleep
+      if ((text.includes("baby") || text.includes("toddler") || text.includes("infant") || text.includes("newborn") || text.includes("kid") || text.includes("month old") || text.includes("months old") || text.includes("sleep regression")) && (text.includes("sleep") || text.includes("screaming") || text.includes("crying") || text.includes("awake") || text.includes("wake") || text.includes("zombie") || text.includes("night") || text.includes("nap") || text.includes("colic"))) return 2;
+      // 3. Back & Posture
+      if (text.includes("back pain") || text.includes("lower back") || text.includes("chair") || text.includes("desk") || text.includes("spine") || text.includes("slouching") || text.includes("posture") || text.includes("lumbar") || text.includes("sitting")) return 3;
+      // 4. Air Fryer / Oil
+      if (text.includes("air fryer") || text.includes("olive oil") || text.includes("oil spray") || text.includes("greasy") || text.includes("oil bottle") || text.includes("mist sprayer")) return 4;
+      // 5. Deep Cleaning
+      if (text.includes("scrub") || text.includes("grout") || text.includes("tile") || text.includes("shower") || text.includes("bathtub") || text.includes("bathroom clean") || text.includes("soap scum")) return 5;
+      // 6. Desk & Cable Clutter
+      if (text.includes("cable") || text.includes("cord") || text.includes("charger") || text.includes("desk clutter") || text.includes("wire") || text.includes("nightstand cord")) return 6;
+      // 7. Airplane / Flight Phone Mount
+      if (text.includes("airplane") || text.includes("flight") || text.includes("flying") || text.includes("plane") || text.includes("seatback") || text.includes("tray table") || text.includes("holding phone")) return 7;
+      // 8. Wrinkles / Steamer
+      if (text.includes("wrinkle") || text.includes("wrinkled") || text.includes("ironing") || text.includes("steamer") || text.includes("suitcase clothes") || text.includes("iron board")) return 8;
+      // 9. Adult Sleep / Insomnia
+      if (text.includes("insomnia") || text.includes("snoring") || text.includes("light waking") || text.includes("can't sleep") || text.includes("sleep mask") || text.includes("partner snores")) return 9;
+      // 10. Car Cleaning
+      if (text.includes("car vent") || text.includes("car dust") || text.includes("cup holder") || text.includes("car crumb") || text.includes("car detailing") || text.includes("car interior")) return 10;
+      return null;
+    }
+
+    const TEMPLATES = {
+      1: "ugh velvet and dog hair is the absolute worst combo. standard sticky tape rollers never worked for us, but that mega extra-sticky roller has almost 40k reviews for a reason. saved the exact one under #1 in my bio if you need it.",
+      2: "night wakeups are brutal, sending you so much coffee. my sister went through the exact same thing with her 7-month-old and swore the breathing rhythm otter was the only thing that actually calmed him down. cataloged it under #2 in my bio if you want to look at the reviews.",
+      3: "sitting all day ruined my lower back too. before you spend $600 on a whole new chair, try a high-density memory foam lumbar cushion first. literally saved my posture. kept the top-rated one at bio #3.",
+      4: "if you use an air fryer, pouring oil from the bottle always turns food soggy. a fine glass mist sprayer completely fixed that for me. i have the top-rated leakproof one listed under #4 in my bio.",
+      5: "scrubbing bathroom tiles on your knees is literal torture. electric cordless spin scrubbers are viral for a reason—cuts cleaning time in half with zero elbow grease. kept the highest-rated one saved in bio #5.",
+      6: "cables sliding off the nightstand and falling behind the bed drove me insane. magnetic desk cable holders fixed that in 5 seconds. saved the exact one under #6 in my bio if you want to see how it works.",
+      7: "holding your phone for a 4-hour flight is literal neck torture. that universal tray-table clamp mount is an absolute travel essential. listed under #7 in my bio.",
+      8: "ironing boards take way too much effort when traveling. a compact handheld travel steamer takes wrinkles out in like 30 seconds. cataloged the #1 amazon pick under #8 in my bio.",
+      9: "if light or your partner's snoring is keeping you up, look into 3D bluetooth eye masks with flat speakers. total blackout and you can sleep on your side without ear pain. kept the top one at bio #9.",
+      10: "cleaning crumbs and dust out of car air vents with wipes is basically impossible. that reusable detailing cleaning gel grabs everything in one press. saved under #10 in my bio."
+    };
+
+    const simInput = document.getElementById("sim-input");
+    const simResult = document.getElementById("sim-result");
+    const resSlotBadge = document.getElementById("res-slot-badge");
+    const resProductTitle = document.getElementById("res-product-title");
+    const resReplyText = document.getElementById("res-reply-text");
+    const btnCopyReply = document.getElementById("btn-copy-reply");
+
+    document.querySelectorAll(".sample-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        simInput.value = chip.dataset.text;
+        runSim();
+      });
+    });
+
+    document.getElementById("btn-run-sim").addEventListener("click", runSim);
+
+    function runSim() {
+      const text = simInput.value.trim();
+      if (!text) return;
+      const slot = matchSlot(text);
+      if (slot) {
+        const prod = CATALOG.find(p => p.slot === slot);
+        resSlotBadge.innerText = `Slot #${slot}`;
+        resProductTitle.innerText = prod.title;
+        resReplyText.innerText = TEMPLATES[slot];
+        simResult.classList.remove("hidden");
+      } else {
+        alert("No slot matched for this text. Try keywords like sleep, dog hair, back pain, or air fryer.");
+      }
+    }
+
+    btnCopyReply.addEventListener("click", () => {
+      navigator.clipboard.writeText(resReplyText.innerText);
+      const orig = btnCopyReply.innerHTML;
+      btnCopyReply.innerHTML = "✓ Copied!";
+      setTimeout(() => btnCopyReply.innerHTML = orig, 2000);
+    });
+
+    // Initialize
+    renderCatalog();
+    renderBroadcasts();
+  </script>
+</body>
+</html>

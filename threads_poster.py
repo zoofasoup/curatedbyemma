@@ -45,11 +45,11 @@ def post_new_thread(text: str, headless: bool = True):
 
     print(f"\nPosting new thread: \"{text}\"")
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless)
+        browser = p.chromium.launch(headless=headless, args=['--disable-ipv6'])
         context = browser.new_context(storage_state=SESSION_FILE)
         page = context.new_page()
 
-        page.goto("https://www.threads.com/")
+        page.goto("https://www.threads.net/", wait_until="domcontentloaded", timeout=45000)
         page.wait_for_timeout(3500)
 
         try:
@@ -92,7 +92,7 @@ def reply_to_thread(thread_url: str, custom_text: str = None, headless: bool = T
 
     print(f"\nTargeting Thread: {thread_url}")
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless)
+        browser = p.chromium.launch(headless=headless, args=['--disable-ipv6'])
         context = browser.new_context(storage_state=SESSION_FILE)
         page = context.new_page()
 

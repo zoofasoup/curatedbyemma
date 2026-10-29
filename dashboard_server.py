@@ -10,6 +10,8 @@ import urllib.parse
 from threads_engine import generate_honest_reply, match_product_slot
 from threads_broadcast import CURATED_QUEUE, load_history, publish_thread, get_next_unposted
 
+import db
+
 PORT = 7860
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_BUFFER = []
@@ -49,6 +51,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_get_broadcast()
         elif path == "/api/logs":
             self.handle_get_logs()
+        elif path == "/api/analytics":
+            self.handle_get_analytics()
+        elif path == "/api/replies":
+            self.handle_get_replies()
         elif path.startswith("/assets/"):
             # Serve public assets (photos)
             asset_path = os.path.join(BASE_DIR, "public", path.lstrip("/"))
@@ -75,6 +81,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_simulate(data)
         elif path == "/api/broadcast/publish":
             self.handle_broadcast_publish(data)
+        elif path == "/api/analytics/update":
+            self.handle_update_metrics(data)
         else:
             self.send_error(404, "Not Found")
 
@@ -189,6 +197,33 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             "message": f"Publish job started in background for '{target['title']}'. Check logs for updates.",
             "post_id": target["id"]
         })
+
+    def handle_get_analytics(self):
+        try:
+            metrics = db.get_slot_analytics("emma")
+            self.send_json({"status": "ok", "metrics": metrics})
+        except Exception as e:
+            self.send_json({"error": str(e)}, status=500)
+
+    def handle_get_replies(self):
+        try:
+            replies = db.get_recent_replies("emma", limit=30)
+            self.send_json({"status": "ok", "replies": replies})
+        except Exception as e:
+            self.send_json({"error": str(e)}, status=500)
+
+    def handle_update_metrics(self, data):
+        try:
+            slot = int(data.get("slot"))
+            ip_id = data.get("ip_id", "emma")
+            clicks = data.get("amazon_clicks")
+            sales = data.get("amazon_sales")
+            status = data.get("status")
+            notes = data.get("notes")
+            db.update_slot_metrics(ip_id, slot, amazon_clicks=clicks, amazon_sales=sales, status=status, notes=notes)
+            self.send_json({"status": "success", "slot": slot})
+        except Exception as e:
+            self.send_json({"error": str(e)}, status=400)
 
 def start_server():
     server = ThreadingHTTPServer(("0.0.0.0", PORT), DashboardHandler)

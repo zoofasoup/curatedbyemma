@@ -228,6 +228,18 @@
   .log { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 12px 14px; max-height: 420px; overflow: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.7; color: var(--ink-2); }
   .log-empty { color: var(--ink-3); font-family: var(--font); font-size: 13.5px; }
 
+  /* ---------- Testing & Experiments ---------- */
+  .exp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .exp-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; }
+  .exp-card-label { font-size: 12px; color: var(--ink-3); margin-bottom: 4px; font-weight: 500; }
+  .exp-card-val { font-size: 22px; font-weight: 600; font-family: var(--mono); letter-spacing: -0.02em; color: var(--ink); }
+  .exp-card-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+  .progress-bar-bg { width: 100%; height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s ease; }
+  .tier-winner { color: oklch(0.44 0.12 145); background: oklch(0.95 0.04 145); border-color: oklch(0.85 0.08 145); }
+  .tier-testing { color: oklch(0.48 0.1 80); background: oklch(0.96 0.03 80); border-color: oklch(0.88 0.06 80); }
+  .tier-low { color: var(--ink-3); background: var(--rail); border-color: var(--line); }
+
   /* ---------- Empty IP ---------- */
   .empty-ip { max-width: 520px; padding: 48px 40px; }
   .empty-ip h1 { font-size: 20px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.015em; }
@@ -409,7 +421,7 @@ const icons = {
   star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>'
 };
 
-const state = { ip: null, tab: "catalog", live: false, published: {}, logs: [] };
+const state = { ip: null, tab: "catalog", live: false, published: {}, logs: [], metrics: [], dbReplies: [] };
 
 /* ---------- Auth ---------- */
 function showApp() { $("#gate").hidden = true; $("#app").hidden = false; boot(); }
@@ -439,6 +451,17 @@ async function fetchLogs() {
   if (!state.live) return;
   try { const r = await fetch("/api/logs", { cache: "no-store" }); state.logs = (await r.json()).logs || []; } catch {}
 }
+async function fetchAnalytics() {
+  if (!state.live) return;
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch("/api/analytics", { cache: "no-store" }),
+      fetch("/api/replies", { cache: "no-store" })
+    ]);
+    if (r1.ok) state.metrics = (await r1.json()).metrics || [];
+    if (r2.ok) state.dbReplies = (await r2.json()).replies || [];
+  } catch {}
+}
 
 /* ---------- Routing ---------- */
 function readHash() {
@@ -464,6 +487,7 @@ function renderRail() {
 /* ---------- Main ---------- */
 const TABS = [
   ["catalog", "Catalog", p => p.catalog.length],
+  ["experiments", "Testing & DB", null, true],
   ["content", "Content", p => p.posts.length],
   ["replies", "Reply tester"],
   ["persona", "Persona"],
@@ -507,7 +531,7 @@ function render() {
       </div>
     </header>
     <section class="panel" id="panel" role="tabpanel" aria-labelledby="tab-${state.tab}">
-      ${({ catalog: renderCatalog, content: renderContent, replies: renderReplies, persona: renderPersona, lander: renderLander, activity: renderActivity })[state.tab](p)}
+      ${({ catalog: renderCatalog, experiments: renderExperiments, content: renderContent, replies: renderReplies, persona: renderPersona, lander: renderLander, activity: renderActivity })[state.tab](p)}
     </section>`;
 
   const tabEls = [...document.querySelectorAll(".tab")];
@@ -552,6 +576,104 @@ function renderCatalog(p) {
         </tbody>
       </table>
     </div>`;
+}
+
+function renderExperiments(p) {
+  const metrics = state.metrics || [];
+  const replies = state.dbReplies || [];
+  const totalReplies = metrics.reduce((a, b) => a + (b.replies_sent || 0), 0);
+  const winners = metrics.filter(m => m.status === "winner").length;
+  const testing = metrics.filter(m => m.status === "testing").length;
+
+  return `
+    <div class="panel-intro">
+      <div>
+        <h2>Testing & Experiment DB</h2>
+        <p>Current 7-Day Cycle: <strong>Oct 28 – Nov 04</strong> · Target: <strong>20 replies / slot</strong> to evaluate conversion.</p>
+      </div>
+      <div>
+        <button class="btn btn-sm" id="refresh-db-btn">Refresh DB</button>
+      </div>
+    </div>
+
+    <div class="exp-stats">
+      <div class="exp-card">
+        <div class="exp-card-label">Total Replies Logged</div>
+        <div class="exp-card-val">${totalReplies}</div>
+        <div class="exp-card-sub">Recorded in affiliate.db</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-card-label">Testing Active</div>
+        <div class="exp-card-val">${testing} slots</div>
+        <div class="exp-card-sub">Under 20 replies target</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-card-label">Winning Slots</div>
+        <div class="exp-card-val">${winners}</div>
+        <div class="exp-card-sub">Sales > 0 or Clicks > 10</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-card-label">Database Path</div>
+        <div class="exp-card-val" style="font-size:13px;word-break:break-all;">data/affiliate.db</div>
+        <div class="exp-card-sub">SQLite Local Storage</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;margin:0 0 10px;">Slot Performance Matrix (7-Day Sprint)</h3>
+    <div class="table-wrap" style="margin-bottom:28px;">
+      <table>
+        <thead><tr>
+          <th>Slot</th>
+          <th>Product Name</th>
+          <th class="num">Progress (Min 20)</th>
+          <th class="num">Replies</th>
+          <th class="num col-hide-sm">Amazon Clicks</th>
+          <th class="num col-hide-sm">Orders</th>
+          <th>Status Tier</th>
+          <th>Action</th>
+        </tr></thead>
+        <tbody>
+          ${metrics.map(m => {
+            const prod = p.catalog.find(c => c.slot === m.slot) || {};
+            const pct = Math.min(100, Math.round(((m.replies_sent || 0) / 20) * 100));
+            const tierClass = m.status === "winner" ? "tier-winner" : (m.status === "testing" ? "tier-testing" : "tier-low");
+            const tierLabel = m.status === "winner" ? "🔥 Winner" : (m.status === "testing" ? "⏳ Testing" : "💤 Underperform");
+            return `
+              <tr>
+                <td class="slot">#${m.slot}</td>
+                <td><div style="font-weight:500;">${esc(prod.title || "Slot #" + m.slot)}</div></td>
+                <td class="num" style="min-width:110px;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-family:var(--mono);font-size:12px;">${pct}%</span>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;"></div></div>
+                  </div>
+                </td>
+                <td class="num mono">${m.replies_sent || 0} / 20</td>
+                <td class="num mono col-hide-sm">${m.amazon_clicks || 0}</td>
+                <td class="num mono col-hide-sm">${m.amazon_sales || 0}</td>
+                <td><span class="pill ${tierClass}" style="border:1px solid currentColor;">${tierLabel}</span></td>
+                <td>
+                  <button class="btn btn-sm btn-ghost edit-slot-btn" data-slot="${m.slot}" data-clicks="${m.amazon_clicks || 0}" data-sales="${m.amazon_sales || 0}" data-status="${m.status}">Update</button>
+                </td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;margin:0 0 10px;">Recent Reply Audit Stream (SQLite)</h3>
+    <div class="log" style="max-height:260px;">
+      ${replies.length === 0 ? `<div class="log-empty">No automated replies recorded in DB yet. Ready for first run.</div>` : replies.map(r => `
+        <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line);">
+          <span style="color:var(--accent);font-weight:600;">[Slot #${r.slot}]</span> 
+          <span style="color:var(--ink-3);">${r.sent_at} UTC</span>
+          ${r.author_username ? ` · to <strong>@${esc(r.author_username)}</strong>` : ""}
+          <div style="color:var(--ink);margin-top:2px;">“${esc(r.reply_text)}”</div>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 function renderContent(p) {
@@ -684,6 +806,52 @@ function bindPanel(p) {
   const reload = $("#reload-lander");
   if (reload) reload.addEventListener("click", () => { const f = $(".device iframe"); f.src = p.landerUrl + "?t=" + Date.now(); });
 
+  const refreshDb = $("#refresh-db-btn");
+  if (refreshDb) {
+    refreshDb.addEventListener("click", async () => {
+      refreshDb.textContent = "Refreshing…";
+      await fetchAnalytics();
+      render();
+      toast("Analytics data refreshed from SQLite.");
+    });
+  }
+
+  document.querySelectorAll(".edit-slot-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const slot = btn.dataset.slot;
+      const curClicks = btn.dataset.clicks;
+      const curSales = btn.dataset.sales;
+      const curStatus = btn.dataset.status;
+
+      const clicks = prompt(`Slot #${slot} — Amazon Clicks this week:`, curClicks);
+      if (clicks === null) return;
+      const sales = prompt(`Slot #${slot} — Amazon Orders/Sales count:`, curSales);
+      if (sales === null) return;
+      const newStatus = prompt(`Status tier (winner, testing, underperforming):`, curStatus);
+      if (newStatus === null) return;
+
+      try {
+        const res = await fetch("/api/analytics/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slot: Number(slot),
+            amazon_clicks: Number(clicks),
+            amazon_sales: Number(sales),
+            status: newStatus.trim().toLowerCase()
+          })
+        });
+        if (res.ok) {
+          toast(`Slot #${slot} metrics updated!`);
+          await fetchAnalytics();
+          render();
+        }
+      } catch (err) {
+        toast("Failed to update: " + err.message);
+      }
+    });
+  });
+
   if (state.tab === "activity") {
     logTimer = setInterval(async () => {
       await fetchLogs();
@@ -766,7 +934,7 @@ function toast(msg) {
 }
 
 /* ---------- Boot ---------- */
-async function boot() { readHash(); render(); await detectLive(); await fetchLogs(); render(); }
+async function boot() { readHash(); render(); await detectLive(); await Promise.all([fetchLogs(), fetchAnalytics()]); render(); }
 if (sessionStorage.getItem(AUTH_KEY)) showApp(); else showGate();
 </script>
 </body>

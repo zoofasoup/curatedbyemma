@@ -18,19 +18,18 @@ import reply_generator
 
 SESSION_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "threads_session.json")
 
-def stream_log(msg):
+def stream_log(msg, callback=None):
     timestamp = datetime.now().strftime("%H:%M:%S")
     formatted = f"[{timestamp}] {msg}"
     print(formatted)
     sys.stdout.flush()
-    # Also append to live dashboard server log if available
-    try:
-        import dashboard_server
-        dashboard_server.add_log(formatted)
-    except:
-        pass
+    if callback:
+        try:
+            callback(formatted)
+        except:
+            pass
 
-def extract_posts_from_graphql(payload):
+def extract_posts_from_graphql(payload, logger=None):
     """
     Recursively walk through Threads GraphQL JSON payload to find post objects
     with caption, like_count, reply_count, and author.
@@ -74,16 +73,19 @@ def extract_posts_from_graphql(payload):
 
     return extracted
 
-def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headless=True):
+def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headless=True, log_callback=None):
+    def log(msg):
+        stream_log(msg, callback=log_callback)
+
     if not os.path.exists(SESSION_PATH):
-        stream_log("❌ threads_session.json not found! Please login first.")
+        log("❌ threads_session.json not found! Please login first.")
         return []
 
     with open(SESSION_PATH, "r") as f:
         session_data = json.load(f)
     cookies = session_data.get("cookies", [])
 
-    stream_log(f"🚀 Starting GraphQL Sniffer for query: '{query}' (Scrolls: {scrolls})...")
+    log(f"🚀 Starting GraphQL Sniffer for query: '{query}' (Scrolls: {scrolls})...")
 
     intercepted_raw_posts = []
 
@@ -97,7 +99,7 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
                     data = response.json()
                     posts = extract_posts_from_graphql(data)
                     if posts:
-                        stream_log(f"📦 Intercepted GraphQL Payload: Found {len(posts)} structured post(s)!")
+                        log(f"📦 Intercepted GraphQL Payload: Found {len(posts)} structured post(s)!")
                         intercepted_raw_posts.extend(posts)
             except Exception:
                 pass
@@ -114,17 +116,17 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
         encoded_q = query.replace(" ", "%20")
         target_url = f"https://www.threads.net/search?q={encoded_q}&serp_type=default&filter=recent"
         
-        stream_log(f"🌐 Navigating to Threads Search: {target_url}")
+        log(f"🌐 Navigating to Threads Search: {target_url}")
         page.goto(target_url, wait_until="domcontentloaded", timeout=25000)
         page.wait_for_timeout(3500)
 
         # Perform human-like scrolls to trigger pagination GraphQL requests
         for s in range(1, scrolls + 1):
-            stream_log(f"📜 Scrolling feed chunk ({s}/{scrolls})...")
+            log(f"📜 Scrolling feed chunk ({s}/{scrolls})...")
             page.mouse.wheel(0, 3500)
             page.wait_for_timeout(2500)
 
-        stream_log(f"✅ Scraping phase finished. Total raw posts intercepted: {len(intercepted_raw_posts)}")
+        log(f"✅ Scraping phase finished. Total raw posts intercepted: {len(intercepted_raw_posts)}")
         browser.close()
 
     # Deduplicate by ID
@@ -132,7 +134,7 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
     for p in intercepted_raw_posts:
         unique_posts[p["id"]] = p
 
-    stream_log(f"🔍 Analyzing {len(unique_posts)} unique candidate posts against Context & Engagement Gates...")
+    log(f"🔍 Analyzing {len(unique_posts)} unique candidate posts against Context & Engagement Gates...")
 
     processed_candidates = []
     conn = db.get_connection()
@@ -151,22 +153,20 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
         else:
             engagement_tier = "⚡ FRESH SNIPER"
 
-        stream_log(f"\n--- Checking Post by @{author} ({engagement_tier} | Likes: {likes}, Replies: {replies}) ---")
-        stream_log(f"Text snippet: \"{text[:75]}...\"")
+        log(f"--- Checking @{author} ({engagement_tier} | {likes} likes, {replies} replies) ---")
 
         # 2. Strict Context & Never Lie Evaluation
         eval_res = reply_generator.evaluate_and_draft_local(text, author=author)
         if eval_res["verdict"] == "REJECT":
-            stream_log(f"❌ REJECTED: {eval_res.get('reason')}")
+            log(f"❌ REJECTED: {eval_res.get('reason')}")
             continue
 
         slot = eval_res["slot"]
         prod_name = eval_res["product_name"]
         draft = eval_res["reply_draft"]
 
-        stream_log(f"✅ ACCEPTED Genuine Complaint! Matched Slot #{slot}: {prod_name}")
-        stream_log(f"📝 Crafted 4-Part Reply:")
-        stream_log(f"   \"{draft}\"")
+        log(f"✅ ACCEPTED! Slot #{slot}: {prod_name}")
+        log(f"📝 Reply Draft: \"{draft[:80]}...\"")
 
         # Store in Approval Queue with engagement data
         c.execute("""
@@ -187,7 +187,7 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
         })
 
     conn.close()
-    stream_log(f"\n🏁 Finished! Added {len(processed_candidates)} qualified candidate(s) to Dashboard Approval Queue.")
+    log(f"🏁 Finished! Added {len(processed_candidates)} qualified candidate(s) to Approval Queue.")
     return processed_candidates
 
 if __name__ == "__main__":

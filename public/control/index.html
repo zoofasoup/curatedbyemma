@@ -229,16 +229,32 @@
   .log-empty { color: var(--ink-3); font-family: var(--font); font-size: 13.5px; }
 
   /* ---------- Testing & Experiments ---------- */
-  .exp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
-  .exp-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; }
-  .exp-card-label { font-size: 12px; color: var(--ink-3); margin-bottom: 4px; font-weight: 500; }
+  .exp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .exp-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; transition: border-color .15s; }
+  .exp-card-label { font-size: 11.5px; color: var(--ink-3); margin-bottom: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; }
   .exp-card-val { font-size: 22px; font-weight: 600; font-family: var(--mono); letter-spacing: -0.02em; color: var(--ink); }
   .exp-card-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
-  .progress-bar-bg { width: 100%; height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+  .progress-bar-bg { width: 100%; height: 5px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 6px; }
   .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s ease; }
   .tier-winner { color: oklch(0.44 0.12 145); background: oklch(0.95 0.04 145); border-color: oklch(0.85 0.08 145); }
   .tier-testing { color: oklch(0.48 0.1 80); background: oklch(0.96 0.03 80); border-color: oklch(0.88 0.06 80); }
   .tier-low { color: var(--ink-3); background: var(--rail); border-color: var(--line); }
+
+  /* Approval Review Cards */
+  .approval-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 18px; margin-bottom: 14px; box-shadow: 0 1px 3px oklch(0.2 0.01 85 / 0.04); transition: border-color .15s; }
+  .approval-card:hover { border-color: var(--line-strong); }
+  .approval-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .bubble-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .bubble-complaint { background: var(--rail); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+  .bubble-reply { background: oklch(0.98 0.015 155); border: 1px solid oklch(0.88 0.04 155); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; color: var(--ink); line-height: 1.55; }
+  .bubble-tag { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: block; }
+
+  /* Console Drawer */
+  .console-drawer { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); margin-bottom: 24px; overflow: hidden; }
+  .console-summary { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; list-style: none; font-size: 12.5px; user-select: none; }
+  .console-summary::-webkit-details-marker { display: none; }
+  .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.85); } }
 
   /* ---------- Empty IP ---------- */
   .empty-ip { max-width: 520px; padding: 48px 40px; }
@@ -622,21 +638,18 @@ function renderExperiments(p) {
       </div>
     </div>
 
-    <!-- LIVE CRAWLER & SNIFFER STREAM CONSOLE -->
-    <div style="margin-bottom:28px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <h3 style="font-size:14px;font-weight:600;margin:0;display:flex;align-items:center;gap:6px;">
-          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite;"></span>
-          Live Crawler & Sniffer Stream
-        </h3>
-        <span style="font-size:12px;color:var(--ink-3);font-family:var(--mono);">Polling real-time GraphQL events</span>
-      </div>
-      <div class="log" id="crawler-live-log" style="background:#111411;color:#bbf7d0;font-family:var(--mono);font-size:12px;line-height:1.6;padding:14px;max-height:220px;overflow-y:auto;border-radius:var(--radius);border:1px solid #222;">
-        ${(state.logs && state.logs.length) ? state.logs.slice(-25).map(esc).join("<br>") : `<span style="color:#666;">[Waiting for crawler trigger. Click "🚀 Run Session" to start GraphQL Sniffer]</span>`}
-      </div>
+    <!-- 1. HUMAN APPROVAL QUEUE (ACTION FIRST) -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;">
+      <h3 style="font-size:14px;font-weight:600;margin:0;display:flex;align-items:center;gap:8px;">
+        Human Approval Queue
+        <span class="pill pill-ok" id="queue-count-pill" style="font-size:11.5px;">${(state.approvalQueue || []).length} Pending</span>
+      </h3>
+      <span style="font-size:12px;color:var(--ink-3);">Review & approve drafts before publishing to Threads</span>
     </div>
+    <div id="approval-queue-list" style="margin-bottom:32px;"></div>
 
-    <h3 style="font-size:14px;font-weight:600;margin:0 0 10px;">Slot Performance Matrix (7-Day Sprint)</h3>
+    <!-- 2. PERFORMANCE MATRIX -->
+    <h3 style="font-size:14px;font-weight:600;margin:0 0 12px;">Slot Performance Matrix (7-Day Sprint)</h3>
     <div class="table-wrap" style="margin-bottom:28px;">
       <table>
         <thead><tr>
@@ -679,44 +692,22 @@ function renderExperiments(p) {
       </table>
     </div>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 10px;">
-      <h3 style="font-size:14px;font-weight:600;margin:0;">Human Approval Queue (Review Before Send)</h3>
-      <span class="pill pill-muted" id="queue-count-pill">${(state.approvalQueue || []).length} Pending</span>
-    </div>
-
-    <div id="approval-queue-list" style="margin-bottom:28px;">
-      ${(!state.approvalQueue || state.approvalQueue.length === 0) ? `
-        <div style="border:1px dashed var(--line-strong);border-radius:var(--radius);padding:18px;text-align:center;color:var(--ink-3);font-size:13.5px;">
-          No pending drafts in queue. Click <strong>"🚀 Run Session (Batch 5)"</strong> to hunt for fresh threads with strict context check.
+    <!-- 3. COLLAPSIBLE CRAWLER STREAM DRAWER -->
+    <details class="console-drawer" style="margin-bottom:28px;">
+      <summary class="console-summary">
+        <div style="display:flex;align-items:center;gap:8px;font-weight:500;">
+          <span class="pulse-dot"></span>
+          <span>Live Crawler & Sniffer Stream Console</span>
+          <span style="font-size:11.5px;color:var(--ink-3);font-family:var(--mono);margin-left:6px;" id="console-head-status">Click to expand live logs</span>
         </div>
-      ` : state.approvalQueue.map(item => `
-        <div style="border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:16px;margin-bottom:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
-            <div>
-              <span class="pill pill-ok" style="font-weight:600;">Slot #${item.matched_slot}: ${esc(item.product_name)}</span>
-              <span style="font-size:13px;color:var(--ink-2);margin-left:8px;">Target: <strong>@${esc(item.author_username)}</strong></span>
-            </div>
-            <a href="${item.thread_url}" target="_blank" rel="noopener" class="btn btn-sm btn-ghost" style="font-size:12px;">View Thread ↗</a>
-          </div>
+        <span class="btn btn-sm btn-ghost" style="font-size:11.5px;">Toggle Stream</span>
+      </summary>
+      <div class="log" id="crawler-live-log" style="background:#111411;color:#bbf7d0;font-family:var(--mono);font-size:12px;line-height:1.6;padding:14px;max-height:220px;overflow-y:auto;border-top:1px solid var(--line);">
+        ${(state.logs && state.logs.length) ? state.logs.slice(-30).map(esc).join("<br>") : `<span style="color:#666;">[Waiting for crawler trigger. Click "🚀 Run Session" to start GraphQL Sniffer]</span>`}
+      </div>
+    </details>
 
-          <div style="background:var(--rail);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--ink-2);margin-bottom:12px;">
-            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-3);margin-bottom:4px;">Original Complaint Post:</div>
-            “${esc(item.thread_text)}”
-          </div>
-
-          <div style="font-size:13.5px;color:var(--ink);line-height:1.55;margin-bottom:14px;">
-            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--accent);margin-bottom:4px;">Crafted 4-Part Honest Reply:</div>
-            “${esc(item.draft_reply)}”
-          </div>
-
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-sm btn-accent approve-btn" data-id="${item.id}" style="background:var(--accent);color:#fff;border-color:var(--accent);">✓ Approve & Send to Threads</button>
-            <button class="btn btn-sm btn-ghost reject-btn" data-id="${item.id}" style="color:var(--danger);">✕ Discard</button>
-          </div>
-        </div>
-      `).join("")}
-    </div>
-
+    <!-- 4. RECENT REPLIES AUDIT STREAM -->
     <h3 style="font-size:14px;font-weight:600;margin:0 0 10px;">Recent Reply Audit Stream (SQLite)</h3>
     <div class="log" style="max-height:260px;">
       ${replies.length === 0 ? `<div class="log-empty">No automated replies recorded in DB yet. Ready for first run.</div>` : replies.map(r => `
@@ -729,6 +720,99 @@ function renderExperiments(p) {
       `).join("")}
     </div>
   `;
+}
+
+function renderApprovalQueue() {
+  const container = $("#approval-queue-list");
+  const pill = $("#queue-count-pill");
+  if (!container) return;
+  const list = state.approvalQueue || [];
+  if (pill) pill.textContent = `${list.length} Pending`;
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div style="border:1px dashed var(--line);border-radius:var(--radius);padding:24px;text-align:center;background:var(--surface);">
+        <div style="font-weight:500;font-size:14px;color:var(--ink);margin-bottom:4px;">No Pending Replies to Review</div>
+        <div style="color:var(--ink-3);font-size:13px;max-width:420px;margin:0 auto 14px;">The queue is all caught up. Run a crawler session to find fresh complaint threads and generate contextual 4-part replies.</div>
+        <button class="btn btn-sm btn-ghost" onclick="document.querySelector('#run-batch-btn').click()">Trigger Scanner Now ↗</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = list.map(item => `
+    <div class="approval-card">
+      <div class="approval-meta">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="pill pill-ok" style="font-weight:600;">Slot #${item.matched_slot}: ${esc(item.product_name)}</span>
+          <span style="font-size:13px;color:var(--ink-2);">Target: <strong>@${esc(item.author_username)}</strong></span>
+        </div>
+        <a href="${item.thread_url}" target="_blank" rel="noopener" class="btn btn-sm btn-ghost" style="font-size:12px;">View Thread ${icons.external}</a>
+      </div>
+
+      <div class="bubble-grid">
+        <div class="bubble-complaint">
+          <span class="bubble-tag" style="color:var(--ink-3);">Original Threads Post</span>
+          “${esc(item.thread_text)}”
+        </div>
+        <div class="bubble-reply">
+          <span class="bubble-tag" style="color:var(--accent);">Emma's 4-Part Honest Reply</span>
+          “${esc(item.draft_reply)}”
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-top:4px;">
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sm btn-accent approve-btn" data-id="${item.id}" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500;">✓ Approve & Dispatch</button>
+          <button class="btn btn-sm btn-ghost reject-btn" data-id="${item.id}" style="color:var(--danger);">✕ Discard</button>
+        </div>
+        <span style="font-size:11.5px;color:var(--ink-3);font-family:var(--mono);">Never Lie verified</span>
+      </div>
+    </div>
+  `).join("");
+
+  // Re-bind actions
+  container.querySelectorAll(".approve-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
+      btn.disabled = true;
+      btn.textContent = "Sending to Threads…";
+      try {
+        await fetch("/api/queue/approve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: Number(id) })
+        });
+        toast("Reply approved! Dispatched in background.");
+        setTimeout(async () => {
+          await fetchAnalytics();
+          renderApprovalQueue();
+        }, 3000);
+      } catch (err) {
+        toast("Error approving: " + err.message);
+        btn.disabled = false;
+      }
+    });
+  });
+
+  container.querySelectorAll(".reject-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
+      btn.disabled = true;
+      try {
+        await fetch("/api/queue/reject", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: Number(id) })
+        });
+        toast("Draft discarded.");
+        await fetchAnalytics();
+        renderApprovalQueue();
+      } catch (err) {
+        toast("Error: " + err.message);
+      }
+    });
+  });
 }
 
 function renderContent(p) {
@@ -867,12 +951,11 @@ function bindPanel(p) {
         const res = await fetch("/api/automation/run", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ count: 5, dry_run: false })
+          body: JSON.stringify({ query: "dog hair couch vacuuming", scrolls: 3 })
         });
-        const data = await res.json();
-        toast("Batch 5 started in background! Pacing: 3-6m cooldown.");
+        toast("GraphQL Sniffer started! Watch live console below.");
       } catch (err) {
-        toast("Failed to start batch: " + err.message);
+        toast("Failed: " + err.message);
       } finally {
         setTimeout(() => {
           runBatch.disabled = false;
@@ -880,6 +963,10 @@ function bindPanel(p) {
         }, 3000);
       }
     });
+  }
+
+  if (state.tab === "experiments") {
+    renderApprovalQueue();
   }
 
   const refreshDb = $("#refresh-db-btn");
@@ -986,8 +1073,7 @@ function bindPanel(p) {
             const data = await r.json();
             if ((data.queue || []).length !== (state.approvalQueue || []).length) {
               state.approvalQueue = data.queue || [];
-              const pill = $("#queue-count-pill");
-              if (pill) pill.textContent = `${state.approvalQueue.length} Pending`;
+              renderApprovalQueue();
             }
           }
         } catch {}

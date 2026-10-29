@@ -241,7 +241,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             add_log(f"🚀 Starting GraphQL Sniffer Session for '{query}'...")
             try:
                 import threads_sniffer
-                found = threads_sniffer.run_graphql_sniffer(query=query, scrolls=scrolls, headless=True)
+                found = threads_sniffer.run_graphql_sniffer(query=query, scrolls=scrolls, headless=True, log_callback=add_log)
                 add_log(f"✓ Sniffer Session Finished! Added {len(found)} qualified drafts to Approval Queue.")
             except Exception as e:
                 add_log(f"[X] Sniffer run failed: {e}")

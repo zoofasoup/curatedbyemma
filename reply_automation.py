@@ -142,40 +142,49 @@ def run_reply_automation(max_replies_this_run=2, dry_run=False):
                     if cur.fetchone():
                         continue
 
-                    thread_id = f"th_{slot}_{abs(hash(text[:50]))}"
+                    # Extract the direct post URL from card
+                    post_link_el = post_el.locator("a[href*='/post/']").first
+                    if post_link_el.count() == 0:
+                        continue
+                    post_href = post_link_el.get_attribute("href")
+                    if not post_href:
+                        continue
+                    direct_post_url = "https://www.threads.net" + post_href if post_href.startswith("/") else post_href
+
+                    thread_id = f"th_{slot}_{abs(hash(direct_post_url))}"
                     reply_text = random.choice(FRAMEWORK_TEMPLATES[slot])
 
                     print(f"  -> Found valid complaint by @{author}:")
-                    print(f"     \"{text[:80]}...\"")
+                    print(f"     URL: {direct_post_url}")
+                    print(f"     Text: \"{text[:70]}...\"")
                     print(f"  -> Prepared Honest Reply (Slot #{slot}):")
                     print(f"     \"{reply_text}\"")
 
                     if dry_run:
                         print("  [DRY-RUN] Reply logged without sending.")
                     else:
-                        # Find reply button and send
+                        # Navigate directly to the post detail page for rock-solid reply composer
                         try:
-                            # Click into post or click reply icon
-                            reply_btn = post_el.locator("svg[aria-label='Reply'], svg[aria-label='Balas']").first
-                            if reply_btn.count() > 0:
-                                reply_btn.click()
-                                page.wait_for_timeout(1500)
-                                # Type into reply composer
-                                composer = page.locator("div[contenteditable='true']").first
-                                composer.click()
-                                page.keyboard.type(reply_text, delay=25)
-                                page.wait_for_timeout(1000)
+                            print(f"  -> Opening direct post page...")
+                            page.goto(direct_post_url, wait_until="domcontentloaded", timeout=25000)
+                            page.wait_for_timeout(3500)
 
-                                # Submit
-                                post_submit = page.locator("div[role='button']:has-text('Post'), div[role='button']:has-text('Kirim')").first
-                                post_submit.click()
-                                page.wait_for_timeout(4000)
-                                print(f"  [✓] Successfully replied to @{author}!")
-                            else:
-                                print("  [!] Reply button not found on card, skipping.")
-                                continue
+                            # Locate the reply composer on detail page
+                            composer = page.locator("div[contenteditable='true']").first
+                            composer.wait_for(state="visible", timeout=10000)
+                            composer.click()
+                            page.wait_for_timeout(500)
+                            page.keyboard.type(reply_text, delay=20)
+                            page.wait_for_timeout(1000)
+
+                            # Submit reply button
+                            submit_btn = page.locator("div[role='button']:has-text('Post'), div[role='button']:has-text('Balas')").first
+                            submit_btn.wait_for(state="visible", timeout=8000)
+                            submit_btn.click()
+                            page.wait_for_timeout(4000)
+                            print(f"  [✓] Successfully replied to @{author} on {direct_post_url}!")
                         except Exception as e:
-                            print(f"  [!] Failed to send reply via UI: {e}")
+                            print(f"  [!] Failed to send reply via direct page: {e}")
                             continue
 
                     # Record to SQLite

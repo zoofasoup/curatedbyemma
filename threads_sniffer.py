@@ -86,7 +86,7 @@ def extract_posts_from_graphql(payload, logger=None):
 
     return extracted
 
-def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headless=True, log_callback=None):
+def run_graphql_sniffer(query="office chair lower back pain", scrolls=2, headless=True, filter_type="both", log_callback=None):
     def log(msg):
         stream_log(msg, callback=log_callback)
 
@@ -98,13 +98,25 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
         session_data = json.load(f)
     cookies = session_data.get("cookies", [])
 
-    log(f"🚀 Starting GraphQL Sniffer for query: '{query}' (Scrolls: {scrolls})...")
+    encoded_q = query.replace(" ", "%20")
+    
+    # Dual-Search: Top (Viral Hijack with thousands of views) + Recent (Fresh Sniper)
+    if filter_type == "top":
+        search_targets = [("🔥 TOP / VIRAL", f"https://www.threads.net/search?q={encoded_q}&serp_type=default")]
+    elif filter_type == "recent":
+        search_targets = [("⚡ RECENT / SNIPER", f"https://www.threads.net/search?q={encoded_q}&serp_type=default&filter=recent")]
+    else: # "both"
+        search_targets = [
+            ("🔥 TOP / VIRAL", f"https://www.threads.net/search?q={encoded_q}&serp_type=default"),
+            ("⚡ RECENT / SNIPER", f"https://www.threads.net/search?q={encoded_q}&serp_type=default&filter=recent")
+        ]
+
+    log(f"🚀 Starting Sniffer for query: '{query}' ({filter_type.upper()} mode, Scrolls: {scrolls})...")
 
     intercepted_raw_posts = []
 
     def on_response(response):
         url = response.url
-        # Catch Threads internal GraphQL endpoints
         if "graphql" in url or "api/graphql" in url:
             try:
                 ct = response.headers.get("content-type", "")
@@ -112,7 +124,6 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
                     data = response.json()
                     posts = extract_posts_from_graphql(data)
                     if posts:
-                        log(f"📦 Intercepted GraphQL Payload: Found {len(posts)} structured post(s)!")
                         intercepted_raw_posts.extend(posts)
             except Exception:
                 pass
@@ -122,71 +133,65 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
         ctx = browser.new_context(viewport={"width": 1280, "height": 800})
         ctx.add_cookies(cookies)
         page = ctx.new_page()
-
-        # Attach response listener
         page.on("response", on_response)
 
-        encoded_q = query.replace(" ", "%20")
-        target_url = f"https://www.threads.net/search?q={encoded_q}&serp_type=default&filter=recent"
-        
-        log(f"🌐 Navigating to Threads Search: {target_url}")
-        page.goto(target_url, wait_until="domcontentloaded", timeout=25000)
-        page.wait_for_timeout(3500)
+        for label, target_url in search_targets:
+            log(f"🌐 Navigating to {label}: {target_url}")
+            try:
+                page.goto(target_url, wait_until="domcontentloaded", timeout=25000)
+                page.wait_for_timeout(3000)
 
-        # 1. Extract SSR posts from embedded script tags (Threads initial state)
-        try:
-            script_tags = page.locator('script[type="application/json"]').all()
-            for s in script_tags:
-                raw_json = s.inner_text()
-                if "caption" in raw_json or "text_post_app_info" in raw_json:
-                    try:
-                        parsed_json = json.loads(raw_json)
-                        ssr_posts = extract_posts_from_graphql(parsed_json)
-                        if ssr_posts:
-                            log(f"📦 Intercepted SSR Page Payload: Found {len(ssr_posts)} initial post(s)!")
-                            intercepted_raw_posts.extend(ssr_posts)
-                    except Exception:
-                        pass
-        except Exception as e:
-            log(f"Notice: SSR script pass: {e}")
-
-        # 2. Perform human-like scrolls to trigger pagination GraphQL requests
-        for s in range(1, scrolls + 1):
-            log(f"📜 Scrolling feed chunk ({s}/{scrolls})...")
-            page.mouse.wheel(0, 3500)
-            page.wait_for_timeout(2500)
-
-        # 3. Direct DOM fallback extraction to guarantee no posts are missed
-        try:
-            articles = page.locator("article, div[data-pressable-container='true']").all()
-            dom_found = 0
-            for art in articles:
+                # 1. Extract SSR posts from embedded script tags
                 try:
-                    art_text = art.inner_text().strip()
-                    if len(art_text) < 25:
-                        continue
-                    author_link = art.locator("a[href^='/@']").first
-                    u_name = author_link.get_attribute("href").lstrip("/@").split("/")[0] if author_link.count() > 0 else ""
-                    post_a = art.locator("a[href*='/post/']").first
-                    p_href = post_a.get_attribute("href") if post_a.count() > 0 else ""
-                    full_p_url = f"https://www.threads.net{p_href}" if p_href.startswith("/") else p_href
-                    if u_name and u_name != "curated_byemma" and len(art_text) > 30:
-                        intercepted_raw_posts.append({
-                            "id": str(abs(hash(art_text))),
-                            "username": u_name,
-                            "text": art_text,
-                            "like_count": 0,
-                            "reply_count": 0,
-                            "taken_at": int(time.time()),
-                            "url": full_p_url or f"https://www.threads.net/@{u_name}"
-                        })
-                        dom_found += 1
+                    script_tags = page.locator('script[type="application/json"]').all()
+                    for s in script_tags:
+                        raw_json = s.inner_text()
+                        if "caption" in raw_json or "text_post_app_info" in raw_json:
+                            try:
+                                parsed_json = json.loads(raw_json)
+                                ssr_posts = extract_posts_from_graphql(parsed_json)
+                                if ssr_posts:
+                                    intercepted_raw_posts.extend(ssr_posts)
+                            except Exception:
+                                pass
                 except Exception:
                     pass
-            if dom_found > 0:
-                log(f"📄 Captured {dom_found} post(s) from rendered page DOM.")
-        except Exception:
-            pass
+
+                # 2. Perform scrolls to trigger GraphQL pagination
+                for s in range(1, scrolls + 1):
+                    page.mouse.wheel(0, 3500)
+                    page.wait_for_timeout(2000)
+
+                # 3. Direct DOM fallback
+                try:
+                    articles = page.locator("article, div[data-pressable-container='true']").all()
+                    for art in articles:
+                        try:
+                            art_text = art.inner_text().strip()
+                            if len(art_text) < 25:
+                                continue
+                            author_link = art.locator("a[href^='/@']").first
+                            u_name = author_link.get_attribute("href").lstrip("/@").split("/")[0] if author_link.count() > 0 else ""
+                            post_a = art.locator("a[href*='/post/']").first
+                            p_href = post_a.get_attribute("href") if post_a.count() > 0 else ""
+                            full_p_url = f"https://www.threads.net{p_href}" if p_href.startswith("/") else p_href
+                            if u_name and u_name != "curated_byemma" and len(art_text) > 30:
+                                intercepted_raw_posts.append({
+                                    "id": str(abs(hash(art_text))),
+                                    "username": u_name,
+                                    "text": art_text,
+                                    "like_count": 0,
+                                    "reply_count": 0,
+                                    "taken_at": int(time.time()),
+                                    "url": full_p_url or f"https://www.threads.net/@{u_name}"
+                                })
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
+
+            except Exception as e:
+                log(f"⚠️ Error scraping {label}: {e}")
 
         log(f"✅ Scraping phase finished. Total raw posts intercepted: {len(intercepted_raw_posts)}")
         browser.close()

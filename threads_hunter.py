@@ -65,7 +65,7 @@ def search_hero_threads(max_per_keyword=3, headless=True):
     print(f"[*] Starting Threads Hunter for 3 Hero Slots at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}...")
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless, args=['--disable-ipv6'])
+        browser = p.chromium.launch(headless=headless, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 800}

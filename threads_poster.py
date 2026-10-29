@@ -45,7 +45,7 @@ def post_new_thread(text: str, headless: bool = True):
 
     print(f"\nPosting new thread: \"{text}\"")
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless, args=['--disable-ipv6'])
+        browser = p.chromium.launch(headless=headless, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
         context = browser.new_context(storage_state=SESSION_FILE)
         page = context.new_page()
 
@@ -92,7 +92,7 @@ def reply_to_thread(thread_url: str, custom_text: str = None, headless: bool = T
 
     print(f"\nTargeting Thread: {thread_url}")
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless, args=['--disable-ipv6'])
+        browser = p.chromium.launch(headless=headless, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
         context = browser.new_context(storage_state=SESSION_FILE)
         page = context.new_page()
 

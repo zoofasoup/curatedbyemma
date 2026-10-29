@@ -118,7 +118,7 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
                 pass
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless, args=['--disable-ipv6'])
+        browser = p.chromium.launch(headless=headless, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
         ctx = browser.new_context(viewport={"width": 1280, "height": 800})
         ctx.add_cookies(cookies)
         page = ctx.new_page()

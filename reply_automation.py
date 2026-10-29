@@ -94,7 +94,7 @@ def run_reply_automation(max_replies_this_run=2, dry_run=False):
     replies_completed = 0
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=['--disable-ipv6'])
+        browser = p.chromium.launch(headless=True, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 800}
@@ -233,7 +233,7 @@ def send_approved_reply(queue_id):
     print(f"[*] Dispatching approved reply to @{author} ({direct_post_url})...")
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=['--disable-ipv6'])
+        browser = p.chromium.launch(headless=True, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
         ctx = browser.new_context(viewport={"width": 1280, "height": 800})
         ctx.add_cookies(cookies)
         page = ctx.new_page()

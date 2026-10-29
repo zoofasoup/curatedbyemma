@@ -119,7 +119,7 @@ def publish_thread(item: dict, headless: bool = True):
         print(f"Image attached: {item['image']}")
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless, args=['--disable-ipv6'])
+        browser = p.chromium.launch(headless=headless, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
         context = browser.new_context(storage_state=SESSION_FILE)
         page = context.new_page()
 

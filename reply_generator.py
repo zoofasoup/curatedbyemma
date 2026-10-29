@@ -296,10 +296,105 @@ CATALOG_SPECS = {
 for s, data in CATALOG_SPECS.items():
     data["draft_template"] = data["draft_templates"][0]
 
+def pre_screen_post(post_text, author="user"):
+    """
+    Fast, zero-cost negative gate that runs BEFORE LLM evaluation.
+    Rejects:
+    1. Emma's own posts or bot replies.
+    2. Dropshipper / competitor promotions, commercial spam, sales CTAs.
+    3. Product pricing ($XX.XX) and store links (shopify, etsy, slankit, amazon links, products/).
+    4. Lifestyle / playlist / music vibe shares (no actual pain/struggle).
+    5. Non-English threads (Indonesian, Malay, etc.).
+    6. Memorial / bereavement / sports / politics.
+    """
+    text_lower = post_text.lower()
+    author_lower = (author or "").lower().strip("@")
+
+    # 1. Emma self-check
+    if author_lower in ("curated_byemma", "curatedbyemma"):
+        return {"verdict": "REJECT", "reason": "Self-post: Author is Emma herself"}
+
+    # 2. Competitor Ads & Dropshipping Spam CTAs
+    promo_phrases = [
+        "comment shop", "comment \"shop\"", "comment 'shop'", "dm you the link",
+        "dm for link", "dm me the link", "dm me for", "dm us for", "link in bio",
+        "link in comments", "link in my bio", "check out our", "order yours",
+        "order now", "shop now", "buy now", "free shipping", "promo code",
+        "discount code", "coupon code", "exclusive deal", "exclusive discount",
+        "limited time offer", "follow @", "follow us for more", "giveaway",
+        "read more:", "article:", "bit.ly", "tinyurl"
+    ]
+    for phrase in promo_phrases:
+        if phrase in text_lower:
+            return {"verdict": "REJECT", "reason": f"Competitor promo / dropshipping CTA detected ('{phrase}')"}
+
+    # 3. Store URLs & E-commerce Product Links
+    store_domains = [
+        "slankit.com", "aliexpress.com", "temu.com", "etsy.com", "shopify.com",
+        "myshopify.com", "/products/", "/product/", "amzn.to/", "amazon.com/dp/",
+        "bit.ly/", "tinyurl.com/", "sca_ref=", "ref=", "affiliate", "tag="
+    ]
+    for domain in store_domains:
+        if domain in text_lower:
+            return {"verdict": "REJECT", "reason": f"E-commerce store or product URL detected ('{domain}')"}
+
+    # 4. Product Pricing Tags (e.g. $14.26, $19.99, $25)
+    if re.search(r'\$\d+(\.\d{2})?', text_lower):
+        return {"verdict": "REJECT", "reason": "Commercial price tag ($XX.XX) detected"}
+
+    # 5. Lifestyle / Music / Playlist Sharing (No genuine struggle/pain)
+    vibe_markers = [
+        "#musicthreads", "#vinylthreads", "#nowplaying", "#songrecommendation",
+        "currently listening to", "lava lamp on", "incense burning", "open.spotify.com",
+        "youtu.be/", "youtube.com/watch", "sleep soundly. dream sweetly"
+    ]
+    for marker in vibe_markers:
+        if marker in text_lower:
+            return {"verdict": "REJECT", "reason": f"Music/Vibe lifestyle share without pain point ('{marker}')"}
+
+    # 6. Non-English Language Veto (Indonesian, Malay, etc.)
+    non_english_markers = [
+        "kak", "bayiku", "anakku", "anak", "banget", "nggak", "ngga", "tidak", "bisa", "udah",
+        "nih", "tuh", "deh", "dgn", "bgt", "gak", "korang", "kat", "boleh", "je",
+        "dah", "tak", "nak", "tu", "saya", "aku", "gue", "lu", "kalo", "kalau",
+        "tidur", "kebangun", "malam", "pagi", "sakit", "punggung", "kursi", "kasur", "belakang",
+        "apakah", "kenapa", "pakaian", "bergosok", "gosok", "baju", "pelik", "sangat",
+        "juga", "lagi", "ini", "itu", "ada", "sama", "kamu", "dia", "mereka", "dengan"
+    ]
+    tokens = set(re.findall(r'\b[a-z]+\b', text_lower))
+    matched_foreign = [w for w in non_english_markers if w in tokens]
+    if len(matched_foreign) >= 1:
+        return {"verdict": "REJECT", "reason": f"Non-English language detected ('{matched_foreign[0]}')"}
+
+    # 7. Memorial / Sports / Politics
+    memorial_words = [
+        "passed away", "died", "funeral", "grave", "rip", "grandfather", "grandmother",
+        "lolo", "lola", "ancestor", "memory of", "childhood", "growing up", "undas",
+        "heaven", "miss him", "miss her", "rest in peace"
+    ]
+    for word in memorial_words:
+        if word in text_lower:
+            return {"verdict": "REJECT", "reason": f"Memorial/Personal family story detected ('{word}')"}
+
+    sports_words = [
+        "pitcher", "innings", "game 2", "game 3", "mlb", "nba", "nfl", "touchdown",
+        "strikeout", "mariners", "dodgers", "yankees", "stray kids", "concert",
+        "kpop", "barricade", "tour", "quarterback"
+    ]
+    for word in sports_words:
+        if word in text_lower:
+            return {"verdict": "REJECT", "reason": f"Sports/Concert context detected ('{word}')"}
+
+    return None
+
 def evaluate_and_draft_local(post_text, author="user"):
     """
     Robust evaluator with strict context gating and 10-slot recognition.
     """
+    pre = pre_screen_post(post_text, author=author)
+    if pre is not None:
+        return pre
+
     text_lower = post_text.lower()
 
     # 1. HARD REJECT LIST (Immediate veto)
@@ -450,18 +545,24 @@ RULES:
 0. STRICT ENGLISH ONLY (US Market Target):
    - The user post MUST be primarily written in English.
    - If the post is in Indonesian, Malay, Tagalog, Spanish, or any non-English language, REJECT IT IMMEDIATELY with reason "Non-English post". Emma only operates in the US English market.
-1. STRICT "NEVER LIE" & CONTEXT RELEVANCE:
+1. NEVER ENGAGE COMPETITOR ADS, DROPSHIPPERS, OR PROMO POSTS:
+   - If the post is an ad, dropshipper, commercial brand, or seller promoting a product (has prices, store links, 'comment SHOP', 'DM for link', 'buy now'), REJECT IMMEDIATELY with reason "Competitor promo / dropshipping post".
+   - Emma ONLY replies to real, organic consumer complaints and daily life frustrations.
+2. NEVER ENGAGE LIFESTYLE / VIBE / POSITIVE POSTS:
+   - If the post is someone relaxing, enjoying music, sharing playlists (#MusicThreads), wishing goodnight, or in a good mood without an actual physical problem or pain point, REJECT IMMEDIATELY.
+   - We NEVER pitch products to people who are content and not asking for a solution.
+3. STRICT "NEVER LIE" & CONTEXT RELEVANCE:
    - Does one of your 10 catalog items GENUINELY solve this user's exact problem?
    - If someone's problem is NOT solved by your products (e.g. medical spine injury, thrown-out back spasms while vacuuming floor under couch, wanting robot vacuums, dog chewing walls), you MUST REJECT.
    - Do NOT force a product recommendation if it does not fit! A sofa lint roller does NOT vacuum floors or heal lower back spasms!
    - Hard REJECT: memorials, family grief, sports games, politics, brand giveaways, spam.
-2. 4-PART HONEST ARC (if ACCEPTED):
+4. 4-PART HONEST ARC (if ACCEPTED):
    - Part 1: Real empathy referencing their SPECIFIC situation, vocabulary, and pain (never generic boilerplate).
    - Part 2: Honest audit citing verified Amazon consensus and review count.
    - Part 3: Honest caveat/con (what it doesn't do or real limitations).
    - Part 4: Casual anchor to bio: "kept it saved under #[slot] in my bio" (or "cataloged under #[slot] on my page").
    - Tone: Lowercase casual, friendly, authentic peer, zero marketing jargon, NO links/URLs, max 2-4 sentences.
-3. OUTPUT FORMAT:
+5. OUTPUT FORMAT:
    Return strictly valid JSON:
    {{
      "verdict": "ACCEPT" or "REJECT",
@@ -525,12 +626,21 @@ EMMA'S 10-SLOT CATALOG:
 def evaluate_and_draft(post_text, author="user"):
     """
     Master evaluator:
-    1. Uses OpenRouter LLM for human-level contextual understanding if OPENROUTER_API_KEY is set.
-    2. Falls back to local heuristics if API key is missing or network fails.
+    1. Zero-cost negative pre-screen (rejects competitor ads, vibe posts, foreign languages, Emma self-posts).
+    2. Uses OpenRouter LLM for human-level contextual understanding if OPENROUTER_API_KEY is set.
+    3. Falls back to local heuristics if API key is missing or network fails.
     """
+    # 1. Negative Pre-Screen Gate
+    pre = pre_screen_post(post_text, author=author)
+    if pre is not None:
+        return pre
+
+    # 2. Contextual LLM
     res = generate_reply_llm(post_text, author=author)
     if res is not None:
         return res
+
+    # 3. Local Heuristic Fallback
     return evaluate_and_draft_local(post_text, author=author)
 
 if __name__ == "__main__":

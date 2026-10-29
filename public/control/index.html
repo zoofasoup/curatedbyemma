@@ -60,8 +60,10 @@
   .btn:hover { background: var(--hover); }
   .btn:active { transform: translateY(0.5px); }
   .btn:disabled { opacity: .5; cursor: not-allowed; }
-  .btn-primary { background: var(--accent); border-color: var(--accent); color: oklch(0.99 0 0); }
-  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .btn-primary:hover { background: oklch(0.12 0.01 85); border-color: oklch(0.12 0.01 85); }
+  .btn-accent { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 500; }
+  .btn-accent:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
   .btn-ghost { border-color: transparent; background: transparent; color: var(--ink-2); }
   .btn-ghost:hover { color: var(--ink); background: var(--hover); }
   .btn-sm { height: 28px; padding: 0 10px; font-size: 12.5px; }
@@ -135,34 +137,40 @@
   .pill-muted { background: var(--hover); color: var(--ink-2); }
   .pill-ok::before, .pill-warn::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 
-  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-top: 22px; overflow-x: auto; scrollbar-width: none; }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-top: 22px; overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
   .tab {
-    position: relative; padding: 9px 10px 11px; border: 0; background: none; cursor: pointer;
+    position: relative; padding: 10px 14px 12px; border: 0; background: none; cursor: pointer;
     font-size: 13.5px; font-weight: 500; color: var(--ink-2); white-space: nowrap; transition: color .15s;
+    display: inline-flex; align-items: center; gap: 6px;
   }
   .tab:hover { color: var(--ink); }
-  .tab[aria-selected="true"] { color: var(--ink); }
+  .tab[aria-selected="true"] { color: var(--ink); font-weight: 600; }
   .tab[aria-selected="true"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; background: var(--ink); border-radius: 2px; }
-  .tab .count { color: var(--ink-3); font-weight: 400; margin-left: 4px; }
+  .tab-badge {
+    display: inline-flex; align-items: center; justify-content: center; height: 18px; min-width: 18px;
+    padding: 0 6px; font-size: 11px; font-weight: 600; border-radius: 99px; background: var(--line); color: var(--ink-2);
+  }
+  .tab[aria-selected="true"] .tab-badge { background: var(--ink); color: #fff; }
+  .tab-badge.is-alert { background: var(--accent); color: #fff; }
 
   .panel { padding: 24px 40px 64px; max-width: 1180px; }
-  .panel-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
-  .panel-intro h2 { font-size: 15px; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01em; }
+  .panel-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+  .panel-intro h2 { font-size: 16px; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01em; }
   .panel-intro p { margin: 0; color: var(--ink-2); font-size: 13.5px; max-width: 68ch; }
 
   /* ---------- Table ---------- */
   .table-wrap { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; }
-  th { text-align: left; font-size: 12.5px; font-weight: 500; color: var(--ink-3); padding: 9px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; background: var(--surface); }
-  td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 13.5px; }
+  th { text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-3); padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; background: var(--surface); }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 13.5px; }
   tr:last-child td { border-bottom: 0; }
   tbody tr { transition: background-color .12s; }
   tbody tr:hover { background: oklch(0.985 0.004 85); }
   .num { text-align: right; white-space: nowrap; }
-  .slot { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); width: 44px; }
+  .slot { font-family: var(--mono); font-size: 12.5px; font-weight: 600; color: var(--ink-2); width: 44px; }
   .product { display: flex; align-items: center; gap: 12px; min-width: 280px; }
-  .thumb { width: 40px; height: 40px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); object-fit: contain; padding: 3px; flex: none; }
+  .thumb { width: 44px; height: 44px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); object-fit: contain; padding: 3px; flex: none; }
   .product-title { font-weight: 500; line-height: 1.35; }
   .product-hook { color: var(--ink-3); font-size: 12.5px; }
   .rating { display: inline-flex; align-items: center; gap: 4px; }
@@ -174,19 +182,19 @@
 
   /* ---------- Content list ---------- */
   .post-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-  .post { display: grid; grid-template-columns: 56px 1fr auto; gap: 16px; padding: 16px; border-bottom: 1px solid var(--line); }
+  .post { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; padding: 18px; border-bottom: 1px solid var(--line); }
   .post:last-child { border-bottom: 0; }
-  .post-media { width: 56px; height: 70px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--line); }
+  .post-media { width: 64px; height: 80px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--line); }
   .post-media.is-text { display: grid; place-items: center; background: var(--rail); color: var(--ink-3); font-size: 11.5px; }
-  .post-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
-  .post-title { font-weight: 600; font-size: 13.5px; }
+  .post-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .post-title { font-weight: 600; font-size: 14px; }
   .post-body { white-space: pre-line; color: var(--ink-2); font-size: 13.5px; max-width: 70ch; margin: 0; }
   .post-body.is-clamped { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .post-expand { border: 0; background: none; padding: 0; margin-top: 4px; font-size: 12.5px; color: var(--ink-3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .post-expand:hover { color: var(--ink); }
   .post-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
 
-  /* ---------- Reply tester ---------- */
+  /* ---------- Reply tester & Persona Sandbox ---------- */
   .tester { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
   .textarea { width: 100%; min-height: 132px; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); font: inherit; font-size: 14px; line-height: 1.55; resize: vertical; color: var(--ink); transition: border-color .15s, box-shadow .15s; }
   .textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
@@ -198,40 +206,53 @@
   .result-empty strong { color: var(--ink-2); font-weight: 500; }
   .result-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
   .result-product { color: var(--ink-2); font-size: 13px; }
-  .reply-text { font-size: 14.5px; line-height: 1.6; margin: 0 0 14px; }
+  .reply-text { font-size: 14px; line-height: 1.6; margin: 0 0 14px; }
   .checks { list-style: none; padding: 12px 0 0; margin: 0; border-top: 1px solid var(--line); display: grid; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
   .checks li { display: flex; align-items: center; gap: 6px; }
   .checks .icon { width: 14px; height: 14px; color: var(--accent); }
   .checks .is-fail { color: var(--danger); }
   .checks .is-fail .icon { color: var(--danger); }
 
-  /* ---------- Persona ---------- */
-  .persona { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-  .persona section { padding: 18px; border-right: 1px solid var(--line); }
-  .persona section:last-child { border-right: 0; }
-  .persona h3 { font-size: 13px; font-weight: 600; margin: 0 0 10px; }
-  .persona ul, .persona ol { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13.5px; display: grid; gap: 6px; }
+  /* ---------- Persona & Guardrails ---------- */
+  .persona-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .persona-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 18px; }
+  .persona-card h3 { font-size: 13px; font-weight: 600; margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-3); }
+  .persona-card ul, .persona-card ol { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13.5px; display: grid; gap: 6px; }
   .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag { font-family: var(--mono); font-size: 12px; padding: 2px 7px; border-radius: 4px; background: var(--danger-soft); color: var(--danger); }
-  .persona-bio { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; color: var(--ink-2); font-size: 13.5px; }
-  .persona-bio img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+  .banned-tag { font-family: var(--mono); font-size: 12px; padding: 3px 8px; border-radius: 4px; background: var(--danger-soft); color: var(--danger); text-decoration: line-through; }
+  .persona-bio { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; padding: 16px 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); font-size: 13.5px; }
+  .persona-bio img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
 
-  /* ---------- Lander ---------- */
-  .lander { display: grid; grid-template-columns: 390px 1fr; gap: 32px; align-items: start; }
-  .device { width: 390px; height: 760px; border: 1px solid var(--line-strong); border-radius: 28px; padding: 8px; background: var(--surface); box-shadow: 0 12px 32px -12px oklch(0.2 0.01 85 / 0.18); }
-  .device iframe { width: 100%; height: 100%; border: 0; border-radius: 21px; background: var(--bg); }
-  .kv { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 10px 20px; font-size: 13.5px; }
-  .kv dt { color: var(--ink-3); }
-  .kv dd { margin: 0; }
+  /* ---------- Radar Topics & Actions ---------- */
+  .radar-topics { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .topic-pill { height: 28px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 99px; background: var(--surface); font-size: 12px; font-weight: 500; cursor: pointer; color: var(--ink-2); transition: all .15s; }
+  .topic-pill:hover, .topic-pill.is-active { background: var(--ink); color: #fff; border-color: var(--ink); }
 
-  /* ---------- Activity ---------- */
-  .log { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 12px 14px; max-height: 420px; overflow: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.7; color: var(--ink-2); }
-  .log-empty { color: var(--ink-3); font-family: var(--font); font-size: 13.5px; }
+  /* ---------- Side-by-Side Approval Review Cards ---------- */
+  .approval-card {
+    border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 20px;
+    margin-bottom: 16px; box-shadow: 0 1px 3px oklch(0.2 0.01 85 / 0.03); transition: border-color .15s, box-shadow .15s;
+  }
+  .approval-card:hover { border-color: var(--line-strong); box-shadow: 0 3px 8px -2px oklch(0.2 0.01 85 / 0.06); }
+  .approval-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+  .approval-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .col-complaint { background: var(--rail); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; flex-direction: column; }
+  .col-reply { background: oklch(0.985 0.015 150); border: 1px solid oklch(0.86 0.04 150); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; flex-direction: column; }
+  .col-tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .col-body { font-size: 13.5px; line-height: 1.6; color: var(--ink); margin: 0; flex-grow: 1; }
+  .col-complaint .col-body { color: var(--ink-2); font-style: normal; }
+  .approval-card-actions { display: flex; justify-content: space-between; align-items: center; padding-top: 6px; }
 
-  /* ---------- Testing & Experiments ---------- */
+  /* ---------- Console Drawer & Audit ---------- */
+  .console-drawer { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); margin-bottom: 24px; overflow: hidden; }
+  .console-summary { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; list-style: none; font-size: 12.5px; user-select: none; }
+  .console-summary::-webkit-details-marker { display: none; }
+  .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.85); } }
+
   .exp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .exp-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; transition: border-color .15s; }
-  .exp-card-label { font-size: 11.5px; color: var(--ink-3); margin-bottom: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; }
+  .exp-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; }
+  .exp-card-label { font-size: 11px; color: var(--ink-3); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
   .exp-card-val { font-size: 22px; font-weight: 600; font-family: var(--mono); letter-spacing: -0.02em; color: var(--ink); }
   .exp-card-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
   .progress-bar-bg { width: 100%; height: 5px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 6px; }
@@ -240,21 +261,14 @@
   .tier-testing { color: oklch(0.48 0.1 80); background: oklch(0.96 0.03 80); border-color: oklch(0.88 0.06 80); }
   .tier-low { color: var(--ink-3); background: var(--rail); border-color: var(--line); }
 
-  /* Approval Review Cards */
-  .approval-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 18px; margin-bottom: 14px; box-shadow: 0 1px 3px oklch(0.2 0.01 85 / 0.04); transition: border-color .15s; }
-  .approval-card:hover { border-color: var(--line-strong); }
-  .approval-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .bubble-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-  .bubble-complaint { background: var(--rail); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; color: var(--ink-2); line-height: 1.55; }
-  .bubble-reply { background: oklch(0.98 0.015 155); border: 1px solid oklch(0.88 0.04 155); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; color: var(--ink); line-height: 1.55; }
-  .bubble-tag { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: block; }
-
-  /* Console Drawer */
-  .console-drawer { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); margin-bottom: 24px; overflow: hidden; }
-  .console-summary { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; list-style: none; font-size: 12.5px; user-select: none; }
-  .console-summary::-webkit-details-marker { display: none; }
-  .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.85); } }
+  /* ---------- Lander Slide-over Modal ---------- */
+  .lander-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s var(--ease); }
+  .lander-modal.is-open { opacity: 1; pointer-events: auto; }
+  .lander-modal-box { background: var(--surface); border-radius: 16px; max-width: 860px; width: 100%; max-height: 90vh; overflow: auto; padding: 28px; position: relative; box-shadow: 0 20px 48px -12px rgba(0,0,0,0.25); display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: center; }
+  .lander-modal-box .device { width: 320px; height: 560px; border-radius: 24px; padding: 6px; }
+  .lander-modal-box .device iframe { border-radius: 18px; }
+  .lander-modal-close { position: absolute; top: 18px; right: 18px; background: none; border: 0; cursor: pointer; color: var(--ink-2); font-size: 16px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; }
+  .lander-modal-close:hover { background: var(--hover); color: var(--ink); }
 
   /* ---------- Empty IP ---------- */
   .empty-ip { max-width: 520px; padding: 48px 40px; }
@@ -290,6 +304,11 @@
     .post-actions { grid-column: 2; flex-direction: row; }
     .device { width: 100%; max-width: 390px; height: 700px; }
     .col-hide-sm { display: none; }
+    .approval-split { grid-template-columns: 1fr; gap: 10px; }
+    .exp-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .persona-grid { grid-template-columns: 1fr; }
+    .lander-modal-box { grid-template-columns: 1fr; padding: 20px 16px; }
+    .approval-card-actions { flex-direction: column; align-items: flex-start; gap: 10px; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -482,12 +501,24 @@ async function fetchAnalytics() {
 }
 
 /* ---------- Routing ---------- */
+const TAB_MAP = {
+  experiments: "radar",
+  replies: "persona",
+  content: "broadcast",
+  lander: "catalog",
+  activity: "radar"
+};
+
 function readHash() {
-  const [ip, tab] = location.hash.replace(/^#\/?/, "").split("/");
+  let [ip, tab] = location.hash.replace(/^#\/?/, "").split("/");
   state.ip = ip || PROJECTS[0].id;
-  state.tab = tab || "catalog";
+  if (TAB_MAP[tab]) tab = TAB_MAP[tab];
+  state.tab = tab || "radar";
 }
-function go(ip, tab) { location.hash = `#/${ip}/${tab || "catalog"}`; }
+function go(ip, tab) {
+  if (TAB_MAP[tab]) tab = TAB_MAP[tab];
+  location.hash = `#/${ip}/${tab || "radar"}`;
+}
 window.addEventListener("hashchange", () => { readHash(); render(); });
 
 /* ---------- Rail ---------- */
@@ -502,15 +533,12 @@ function renderRail() {
   document.querySelectorAll(".ip-link").forEach(b => b.addEventListener("click", () => go(b.dataset.ip)));
 }
 
-/* ---------- Main ---------- */
+/* ---------- Main Workspaces ---------- */
 const TABS = [
-  ["catalog", "Catalog", p => p.catalog.length],
-  ["experiments", "Testing & DB", null, true],
-  ["content", "Content", p => p.posts.length],
-  ["replies", "Reply tester"],
-  ["persona", "Persona"],
-  ["lander", "Lander"],
-  ["activity", "Activity", null, true]
+  ["radar", "Radar & Approvals", () => (state.approvalQueue || []).length],
+  ["broadcast", "Feed Broadcasts", p => p.posts.length],
+  ["catalog", "Catalog & Sprint", p => p.catalog.length],
+  ["persona", "Persona & Rules"]
 ];
 
 function render() {
@@ -518,9 +546,9 @@ function render() {
   const main = $("#main");
   if (state.ip === "new") { main.innerHTML = renderNewIp(); return; }
   const p = PROJECTS.find(x => x.id === state.ip) || PROJECTS[0];
-  const tabs = TABS.filter(t => !t[3] || state.live);
-  if (!tabs.some(t => t[0] === state.tab)) state.tab = "catalog";
+  if (!TABS.some(t => t[0] === state.tab)) state.tab = "radar";
   const publishedCount = p.posts.filter(x => state.published[x.id]).length;
+  const pendingCount = (state.approvalQueue || []).length;
 
   main.innerHTML = `
     <header class="page-head">
@@ -532,25 +560,58 @@ function render() {
         </div>
         <div class="title-actions">
           <a class="btn" href="${p.threadsUrl}" target="_blank" rel="noopener">Threads ${icons.external}</a>
-          <a class="btn" href="${p.landerUrl}" target="_blank" rel="noopener">Lander ${icons.external}</a>
+          <button class="btn" id="open-lander-btn">Bio Lander ${icons.external}</button>
         </div>
       </div>
       <dl class="facts">
         <div><dt>Status</dt><dd><span class="pill ${p.status === "active" ? "pill-ok" : "pill-muted"}">${p.status === "active" ? "Active" : "Paused"}</span></dd></div>
-        <div><dt>Tracking ID</dt><dd class="mono">${esc(p.tag)}</dd></div>
-        <div><dt>Slots</dt><dd>#1–#${p.catalog.length}</dd></div>
-        <div><dt>Posts</dt><dd>${state.live ? `${publishedCount} of ${p.posts.length} published` : `${p.posts.length} drafted`}</dd></div>
+        <div><dt>Amazon Tag</dt><dd class="mono">${esc(p.tag)}</dd></div>
+        <div><dt>Catalog</dt><dd>#1–#${p.catalog.length} permanent</dd></div>
+        <div><dt>Radar Approvals</dt><dd class="mono"><strong style="color:var(--accent);">${pendingCount}</strong> pending</dd></div>
       </dl>
       <div class="tabs" role="tablist" aria-label="${esc(p.persona)} sections">
-        ${tabs.map(([id, label, count]) => `
+        ${TABS.map(([id, label, count]) => {
+          const c = count ? count(p) : null;
+          const isAlert = id === "radar" && pendingCount > 0;
+          return `
           <button class="tab" role="tab" id="tab-${id}" aria-selected="${state.tab === id}" aria-controls="panel" tabindex="${state.tab === id ? 0 : -1}" data-tab="${id}">
-            ${label}${count ? `<span class="count">${count(p)}</span>` : ""}
-          </button>`).join("")}
+            ${label}${c !== null ? `<span class="tab-badge ${isAlert ? "is-alert" : ""}">${c}</span>` : ""}
+          </button>`;
+        }).join("")}
       </div>
     </header>
     <section class="panel" id="panel" role="tabpanel" aria-labelledby="tab-${state.tab}">
-      ${({ catalog: renderCatalog, experiments: renderExperiments, content: renderContent, replies: renderReplies, persona: renderPersona, lander: renderLander, activity: renderActivity })[state.tab](p)}
-    </section>`;
+      ${({
+        radar: renderRadar,
+        broadcast: renderBroadcast,
+        catalog: renderCatalogSprint,
+        persona: renderPersona
+      })[state.tab](p)}
+    </section>
+
+    <!-- Slide-over Modal for Bio Lander -->
+    <div class="lander-modal" id="lander-modal" hidden>
+      <div class="lander-modal-box">
+        <button class="lander-modal-close" id="close-lander-modal" aria-label="Close">✕</button>
+        <div class="device">
+          <iframe id="modal-lander-iframe" src="${p.landerUrl}" title="Bio Lander Preview" loading="lazy"></iframe>
+        </div>
+        <div>
+          <h2 style="font-size:18px;font-weight:600;margin:0 0 4px;">Emma's Curated Bio Lander</h2>
+          <p style="color:var(--ink-2);font-size:13.5px;margin:0 0 20px;">The destination page all approved replies and bio links reference.</p>
+          <dl class="kv">
+            <dt>Live URL</dt><dd><a href="${p.landerUrl}" target="_blank" rel="noopener">${p.landerUrl.replace("https://", "")} ↗</a></dd>
+            <dt>Tracking Tag</dt><dd class="mono">${esc(p.tag)}</dd>
+            <dt>Slots Active</dt><dd>10 Curated Products (#1 to #10)</dd>
+            <dt>Hosting</dt><dd>Cloudflare Pages (instant auto-deploy)</dd>
+          </dl>
+          <div style="margin-top:24px;display:flex;gap:8px;">
+            <button class="btn btn-sm" id="reload-lander-btn">Reload Page</button>
+            <a class="btn btn-sm btn-ghost" href="${p.landerUrl}" target="_blank" rel="noopener">Open in New Tab ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>`;
 
   const tabEls = [...document.querySelectorAll(".tab")];
   tabEls.forEach((t, i) => {
@@ -564,153 +625,61 @@ function render() {
   bindPanel(p);
 }
 
-function renderCatalog(p) {
-  return `
-    <div class="panel-intro">
-      <div>
-        <h2>Master catalog</h2>
-        <p>Slot numbers are referenced in live replies and posts. Never reorder; new products start at #${p.catalog.length + 1}.</p>
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>Slot</th><th>Product</th><th class="col-hide-sm">Category</th>
-          <th class="num col-hide-sm">Rating</th><th class="num col-hide-sm">Bought / mo</th><th class="num"><span class="sr-only">Link</span></th>
-        </tr></thead>
-        <tbody>
-          ${p.catalog.map(it => `
-            <tr>
-              <td class="slot">#${it.slot}</td>
-              <td><div class="product">
-                <img class="thumb" src="${it.image}" alt="" loading="lazy" width="40" height="40">
-                <div><div class="product-title">${esc(it.title)}</div><div class="product-hook">${esc(it.hook)}</div></div>
-              </div></td>
-              <td class="col-hide-sm muted">${esc(it.category)}</td>
-              <td class="num col-hide-sm"><span class="rating">${icons.star}${it.rating.toFixed(1)}</span> <span class="muted">(${fmt(it.reviews)})</span></td>
-              <td class="num col-hide-sm">${esc(it.velocity)}</td>
-              <td class="num"><a class="row-link" href="https://www.amazon.com/dp/${it.asin}?tag=${p.tag}" target="_blank" rel="noopener">Amazon ${icons.external}</a></td>
-            </tr>`).join("")}
-        </tbody>
-      </table>
-    </div>`;
-}
-
-function renderExperiments(p) {
-  const metrics = state.metrics || [];
+/* ---------- Workspace 1: Radar & Approvals ---------- */
+function renderRadar(p) {
   const replies = state.dbReplies || [];
-  const totalReplies = metrics.reduce((a, b) => a + (b.replies_sent || 0), 0);
-  const winners = metrics.filter(m => m.status === "winner").length;
-  const testing = metrics.filter(m => m.status === "testing").length;
-
   return `
     <div class="panel-intro">
       <div>
-        <h2>Testing & Experiment DB</h2>
-        <p>Current 7-Day Cycle: <strong>Oct 28 – Nov 04</strong> · Target: <strong>20 replies / slot</strong> to evaluate conversion.</p>
+        <h2>Inbound Reply Radar & Approvals</h2>
+        <p>GraphQL Sniffer monitors Threads for real user complaints. Review AI drafts side-by-side before dispatching.</p>
       </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-sm btn-accent" id="run-batch-btn" style="background:var(--accent);color:#fff;border-color:var(--accent);">🚀 Run Session (Batch 5)</button>
-        <button class="btn btn-sm" id="refresh-db-btn">Refresh DB</button>
-      </div>
-    </div>
-
-    <div class="exp-stats">
-      <div class="exp-card">
-        <div class="exp-card-label">Total Replies Logged</div>
-        <div class="exp-card-val">${totalReplies}</div>
-        <div class="exp-card-sub">Recorded in affiliate.db</div>
-      </div>
-      <div class="exp-card">
-        <div class="exp-card-label">Testing Active</div>
-        <div class="exp-card-val">${testing} slots</div>
-        <div class="exp-card-sub">Under 20 replies target</div>
-      </div>
-      <div class="exp-card">
-        <div class="exp-card-label">Winning Slots</div>
-        <div class="exp-card-val">${winners}</div>
-        <div class="exp-card-sub">Sales > 0 or Clicks > 10</div>
-      </div>
-      <div class="exp-card">
-        <div class="exp-card-label">Database Path</div>
-        <div class="exp-card-val" style="font-size:13px;word-break:break-all;">data/affiliate.db</div>
-        <div class="exp-card-sub">SQLite Local Storage</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-sm btn-accent" id="run-batch-btn" style="background:var(--accent);color:#fff;border-color:var(--accent);">🚀 Run Scanner (Batch 5)</button>
+        <button class="btn btn-sm" id="refresh-db-btn">Refresh</button>
       </div>
     </div>
 
-    <!-- 1. HUMAN APPROVAL QUEUE (ACTION FIRST) -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;">
+    <!-- Topic Radar Pills -->
+    <div class="radar-topics">
+      <span style="font-size:12px;font-weight:600;color:var(--ink-3);margin-right:4px;">SCANNER TOPICS:</span>
+      <button class="topic-pill is-active" data-query="dog hair couch vacuuming">🐾 Pet Hair (Velvet Couch)</button>
+      <button class="topic-pill" data-query="lower back pain office chair posture">💺 Back Pain (Office Chair)</button>
+      <button class="topic-pill" data-query="flight phone neck pain tray table">✈️ Flight Travel (Neck Strain)</button>
+      <button class="topic-pill" data-query="charging cables falling behind nightstand">🔌 Bedside Cables</button>
+      <button class="topic-pill" data-query="dust crumbs car air vent cleaning">🚗 Car Detailing Putty</button>
+    </div>
+
+    <!-- Human Approval Queue (Hero Split View) -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;">
       <h3 style="font-size:14px;font-weight:600;margin:0;display:flex;align-items:center;gap:8px;">
         Human Approval Queue
         <span class="pill pill-ok" id="queue-count-pill" style="font-size:11.5px;">${(state.approvalQueue || []).length} Pending</span>
       </h3>
-      <span style="font-size:12px;color:var(--ink-3);">Review & approve drafts before publishing to Threads</span>
+      <span style="font-size:12px;color:var(--ink-3);">Side-by-side comparison · Never Lie verified</span>
     </div>
+
     <div id="approval-queue-list" style="margin-bottom:32px;"></div>
 
-    <!-- 2. PERFORMANCE MATRIX -->
-    <h3 style="font-size:14px;font-weight:600;margin:0 0 12px;">Slot Performance Matrix (7-Day Sprint)</h3>
-    <div class="table-wrap" style="margin-bottom:28px;">
-      <table>
-        <thead><tr>
-          <th>Slot</th>
-          <th>Product Name</th>
-          <th class="num">Progress (Min 20)</th>
-          <th class="num">Replies</th>
-          <th class="num col-hide-sm">Amazon Clicks</th>
-          <th class="num col-hide-sm">Orders</th>
-          <th>Status Tier</th>
-          <th>Action</th>
-        </tr></thead>
-        <tbody>
-          ${metrics.map(m => {
-            const prod = p.catalog.find(c => c.slot === m.slot) || {};
-            const pct = Math.min(100, Math.round(((m.replies_sent || 0) / 20) * 100));
-            const tierClass = m.status === "winner" ? "tier-winner" : (m.status === "testing" ? "tier-testing" : "tier-low");
-            const tierLabel = m.status === "winner" ? "🔥 Winner" : (m.status === "testing" ? "⏳ Testing" : "💤 Underperform");
-            return `
-              <tr>
-                <td class="slot">#${m.slot}</td>
-                <td><div style="font-weight:500;">${esc(prod.title || "Slot #" + m.slot)}</div></td>
-                <td class="num" style="min-width:110px;">
-                  <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="font-family:var(--mono);font-size:12px;">${pct}%</span>
-                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;"></div></div>
-                  </div>
-                </td>
-                <td class="num mono">${m.replies_sent || 0} / 20</td>
-                <td class="num mono col-hide-sm">${m.amazon_clicks || 0}</td>
-                <td class="num mono col-hide-sm">${m.amazon_sales || 0}</td>
-                <td><span class="pill ${tierClass}" style="border:1px solid currentColor;">${tierLabel}</span></td>
-                <td>
-                  <button class="btn btn-sm btn-ghost edit-slot-btn" data-slot="${m.slot}" data-clicks="${m.amazon_clicks || 0}" data-sales="${m.amazon_sales || 0}" data-status="${m.status}">Update</button>
-                </td>
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 3. COLLAPSIBLE CRAWLER STREAM DRAWER -->
+    <!-- Collapsible Live Sniffer Stream Drawer -->
     <details class="console-drawer" style="margin-bottom:28px;">
       <summary class="console-summary">
         <div style="display:flex;align-items:center;gap:8px;font-weight:500;">
           <span class="pulse-dot"></span>
-          <span>Live Crawler & Sniffer Stream Console</span>
-          <span style="font-size:11.5px;color:var(--ink-3);font-family:var(--mono);margin-left:6px;" id="console-head-status">Click to expand live logs</span>
+          <span>Live GraphQL Sniffer Console</span>
+          <span style="font-size:11.5px;color:var(--ink-3);font-family:var(--mono);margin-left:6px;" id="console-head-status">Click to monitor live stream</span>
         </div>
         <span class="btn btn-sm btn-ghost" style="font-size:11.5px;">Toggle Stream</span>
       </summary>
       <div class="log" id="crawler-live-log" style="background:#111411;color:#bbf7d0;font-family:var(--mono);font-size:12px;line-height:1.6;padding:14px;max-height:220px;overflow-y:auto;border-top:1px solid var(--line);">
-        ${(state.logs && state.logs.length) ? state.logs.slice(-30).map(esc).join("<br>") : `<span style="color:#666;">[Waiting for crawler trigger. Click "🚀 Run Session" to start GraphQL Sniffer]</span>`}
+        ${(state.logs && state.logs.length) ? state.logs.slice(-30).map(esc).join("<br>") : `<span style="color:#666;">[Waiting for crawler trigger. Click "🚀 Run Scanner" to start GraphQL Sniffer]</span>`}
       </div>
     </details>
 
-    <!-- 4. RECENT REPLIES AUDIT STREAM -->
-    <h3 style="font-size:14px;font-weight:600;margin:0 0 10px;">Recent Reply Audit Stream (SQLite)</h3>
-    <div class="log" style="max-height:260px;">
-      ${replies.length === 0 ? `<div class="log-empty">No automated replies recorded in DB yet. Ready for first run.</div>` : replies.map(r => `
+    <!-- Dispatched Replies Audit Stream -->
+    <h3 style="font-size:14px;font-weight:600;margin:0 0 10px;">Recent Dispatched Replies (SQLite Audit)</h3>
+    <div class="log" style="max-height:240px;">
+      ${replies.length === 0 ? `<div class="log-empty">No replies dispatched yet. Approved drafts will appear here.</div>` : replies.map(r => `
         <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--line);">
           <span style="color:var(--accent);font-weight:600;">[Slot #${r.slot}]</span> 
           <span style="color:var(--ink-3);">${r.sent_at} UTC</span>
@@ -722,6 +691,7 @@ function renderExperiments(p) {
   `;
 }
 
+/* Side-by-Side Queue Renderer */
 function renderApprovalQueue() {
   const container = $("#approval-queue-list");
   const pill = $("#queue-count-pill");
@@ -731,10 +701,10 @@ function renderApprovalQueue() {
 
   if (list.length === 0) {
     container.innerHTML = `
-      <div style="border:1px dashed var(--line);border-radius:var(--radius);padding:24px;text-align:center;background:var(--surface);">
-        <div style="font-weight:500;font-size:14px;color:var(--ink);margin-bottom:4px;">No Pending Replies to Review</div>
-        <div style="color:var(--ink-3);font-size:13px;max-width:420px;margin:0 auto 14px;">The queue is all caught up. Run a crawler session to find fresh complaint threads and generate contextual 4-part replies.</div>
-        <button class="btn btn-sm btn-ghost" onclick="document.querySelector('#run-batch-btn').click()">Trigger Scanner Now ↗</button>
+      <div style="border:1px dashed var(--line);border-radius:var(--radius);padding:28px 24px;text-align:center;background:var(--surface);">
+        <div style="font-weight:600;font-size:14px;color:var(--ink);margin-bottom:4px;">No Pending Replies in Queue</div>
+        <div style="color:var(--ink-3);font-size:13px;max-width:440px;margin:0 auto 16px;">The radar is caught up. Pick a scanner topic above or click "Run Scanner" to intercept fresh complaint threads on Threads.</div>
+        <button class="btn btn-sm btn-ghost" onclick="document.querySelector('#run-batch-btn').click()">Trigger Radar Scanner ↗</button>
       </div>
     `;
     return;
@@ -742,31 +712,41 @@ function renderApprovalQueue() {
 
   container.innerHTML = list.map(item => `
     <div class="approval-card">
-      <div class="approval-meta">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="pill pill-ok" style="font-weight:600;">Slot #${item.matched_slot}: ${esc(item.product_name)}</span>
-          <span style="font-size:13px;color:var(--ink-2);">Target: <strong>@${esc(item.author_username)}</strong></span>
+      <div class="approval-card-head">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="pill pill-ok" style="font-weight:600;font-size:12px;">Slot #${item.matched_slot}: ${esc(item.product_name)}</span>
+          <span style="font-size:13px;color:var(--ink-2);">Author: <strong>@${esc(item.author_username)}</strong></span>
         </div>
-        <a href="${item.thread_url}" target="_blank" rel="noopener" class="btn btn-sm btn-ghost" style="font-size:12px;">View Thread ${icons.external}</a>
+        <a href="${item.thread_url}" target="_blank" rel="noopener" class="btn btn-sm btn-ghost" style="font-size:12px;">Open Thread ${icons.external}</a>
       </div>
 
-      <div class="bubble-grid">
-        <div class="bubble-complaint">
-          <span class="bubble-tag" style="color:var(--ink-3);">Original Threads Post</span>
-          “${esc(item.thread_text)}”
+      <!-- Side-by-Side Split Grid -->
+      <div class="approval-split">
+        <!-- Left: Threads Complaint Post -->
+        <div class="col-complaint">
+          <div class="col-tag-row">
+            <span style="color:var(--ink-3);">Threads Complaint Post</span>
+            <span class="pill pill-muted" style="font-size:11px;">Target Post</span>
+          </div>
+          <p class="col-body">“${esc(item.thread_text)}”</p>
         </div>
-        <div class="bubble-reply">
-          <span class="bubble-tag" style="color:var(--accent);">Emma's 4-Part Honest Reply</span>
-          “${esc(item.draft_reply)}”
+
+        <!-- Right: Emma's 4-Part Honest Reply -->
+        <div class="col-reply">
+          <div class="col-tag-row">
+            <span style="color:var(--accent);font-weight:600;">Emma's 4-Part Honest Reply</span>
+            <span class="pill pill-ok" style="font-size:11px;">Bio #${item.matched_slot}</span>
+          </div>
+          <p class="col-body">“${esc(item.draft_reply)}”</p>
         </div>
       </div>
 
-      <div style="display:flex;align-items:center;justify-content:space-between;padding-top:4px;">
+      <div class="approval-card-actions">
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-sm btn-accent approve-btn" data-id="${item.id}" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500;">✓ Approve & Dispatch</button>
+          <button class="btn btn-sm btn-accent approve-btn" data-id="${item.id}" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;">✓ Approve & Dispatch</button>
           <button class="btn btn-sm btn-ghost reject-btn" data-id="${item.id}" style="color:var(--danger);">✕ Discard</button>
         </div>
-        <span style="font-size:11.5px;color:var(--ink-3);font-family:var(--mono);">Never Lie verified</span>
+        <span style="font-size:11.5px;color:var(--ink-3);font-family:var(--mono);">Never Lie verified · Strict Context Pass</span>
       </div>
     </div>
   `).join("");
@@ -776,7 +756,7 @@ function renderApprovalQueue() {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
       btn.disabled = true;
-      btn.textContent = "Sending to Threads…";
+      btn.textContent = "Dispatching to Threads…";
       try {
         await fetch("/api/queue/approve", {
           method: "POST",
@@ -815,12 +795,13 @@ function renderApprovalQueue() {
   });
 }
 
-function renderContent(p) {
+/* ---------- Workspace 2: Feed Broadcasts ---------- */
+function renderBroadcast(p) {
   return `
     <div class="panel-intro">
       <div>
-        <h2>Threads posts</h2>
-        <p>${state.live ? "Publishing runs through the local browser session. One post at a time; wait for the status to change." : "Read-only here. Copy a post to publish from your phone, or open this page on localhost to publish directly."}</p>
+        <h2>Feed Broadcasts</h2>
+        <p>Curated lifestyle and problem-solution threads for @${esc(p.persona.toLowerCase().replace(/\s+/g, ""))}. Publish directly or copy to phone.</p>
       </div>
     </div>
     <ul class="post-list">
@@ -847,60 +828,159 @@ function renderContent(p) {
     </ul>`;
 }
 
-function renderReplies(p) {
+/* ---------- Workspace 3: Catalog & Sprint ---------- */
+function renderCatalogSprint(p) {
+  const metrics = state.metrics || [];
+  const totalReplies = metrics.reduce((a, b) => a + (b.replies_sent || 0), 0);
+  const winners = metrics.filter(m => m.status === "winner").length;
+  const testing = metrics.filter(m => m.status === "testing").length;
+
   return `
     <div class="panel-intro">
       <div>
-        <h2>Reply tester</h2>
-        <p>Paste a real Threads complaint to see which slot it maps to and the reply ${esc(p.persona)} would leave.</p>
+        <h2>Master Catalog & 7-Day Sprint</h2>
+        <p>Sprint 1: <strong>Oct 28 – Nov 04</strong> · Target: <strong>20 replies / slot</strong> to evaluate conversion. Slot numbers #1–#10 are permanent.</p>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sm" id="view-lander-toggle-btn">📱 Preview Bio Lander</button>
+        <button class="btn btn-sm" id="refresh-metrics-btn">Refresh DB</button>
+      </div>
+    </div>
+
+    <!-- Unified Master Catalog & Sprint Matrix Table -->
+    <div class="table-wrap" style="margin-bottom:28px;">
+      <table>
+        <thead><tr>
+          <th>Slot</th>
+          <th>Product & Hook</th>
+          <th class="col-hide-sm">Category</th>
+          <th class="num col-hide-sm">Amazon Rating</th>
+          <th class="num">Sprint Progress (Min 20)</th>
+          <th class="num mono col-hide-sm">Clicks</th>
+          <th class="num mono col-hide-sm">Orders</th>
+          <th>Tier</th>
+          <th class="num">Actions</th>
+        </tr></thead>
+        <tbody>
+          ${p.catalog.map(it => {
+            const m = metrics.find(x => x.slot === it.slot) || { replies_sent: 0, amazon_clicks: 0, amazon_sales: 0, status: "testing" };
+            const pct = Math.min(100, Math.round(((m.replies_sent || 0) / 20) * 100));
+            const tierClass = m.status === "winner" ? "tier-winner" : (m.status === "testing" ? "tier-testing" : "tier-low");
+            const tierLabel = m.status === "winner" ? "🔥 Winner" : (m.status === "testing" ? "⏳ Testing" : "💤 Underperform");
+            return `
+              <tr>
+                <td class="slot">#${it.slot}</td>
+                <td>
+                  <div class="product">
+                    <img class="thumb" src="${it.image}" alt="" loading="lazy" width="44" height="44">
+                    <div>
+                      <div class="product-title">${esc(it.title)}</div>
+                      <div class="product-hook">${esc(it.hook)}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="col-hide-sm muted">${esc(it.category)}</td>
+                <td class="num col-hide-sm">
+                  <span class="rating">${icons.star}${it.rating.toFixed(1)}</span>
+                  <div style="font-size:11.5px;color:var(--ink-3);">${esc(it.velocity)}</div>
+                </td>
+                <td class="num" style="min-width:115px;">
+                  <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
+                    <span style="font-family:var(--mono);font-size:12px;">${pct}%</span>
+                    <div class="progress-bar-bg" style="width:50px;"><div class="progress-bar-fill" style="width:${pct}%;"></div></div>
+                  </div>
+                  <div style="font-size:11px;color:var(--ink-3);font-family:var(--mono);margin-top:2px;">${m.replies_sent || 0} / 20 replies</div>
+                </td>
+                <td class="num mono col-hide-sm">${m.amazon_clicks || 0}</td>
+                <td class="num mono col-hide-sm">${m.amazon_sales || 0}</td>
+                <td><span class="pill ${tierClass}" style="border:1px solid currentColor;">${tierLabel}</span></td>
+                <td class="num">
+                  <div style="display:flex;gap:6px;justify-content:flex-end;">
+                    <button class="btn btn-sm btn-ghost edit-slot-btn" data-slot="${it.slot}" data-clicks="${m.amazon_clicks || 0}" data-sales="${m.amazon_sales || 0}" data-status="${m.status}">Update</button>
+                    <a class="row-link" href="https://www.amazon.com/dp/${it.asin}?tag=${p.tag}" target="_blank" rel="noopener">${icons.external}</a>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Quick Stat Cards -->
+    <div class="exp-stats">
+      <div class="exp-card">
+        <div class="exp-card-label">Total Dispatched</div>
+        <div class="exp-card-val">${totalReplies}</div>
+        <div class="exp-card-sub">Recorded in affiliate.db</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-card-label">Testing Active</div>
+        <div class="exp-card-val">${testing} slots</div>
+        <div class="exp-card-sub">Under 20 replies target</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-card-label">Winning Slots</div>
+        <div class="exp-card-val">${winners}</div>
+        <div class="exp-card-sub">Sales > 0 or Clicks > 10</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-card-label">Database Path</div>
+        <div class="exp-card-val" style="font-size:13px;word-break:break-all;">data/affiliate.db</div>
+        <div class="exp-card-sub">SQLite Local Storage</div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- Workspace 4: Persona & Rules ---------- */
+function renderPersona(p) {
+  return `
+    <div class="persona-bio">
+      <img src="${p.avatar}" alt="${esc(p.persona)}">
+      <div>
+        <strong style="color:var(--ink);font-weight:600;font-size:15px;">${esc(p.persona)}</strong>
+        <div style="color:var(--ink-2);margin-top:2px;max-width:70ch;">${esc(p.bio)}</div>
+      </div>
+    </div>
+
+    <!-- Persona 3-Card Grid -->
+    <div class="persona-grid">
+      <div class="persona-card">
+        <h3>Ground Rules</h3>
+        <ol>${p.rules.map(r => `<li>${esc(r)}</li>`).join("")}</ol>
+      </div>
+      <div class="persona-card">
+        <h3>Never Write (Banned AI Slop)</h3>
+        <div class="tags">${p.banned.map(b => `<span class="banned-tag">${esc(b)}</span>`).join("")}</div>
+      </div>
+      <div class="persona-card">
+        <h3>Signature Phrasing</h3>
+        <ul>${p.signatures.map(s => `<li>${esc(s)}</li>`).join("")}</ul>
+      </div>
+    </div>
+
+    <!-- Interactive Reply Sandbox Simulator -->
+    <div class="panel-intro" style="margin-top:32px;">
+      <div>
+        <h2>Interactive Reply Sandbox</h2>
+        <p>Test any real or hypothetical Threads complaint against Emma's 4-part arc and slot mapping rules.</p>
       </div>
     </div>
     <div class="tester">
       <div>
-        <label class="field-label" for="sim-input">Post text</label>
-        <textarea class="textarea" id="sim-input" placeholder="e.g. my lower back is killing me after sitting all day"></textarea>
+        <label class="field-label" for="sim-input">Complaint text</label>
+        <textarea class="textarea" id="sim-input" placeholder="e.g. golden retriever shedding is getting completely out of hand on my couch..."></textarea>
         <div class="samples" aria-label="Sample posts">
           ${p.samples.map(([label, text]) => `<button class="chip" data-sample="${esc(text)}">${esc(label)}</button>`).join("")}
         </div>
         <button class="btn btn-primary" id="sim-run">Match and draft reply</button>
       </div>
       <div class="result" id="sim-result" aria-live="polite">
-        <div class="result-empty"><strong>No post tested yet</strong>Pick a sample or paste a post, then run the match.</div>
+        <div class="result-empty"><strong>No complaint tested yet</strong>Pick a sample chip above or paste a custom complaint.</div>
       </div>
-    </div>`;
-}
-
-function renderPersona(p) {
-  return `
-    <div class="persona-bio"><img src="${p.avatar}" alt=""><div><strong style="color:var(--ink);font-weight:600">${esc(p.persona)}</strong><br>${esc(p.bio)}</div></div>
-    <div class="persona">
-      <section><h3>Never write</h3><div class="tags">${p.banned.map(b => `<span class="tag">${esc(b)}</span>`).join("")}</div></section>
-      <section><h3>Signature phrasing</h3><ul>${p.signatures.map(s => `<li>${esc(s)}</li>`).join("")}</ul></section>
-      <section><h3>Ground rules</h3><ol>${p.rules.map(r => `<li>${esc(r)}</li>`).join("")}</ol></section>
-    </div>`;
-}
-
-function renderLander(p) {
-  return `
-    <div class="lander">
-      <div class="device"><iframe src="${p.landerUrl}" title="${esc(p.name)} lander preview" loading="lazy"></iframe></div>
-      <div>
-        <div class="panel-intro"><div><h2>Bio lander</h2><p>The page every reply points to. Live from Cloudflare Pages.</p></div></div>
-        <dl class="kv">
-          <dt>URL</dt><dd><a href="${p.landerUrl}" target="_blank" rel="noopener">${p.landerUrl.replace("https://", "")}</a></dd>
-          <dt>Tracking ID</dt><dd class="mono">${esc(p.tag)}</dd>
-          <dt>Disclosure</dt><dd>“As an Amazon Associate I earn from qualifying purchases.”</dd>
-          <dt>Hosting</dt><dd>Cloudflare Pages, deploys from <span class="mono">main</span></dd>
-        </dl>
-        <p style="margin-top:20px"><button class="btn" id="reload-lander">Reload preview</button></p>
-      </div>
-    </div>`;
-}
-
-function renderActivity() {
-  return `
-    <div class="panel-intro"><div><h2>Activity</h2><p>Local server log. Refreshes every 3 seconds while this tab is open.</p></div></div>
-    <div class="log" id="log">${state.logs.length ? state.logs.map(esc).join("<br>") : '<span class="log-empty">Nothing logged yet.</span>'}</div>`;
+    </div>
+  `;
 }
 
 function renderNewIp() {
@@ -922,19 +1002,23 @@ let logTimer = null;
 function bindPanel(p) {
   clearInterval(logTimer);
 
+  // Expand post
   document.querySelectorAll("[data-expand]").forEach(b => b.addEventListener("click", () => {
     const body = b.previousElementSibling;
     const open = body.classList.toggle("is-clamped");
     b.textContent = open ? "Show full post" : "Show less";
   }));
 
+  // Copy post
   document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
     const post = p.posts.find(x => x.id === b.dataset.copy);
     await copy(post.text, b);
   }));
 
+  // Publish post
   document.querySelectorAll("[data-publish]").forEach(b => b.addEventListener("click", () => publish(p, b)));
 
+  // Sandbox testing
   const input = $("#sim-input");
   if (input) {
     document.querySelectorAll("[data-sample]").forEach(c => c.addEventListener("click", () => { input.value = c.dataset.sample; runMatch(p); }));
@@ -942,16 +1026,61 @@ function bindPanel(p) {
     input.addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) runMatch(p); });
   }
 
+  // Bio Lander Modal
+  const openModal = () => {
+    const m = $("#lander-modal");
+    if (m) { m.hidden = false; setTimeout(() => m.classList.add("is-open"), 10); }
+  };
+  const closeModal = () => {
+    const m = $("#lander-modal");
+    if (m) { m.classList.remove("is-open"); setTimeout(() => m.hidden = true, 200); }
+  };
+  const openLanderBtn = $("#open-lander-btn");
+  if (openLanderBtn) openLanderBtn.addEventListener("click", openModal);
+  const viewLanderToggleBtn = $("#view-lander-toggle-btn");
+  if (viewLanderToggleBtn) viewLanderToggleBtn.addEventListener("click", openModal);
+  const closeLanderBtn = $("#close-lander-modal");
+  if (closeLanderBtn) closeLanderBtn.addEventListener("click", closeModal);
+  const reloadLanderBtn = $("#reload-lander-btn");
+  if (reloadLanderBtn) reloadLanderBtn.addEventListener("click", () => {
+    const ifr = $("#modal-lander-iframe");
+    if (ifr) ifr.src = ifr.src;
+    toast("Reloaded bio lander preview.");
+  });
+
+  // Scanner Topic Pills
+  document.querySelectorAll(".topic-pill").forEach(pill => {
+    pill.addEventListener("click", async () => {
+      document.querySelectorAll(".topic-pill").forEach(x => x.classList.remove("is-active"));
+      pill.classList.add("is-active");
+      const q = pill.dataset.query;
+      toast(`Triggering radar scan: "${q}"`);
+      try {
+        await fetch("/api/automation/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: q, scrolls: 3 })
+        });
+        toast(`Radar dispatched! Monitoring GraphQL for "${q}"...`);
+      } catch (err) {
+        toast("Scan trigger error: " + err.message);
+      }
+    });
+  });
+
+  // Run Batch Scanner Button
   const runBatch = $("#run-batch-btn");
   if (runBatch) {
     runBatch.addEventListener("click", async () => {
       runBatch.disabled = true;
-      runBatch.textContent = "Running…";
+      runBatch.textContent = "Scanning Threads…";
+      const activePill = document.querySelector(".topic-pill.is-active");
+      const q = activePill ? activePill.dataset.query : "dog hair couch vacuuming";
       try {
-        const res = await fetch("/api/automation/run", {
+        await fetch("/api/automation/run", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: "dog hair couch vacuuming", scrolls: 3 })
+          body: JSON.stringify({ query: q, scrolls: 3 })
         });
         toast("GraphQL Sniffer started! Watch live console below.");
       } catch (err) {
@@ -959,68 +1088,31 @@ function bindPanel(p) {
       } finally {
         setTimeout(() => {
           runBatch.disabled = false;
-          runBatch.textContent = "🚀 Run Session (Batch 5)";
+          runBatch.textContent = "🚀 Run Scanner (Batch 5)";
         }, 3000);
       }
     });
   }
 
-  if (state.tab === "experiments") {
+  // Refresh DB Button
+  const refreshBtns = [$("#refresh-db-btn"), $("#refresh-metrics-btn")];
+  refreshBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener("click", async () => {
+        btn.textContent = "Refreshing…";
+        await fetchAnalytics();
+        render();
+        toast("Analytics refreshed from SQLite.");
+      });
+    }
+  });
+
+  // Render Queue when on Radar workspace
+  if (state.tab === "radar") {
     renderApprovalQueue();
   }
 
-  const refreshDb = $("#refresh-db-btn");
-  if (refreshDb) {
-    refreshDb.addEventListener("click", async () => {
-      refreshDb.textContent = "Refreshing…";
-      await fetchAnalytics();
-      render();
-      toast("Analytics data refreshed from SQLite.");
-    });
-  }
-
-  document.querySelectorAll(".approve-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.id;
-      btn.disabled = true;
-      btn.textContent = "Sending to Threads…";
-      try {
-        const res = await fetch("/api/queue/approve", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: Number(id) })
-        });
-        toast("Reply approved! Dispatched in background.");
-        setTimeout(async () => {
-          await fetchAnalytics();
-          render();
-        }, 4000);
-      } catch (err) {
-        toast("Error approving: " + err.message);
-        btn.disabled = false;
-      }
-    });
-  });
-
-  document.querySelectorAll(".reject-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const id = btn.dataset.id;
-      btn.disabled = true;
-      try {
-        await fetch("/api/queue/reject", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: Number(id) })
-        });
-        toast("Draft discarded.");
-        await fetchAnalytics();
-        render();
-      } catch (err) {
-        toast("Error: " + err.message);
-      }
-    });
-  });
-
+  // Edit slot metrics
   document.querySelectorAll(".edit-slot-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
       const slot = btn.dataset.slot;
@@ -1057,27 +1149,27 @@ function bindPanel(p) {
     });
   });
 
-  if (state.tab === "activity" || state.tab === "experiments") {
+  // Live polling for Radar console & queue
+  if (state.tab === "radar") {
     logTimer = setInterval(async () => {
       await fetchLogs();
-      const el = state.tab === "activity" ? $("#log") : $("#crawler-live-log");
+      const el = $("#crawler-live-log");
       if (el) {
         el.innerHTML = state.logs.length ? state.logs.slice(-30).map(esc).join("<br>") : '<span class="log-empty">Waiting for crawler trigger...</span>';
         el.scrollTop = el.scrollHeight;
       }
-      if (state.tab === "experiments") {
-        // Also quietly check if queue was updated
-        try {
-          const r = await fetch("/api/queue", { cache: "no-store" });
-          if (r.ok) {
-            const data = await r.json();
-            if ((data.queue || []).length !== (state.approvalQueue || []).length) {
-              state.approvalQueue = data.queue || [];
-              renderApprovalQueue();
-            }
+      try {
+        const r = await fetch("/api/queue", { cache: "no-store" });
+        if (r.ok) {
+          const data = await r.json();
+          if ((data.queue || []).length !== (state.approvalQueue || []).length) {
+            state.approvalQueue = data.queue || [];
+            renderApprovalQueue();
+            const badge = $("#radar-pending-badge");
+            if (badge) badge.textContent = state.approvalQueue.length;
           }
-        } catch {}
-      }
+        }
+      } catch {}
     }, 1500);
   }
 }

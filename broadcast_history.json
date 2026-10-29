@@ -22,5 +22,13 @@
     "image": null,
     "timestamp": "2026-10-29T13:48:21.203986",
     "status": "success"
+  },
+  {
+    "id": "pet_hair_couch_slot1",
+    "title": "Pet Hair & Couch Relief (Slot #1)",
+    "text": "vacuuming only gets about 60% of pet hair off couches and car seats. regular lint rollers run out in 2 minutes.\n\nthat extra-sticky 5-pack with 40k reviews is the only thing that actually pulls up deep stubborn fur.\n\nsaved under #1 on my page.",
+    "image": "public/assets/emma/emma_couch.jpg",
+    "timestamp": "2026-10-29T14:33:30.883983",
+    "status": "success"
   }
 ]

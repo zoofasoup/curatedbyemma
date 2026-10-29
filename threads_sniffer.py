@@ -18,6 +18,19 @@ import reply_generator
 
 SESSION_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "threads_session.json")
 
+SLOT_SEARCH_QUERIES = {
+    1: "dog hair couch vacuuming",
+    2: "baby won't sleep crying",
+    3: "office chair lower back pain",
+    4: "air fryer soggy oil",
+    5: "scrubbing tile grout bathtub",
+    6: "charging cables falling behind nightstand",
+    7: "flight neck pain phone",
+    8: "wrinkled clothes hotel travel",
+    9: "earbuds hurt side sleeping",
+    10: "dust crumbs car air vent"
+}
+
 def stream_log(msg, callback=None):
     timestamp = datetime.now().strftime("%H:%M:%S")
     formatted = f"[{timestamp}] {msg}"
@@ -137,8 +150,6 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
     log(f"🔍 Analyzing {len(unique_posts)} unique candidate posts against Context & Engagement Gates...")
 
     processed_candidates = []
-    conn = db.get_connection()
-    c = conn.cursor()
 
     for pid, p in unique_posts.items():
         author = p["username"]
@@ -147,13 +158,20 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
         replies = p["reply_count"]
         url = p["url"] or f"https://www.threads.net/@{author}"
 
-        # 1. Determine Engagement Tier
+        # 0. Strict Deduplication Gate
+        if db.is_thread_already_processed(url, ip_id="emma"):
+            log(f"⏭️ Skipping @{author} ({url}) — already queued or replied.")
+            continue
+
+        # 1. Determine Engagement Tier & Opportunity Score
         if likes >= 20 or replies >= 5:
             engagement_tier = "🔥 VIRAL HIJACK"
+            opportunity_score = min(100, int(likes + (replies * 3)))
         else:
             engagement_tier = "⚡ FRESH SNIPER"
+            opportunity_score = 85 + (15 if replies == 0 else (5 if replies <= 2 else 0))
 
-        log(f"--- Checking @{author} ({engagement_tier} | {likes} likes, {replies} replies) ---")
+        log(f"--- Checking @{author} ({engagement_tier} | Score: {opportunity_score} | {likes} likes, {replies} replies) ---")
 
         # 2. Strict Context & Never Lie Evaluation
         eval_res = reply_generator.evaluate_and_draft_local(text, author=author)
@@ -168,28 +186,60 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=3, headles
         log(f"✅ ACCEPTED! Slot #{slot}: {prod_name}")
         log(f"📝 Reply Draft: \"{draft[:80]}...\"")
 
-        # Store in Approval Queue with engagement data
-        c.execute("""
-        INSERT OR IGNORE INTO reply_approval_queue 
-        (ip_id, author_username, thread_url, thread_text, matched_slot, product_name, draft_reply, status)
-        VALUES ('emma', ?, ?, ?, ?, ?, ?, 'pending')
-        """, (author, url, f"[{engagement_tier} - {likes} likes, {replies} replies] {text}", slot, prod_name, draft))
-        conn.commit()
+        added = db.add_to_queue(
+            ip_id="emma",
+            author=author,
+            thread_url=url,
+            thread_text=text,
+            slot=slot,
+            product_name=prod_name,
+            draft_reply=draft,
+            engagement_tier=engagement_tier,
+            likes_count=likes,
+            replies_count=replies,
+            opportunity_score=opportunity_score
+        )
 
-        processed_candidates.append({
-            "author": author,
-            "url": url,
-            "engagement": engagement_tier,
-            "likes": likes,
-            "replies": replies,
-            "slot": slot,
-            "draft": draft
-        })
+        if added:
+            processed_candidates.append({
+                "author": author,
+                "url": url,
+                "engagement": engagement_tier,
+                "score": opportunity_score,
+                "likes": likes,
+                "replies": replies,
+                "slot": slot,
+                "draft": draft
+            })
 
-    conn.close()
     log(f"🏁 Finished! Added {len(processed_candidates)} qualified candidate(s) to Approval Queue.")
     return processed_candidates
 
+def run_query_rotation(slots=None, scrolls=2, headless=True, log_callback=None):
+    """
+    Rotates queries across the specified slots (default: all 10 slots).
+    Safely captures opportunities for each product in Emma's catalog.
+    """
+    target_slots = slots if slots else list(range(1, 11))
+    total_found = 0
+    for s in target_slots:
+        query = SLOT_SEARCH_QUERIES.get(s)
+        if not query:
+            continue
+        stream_log(f"\n==========================================", callback=log_callback)
+        stream_log(f"🎯 SPRINT ROTATOR: Slot #{s} -> Query '{query}'", callback=log_callback)
+        stream_log(f"==========================================", callback=log_callback)
+        try:
+            candidates = run_graphql_sniffer(query=query, scrolls=scrolls, headless=headless, log_callback=log_callback)
+            total_found += len(candidates)
+            time.sleep(3) # safe delay between queries
+        except Exception as e:
+            stream_log(f"⚠️ Error querying slot #{s} ('{query}'): {e}", callback=log_callback)
+    return total_found
+
 if __name__ == "__main__":
-    q = sys.argv[1] if len(sys.argv) > 1 else "office chair lower back pain"
-    run_graphql_sniffer(query=q, scrolls=2, headless=True)
+    if len(sys.argv) > 1 and sys.argv[1] == "--rotate":
+        run_query_rotation(scrolls=2, headless=True)
+    else:
+        q = sys.argv[1] if len(sys.argv) > 1 else "office chair lower back pain"
+        run_graphql_sniffer(query=q, scrolls=2, headless=True)

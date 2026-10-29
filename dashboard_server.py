@@ -234,21 +234,27 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.send_json({"error": str(e)}, status=400)
 
     def handle_run_automation(self, data):
-        query = data.get("query", "office chair lower back pain")
+        query = data.get("query")
         scrolls = int(data.get("scrolls", 2))
+        rotate = bool(data.get("rotate", False))
 
         def worker():
-            add_log(f"🚀 Starting GraphQL Sniffer Session for '{query}'...")
             try:
                 import threads_sniffer
-                found = threads_sniffer.run_graphql_sniffer(query=query, scrolls=scrolls, headless=True, log_callback=add_log)
-                add_log(f"✓ Sniffer Session Finished! Added {len(found)} qualified drafts to Approval Queue.")
+                if rotate or not query:
+                    add_log("🚀 Starting Multi-Slot Query Rotator across catalog...")
+                    total = threads_sniffer.run_query_rotation(scrolls=scrolls, headless=True, log_callback=add_log)
+                    add_log(f"✓ Sprint Rotator Completed! Found and queued {total} high-intent opportunity(s).")
+                else:
+                    add_log(f"🚀 Starting GraphQL Sniffer for query: '{query}'...")
+                    found = threads_sniffer.run_graphql_sniffer(query=query, scrolls=scrolls, headless=True, log_callback=add_log)
+                    add_log(f"✓ Sniffer Session Finished! Added {len(found)} qualified drafts to Approval Queue.")
             except Exception as e:
                 add_log(f"[X] Sniffer run failed: {e}")
 
         t = threading.Thread(target=worker, daemon=True)
         t.start()
-        self.send_json({"status": "started", "query": query, "message": "GraphQL sniffer running in background"})
+        self.send_json({"status": "started", "message": "GraphQL sniffer running in background"})
 
     def handle_get_queue(self):
         try:
@@ -259,6 +265,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
     def handle_approve_queue(self, data):
         queue_id = int(data.get("id"))
+        # Immediately set status to 'dispatching' so it is removed from pending queue in dashboard
+        db.update_queue_status(queue_id, "dispatching")
+        
         def worker():
             add_log(f"🚀 User approved reply #{queue_id}. Dispatching to Threads...")
             try:
@@ -269,7 +278,6 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 err_str = str(e)
                 add_log(f"[X] Failed to send reply #{queue_id}: {err_str}")
                 try:
-                    import database as db
                     db.update_queue_status(queue_id, "failed")
                 except Exception:
                     pass

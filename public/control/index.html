@@ -526,10 +526,20 @@ function renderQueueView(p, pendingCount) {
           <p>No pending drafts to review. Click "Scan Threads" to hunt for fresh real-world complaints.</p>
           <button class="btn btn-sm btn-solid" onclick="document.querySelector('#scan-now-btn').click()">Scan Threads Now</button>
         </div>
-      ` : queue.map(item => `
-        <div class="triage-card">
+      ` : queue.map(item => {
+        // Strip legacy bracket prefix if present
+        const cleanComplaint = (item.thread_text || "").replace(/^\[.*?\]\s*/, "");
+        const isViral = (item.engagement_tier || "").includes("VIRAL");
+        return `
+        <div class="triage-card" id="queue-card-${item.id}">
           <div class="triage-head">
-            <span class="triage-slot-pill">Slot #${item.matched_slot}: ${esc(item.product_name)}</span>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span class="triage-slot-pill">Slot #${item.matched_slot}: ${esc(item.product_name)}</span>
+              <span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:${isViral ? '#fef3c7;color:#92400e;' : '#ecfdf5;color:#065f46;'}">
+                ${esc(item.engagement_tier || '⚡ FRESH SNIPER')} · Score ${item.opportunity_score || 85}
+              </span>
+              <span style="font-size:11px;color:var(--ink-3);">${item.likes_count || 0} likes · ${item.replies_count || 0} replies</span>
+            </div>
             <div style="display:flex;align-items:center;gap:10px;">
               <span style="color:var(--ink-2);">@<strong>${esc(item.author_username)}</strong></span>
               <a href="${item.thread_url}" target="_blank" rel="noopener" class="btn btn-sm btn-ghost" style="padding:0 6px;">Open Thread ↗</a>
@@ -537,7 +547,7 @@ function renderQueueView(p, pendingCount) {
           </div>
 
           <div class="triage-complaint">
-            “${esc(item.thread_text)}”
+            “${esc(cleanComplaint)}”
           </div>
 
           <div class="triage-reply-box">
@@ -553,10 +563,10 @@ function renderQueueView(p, pendingCount) {
               <button class="btn btn-sm btn-solid approve-btn" data-id="${item.id}">✓ Approve & Send</button>
               <button class="btn btn-sm btn-ghost reject-btn" data-id="${item.id}" style="color:var(--danger);">✕ Discard</button>
             </div>
-            <span style="font-size:11.5px;color:var(--ink-3);">Never Lie verified</span>
+            <span style="font-size:11.5px;color:var(--ink-3);">Never Lie verified · Direct Slot Reference</span>
           </div>
         </div>
-      `).join("")}
+      `;}).join("")}
 
       <!-- Collapsible Live Sniffer Stream Drawer -->
       <details class="console-box">
@@ -780,7 +790,7 @@ function bindActions(p) {
         await fetch("/api/automation/run", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: "dog hair couch vacuuming", scrolls: 3 })
+          body: JSON.stringify({ rotate: true, scrolls: 2 })
         });
       } catch (err) {
         toast("Scan error: " + err.message);
@@ -804,46 +814,49 @@ function bindActions(p) {
     };
   }
 
-  // Approve draft
+  // Approve draft with instant optimistic update
   document.querySelectorAll(".approve-btn").forEach(btn => {
     btn.onclick = async () => {
-      const id = btn.dataset.id;
+      const id = Number(btn.dataset.id);
       btn.disabled = true;
-      btn.textContent = "Sending…";
+      btn.textContent = "Dispatching…";
+
+      // Optimistically remove from state so the card vanishes immediately
+      state.approvalQueue = (state.approvalQueue || []).filter(x => x.id !== id);
+      render();
+      toast("Draft approved! Dispatching live to Threads...");
+
       try {
         await fetch("/api/queue/approve", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: Number(id) })
+          body: JSON.stringify({ id })
         });
-        toast("Reply approved! Dispatched to Threads.");
-        setTimeout(async () => {
-          await fetchAnalytics();
-          render();
-        }, 3000);
       } catch (err) {
-        toast("Error: " + err.message);
-        btn.disabled = false;
+        toast("Error dispatching: " + err.message);
       }
     };
   });
 
-  // Discard draft
+  // Discard draft with instant optimistic update
   document.querySelectorAll(".reject-btn").forEach(btn => {
     btn.onclick = async () => {
-      const id = btn.dataset.id;
+      const id = Number(btn.dataset.id);
       btn.disabled = true;
+
+      // Optimistically remove from state so the card vanishes immediately
+      state.approvalQueue = (state.approvalQueue || []).filter(x => x.id !== id);
+      render();
+      toast("Draft discarded.");
+
       try {
         await fetch("/api/queue/reject", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: Number(id) })
+          body: JSON.stringify({ id })
         });
-        toast("Draft discarded.");
-        await fetchAnalytics();
-        render();
       } catch (err) {
-        toast("Error: " + err.message);
+        toast("Error discarding: " + err.message);
       }
     };
   });

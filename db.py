@@ -62,10 +62,31 @@ def init_db():
         matched_slot INTEGER NOT NULL,
         product_name TEXT NOT NULL,
         draft_reply TEXT NOT NULL,
-        status TEXT DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
+        status TEXT DEFAULT 'pending', -- 'pending', 'dispatching', 'approved', 'rejected', 'failed'
+        engagement_tier TEXT DEFAULT 'FRESH_SNIPER',
+        likes_count INTEGER DEFAULT 0,
+        replies_count INTEGER DEFAULT 0,
+        opportunity_score INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
+
+    # Ensure unique index on (ip_id, thread_url) to guarantee strict deduplication
+    c.execute("""
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_queue_ip_url ON reply_approval_queue (ip_id, thread_url);
+    """)
+
+    # Migrate columns if existing DB created without them
+    c.execute("PRAGMA table_info(reply_approval_queue)")
+    cols = [col[1] for col in c.fetchall()]
+    if "engagement_tier" not in cols:
+        c.execute("ALTER TABLE reply_approval_queue ADD COLUMN engagement_tier TEXT DEFAULT 'FRESH_SNIPER'")
+    if "likes_count" not in cols:
+        c.execute("ALTER TABLE reply_approval_queue ADD COLUMN likes_count INTEGER DEFAULT 0")
+    if "replies_count" not in cols:
+        c.execute("ALTER TABLE reply_approval_queue ADD COLUMN replies_count INTEGER DEFAULT 0")
+    if "opportunity_score" not in cols:
+        c.execute("ALTER TABLE reply_approval_queue ADD COLUMN opportunity_score INTEGER DEFAULT 0")
 
     # 3. Slot Experiment & 7-Day Performance Metrics
     c.execute("""
@@ -121,24 +142,67 @@ def get_pending_queue(ip_id="emma"):
     c.execute("""
     SELECT * FROM reply_approval_queue 
     WHERE ip_id = ? AND status = 'pending'
-    ORDER BY created_at DESC
+    ORDER BY opportunity_score DESC, created_at DESC
     """, (ip_id,))
     rows = [dict(r) for r in c.fetchall()]
     conn.close()
     return rows
 
-def add_to_queue(ip_id, author, thread_url, thread_text, slot, product_name, draft_reply):
+def is_thread_already_processed(thread_url: str, ip_id: str = "emma") -> bool:
+    """
+    Strict deduplication check across:
+    1. reply_approval_queue (pending, dispatching, approved, rejected, failed)
+    2. threads_scraped (if previously ingested)
+    3. replies_sent (threads already replied to)
+    """
+    if not thread_url:
+        return False
+    norm_url = thread_url.strip().split("?")[0].rstrip("/")
     conn = get_connection()
     c = conn.cursor()
-    # Check if thread already in queue
-    c.execute("SELECT id FROM reply_approval_queue WHERE thread_url = ?", (thread_url,))
-    if not c.fetchone():
-        c.execute("""
-        INSERT INTO reply_approval_queue (ip_id, author_username, thread_url, thread_text, matched_slot, product_name, draft_reply, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
-        """, (ip_id, author, thread_url, thread_text, slot, product_name, draft_reply))
-        conn.commit()
+    
+    # Check queue
+    c.execute("""
+    SELECT id FROM reply_approval_queue 
+    WHERE ip_id = ? AND (thread_url = ? OR thread_url LIKE ?)
+    """, (ip_id, thread_url, norm_url + "%"))
+    if c.fetchone():
+        conn.close()
+        return True
+
+    # Check threads_scraped
+    c.execute("""
+    SELECT id FROM threads_scraped 
+    WHERE ip_id = ? AND (thread_url = ? OR thread_url LIKE ?)
+    """, (ip_id, thread_url, norm_url + "%"))
+    if c.fetchone():
+        conn.close()
+        return True
+
     conn.close()
+    return False
+
+def add_to_queue(ip_id, author, thread_url, thread_text, slot, product_name, draft_reply, 
+                 engagement_tier="FRESH_SNIPER", likes_count=0, replies_count=0, opportunity_score=0):
+    if is_thread_already_processed(thread_url, ip_id=ip_id):
+        return False
+    conn = get_connection()
+    c = conn.cursor()
+    try:
+        c.execute("""
+        INSERT INTO reply_approval_queue 
+        (ip_id, author_username, thread_url, thread_text, matched_slot, product_name, draft_reply, 
+         status, engagement_tier, likes_count, replies_count, opportunity_score)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)
+        """, (ip_id, author, thread_url, thread_text, slot, product_name, draft_reply,
+              engagement_tier, likes_count, replies_count, opportunity_score))
+        conn.commit()
+        added = True
+    except sqlite3.IntegrityError:
+        added = False
+    finally:
+        conn.close()
+    return added
 
 def update_queue_status(queue_id, new_status):
     conn = get_connection()

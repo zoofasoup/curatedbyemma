@@ -169,20 +169,20 @@ def run_reply_automation(max_replies_this_run=2, dry_run=False):
                             page.goto(direct_post_url, wait_until="domcontentloaded", timeout=25000)
                             page.wait_for_timeout(3500)
 
-                            # Locate the reply composer on detail page
-                            composer = page.locator("div[contenteditable='true']").first
+                            # Locate the lexical textbox on detail page
+                            composer = page.locator("div[role='textbox'][contenteditable='true']").first
                             composer.wait_for(state="visible", timeout=10000)
                             composer.click()
                             page.wait_for_timeout(500)
-                            page.keyboard.type(reply_text, delay=20)
+                            page.keyboard.type(reply_text, delay=22)
                             page.wait_for_timeout(1000)
 
-                            # Submit reply button
-                            submit_btn = page.locator("div[role='button']:has-text('Post'), div[role='button']:has-text('Balas')").first
-                            submit_btn.wait_for(state="visible", timeout=8000)
-                            submit_btn.click()
+                            # Native submit via Control+Enter & Meta+Enter (universal on Threads Web)
+                            page.keyboard.press("Control+Enter")
+                            page.wait_for_timeout(500)
+                            page.keyboard.press("Meta+Enter")
                             page.wait_for_timeout(4000)
-                            print(f"  [✓] Successfully replied to @{author} on {direct_post_url}!")
+                            print(f"  [✓] Successfully submitted honest reply to @{author} on {direct_post_url}!")
                         except Exception as e:
                             print(f"  [!] Failed to send reply via direct page: {e}")
                             continue

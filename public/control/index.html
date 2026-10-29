@@ -1,706 +1,370 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Emma Engine | Operations Control Center</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .mono { font-family: 'JetBrains Mono', monospace; }
-    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scroll::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 9999px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Control · ahmadzufaar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Rethink+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(0.985 0.004 85);
+    --surface: oklch(1 0 0);
+    --rail: oklch(0.963 0.006 85);
+    --hover: oklch(0.945 0.007 85);
+    --line: oklch(0.912 0.006 85);
+    --line-strong: oklch(0.86 0.008 85);
+    --ink: oklch(0.21 0.012 85);
+    --ink-2: oklch(0.43 0.012 85);
+    --ink-3: oklch(0.53 0.01 85);
+    --accent: oklch(0.44 0.085 162);
+    --accent-hover: oklch(0.38 0.085 162);
+    --accent-soft: oklch(0.955 0.025 162);
+    --star: oklch(0.7 0.14 75);
+    --warn-ink: oklch(0.47 0.1 70);
+    --warn-soft: oklch(0.96 0.035 80);
+    --danger: oklch(0.52 0.17 25);
+    --danger-soft: oklch(0.96 0.025 25);
+    --radius: 8px;
+    --radius-sm: 6px;
+    --font: "Rethink Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 400 14px/1.5 var(--font); font-feature-settings: "tnum" 1, "cv11" 1;
+    -webkit-font-smoothing: antialiased; caret-color: var(--accent);
+    scrollbar-color: var(--line-strong) transparent;
+  }
+  ::selection { background: var(--accent-soft); color: var(--ink); }
+  a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: -0.01em; }
+  .icon { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  [hidden] { display: none !important; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px;
+    border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface);
+    font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; text-decoration: none;
+    transition: background-color .15s, border-color .15s, color .15s;
+  }
+  .btn:hover { background: var(--hover); }
+  .btn:active { transform: translateY(0.5px); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: oklch(0.99 0 0); }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-ghost { border-color: transparent; background: transparent; color: var(--ink-2); }
+  .btn-ghost:hover { color: var(--ink); background: var(--hover); }
+  .btn-sm { height: 28px; padding: 0 10px; font-size: 12.5px; }
+  .btn.is-done { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- PIN gate ---------- */
+  .gate { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+  .gate-box { width: 100%; max-width: 320px; }
+  .gate h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 4px; }
+  .gate p { margin: 0 0 24px; color: var(--ink-2); }
+  .field-label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .input {
+    width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+    background: var(--surface); font: inherit; font-size: 16px; color: var(--ink);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 3px var(--danger-soft); }
+  .gate .input { letter-spacing: 0.4em; font-family: var(--mono); }
+  .gate .btn { width: 100%; justify-content: center; height: 40px; margin-top: 12px; font-size: 14px; }
+  .field-error { color: var(--danger); font-size: 13px; margin: 8px 0 0; }
+
+  /* ---------- App shell ---------- */
+  .app { display: grid; grid-template-columns: 232px 1fr; min-height: 100dvh; }
+  .rail {
+    background: var(--rail); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; position: sticky; top: 0; height: 100dvh; padding: 14px 10px;
+  }
+  .workspace { display: flex; align-items: center; gap: 10px; padding: 4px 8px 14px; }
+  .workspace-mark {
+    width: 26px; height: 26px; border-radius: 6px; background: var(--ink); color: var(--bg);
+    display: grid; place-items: center; font-weight: 700; font-size: 13px;
+  }
+  .workspace-name { font-weight: 600; font-size: 14px; line-height: 1.2; }
+  .workspace-sub { font-size: 12px; color: var(--ink-3); }
+  .rail-heading { font-size: 12px; font-weight: 500; color: var(--ink-3); padding: 14px 8px 6px; }
+  .ip-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+  .ip-link {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px 8px; border: 0; border-radius: var(--radius-sm);
+    background: transparent; cursor: pointer; text-align: left; transition: background-color .15s;
+  }
+  .ip-link:hover { background: var(--hover); }
+  .ip-link[aria-current="page"] { background: var(--surface); box-shadow: 0 1px 2px oklch(0.2 0.01 85 / 0.06), 0 0 0 1px var(--line); }
+  .ip-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex: none; }
+  .ip-name { font-weight: 500; font-size: 13.5px; }
+  .ip-handle { font-size: 12px; color: var(--ink-3); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-left: auto; flex: none; }
+  .status-dot.is-paused { background: var(--line-strong); }
+  .ip-add { color: var(--ink-2); font-size: 13px; }
+  .ip-add .icon { width: 15px; height: 15px; margin: 0 4.5px; }
+  .rail-foot { margin-top: auto; border-top: 1px solid var(--line); padding: 14px 10px 6px; display: flex; align-items: center; gap: 10px; }
+  .user-mark { width: 26px; height: 26px; border-radius: 50%; background: var(--line); display: grid; place-items: center; font-size: 12px; font-weight: 600; color: var(--ink-2); }
+  .user-name { font-size: 13px; font-weight: 500; }
+  .user-mode { font-size: 12px; color: var(--ink-3); }
+  .rail-foot .btn { margin-left: auto; padding: 0 7px; }
+
+  .main { min-width: 0; }
+  .page-head { padding: 28px 40px 0; max-width: 1180px; }
+  .title-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .title-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+  .title-row h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 0; line-height: 1.2; }
+  .title-meta { color: var(--ink-2); font-size: 13.5px; }
+  .title-actions { margin-left: auto; display: flex; gap: 8px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 18px 0 0; padding: 0; }
+  .facts div { display: flex; gap: 8px; align-items: baseline; }
+  .facts dt { color: var(--ink-3); font-size: 13px; }
+  .facts dd { margin: 0; font-size: 13px; font-weight: 500; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; height: 20px; padding: 0 7px; border-radius: 99px; font-size: 12px; font-weight: 500; }
+  .pill-ok { background: var(--accent-soft); color: var(--accent); }
+  .pill-warn { background: var(--warn-soft); color: var(--warn-ink); }
+  .pill-muted { background: var(--hover); color: var(--ink-2); }
+  .pill-ok::before, .pill-warn::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-top: 22px; overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    position: relative; padding: 9px 10px 11px; border: 0; background: none; cursor: pointer;
+    font-size: 13.5px; font-weight: 500; color: var(--ink-2); white-space: nowrap; transition: color .15s;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] { color: var(--ink); }
+  .tab[aria-selected="true"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; background: var(--ink); border-radius: 2px; }
+  .tab .count { color: var(--ink-3); font-weight: 400; margin-left: 4px; }
+
+  .panel { padding: 24px 40px 64px; max-width: 1180px; }
+  .panel-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+  .panel-intro h2 { font-size: 15px; font-weight: 600; margin: 0 0 2px; letter-spacing: -0.01em; }
+  .panel-intro p { margin: 0; color: var(--ink-2); font-size: 13.5px; max-width: 68ch; }
+
+  /* ---------- Table ---------- */
+  .table-wrap { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 12.5px; font-weight: 500; color: var(--ink-3); padding: 9px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; background: var(--surface); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 13.5px; }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr { transition: background-color .12s; }
+  tbody tr:hover { background: oklch(0.985 0.004 85); }
+  .num { text-align: right; white-space: nowrap; }
+  .slot { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); width: 44px; }
+  .product { display: flex; align-items: center; gap: 12px; min-width: 280px; }
+  .thumb { width: 40px; height: 40px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); object-fit: contain; padding: 3px; flex: none; }
+  .product-title { font-weight: 500; line-height: 1.35; }
+  .product-hook { color: var(--ink-3); font-size: 12.5px; }
+  .rating { display: inline-flex; align-items: center; gap: 4px; }
+  .rating svg { width: 13px; height: 13px; fill: var(--star); stroke: none; }
+  .muted { color: var(--ink-3); }
+  .row-link { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-2); text-decoration: none; font-size: 13px; }
+  .row-link:hover { color: var(--accent); }
+  .row-link .icon { width: 14px; height: 14px; }
+
+  /* ---------- Content list ---------- */
+  .post-list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  .post { display: grid; grid-template-columns: 56px 1fr auto; gap: 16px; padding: 16px; border-bottom: 1px solid var(--line); }
+  .post:last-child { border-bottom: 0; }
+  .post-media { width: 56px; height: 70px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--line); }
+  .post-media.is-text { display: grid; place-items: center; background: var(--rail); color: var(--ink-3); font-size: 11.5px; }
+  .post-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+  .post-title { font-weight: 600; font-size: 13.5px; }
+  .post-body { white-space: pre-line; color: var(--ink-2); font-size: 13.5px; max-width: 70ch; margin: 0; }
+  .post-body.is-clamped { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .post-expand { border: 0; background: none; padding: 0; margin-top: 4px; font-size: 12.5px; color: var(--ink-3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .post-expand:hover { color: var(--ink); }
+  .post-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+
+  /* ---------- Reply tester ---------- */
+  .tester { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+  .textarea { width: 100%; min-height: 132px; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); font: inherit; font-size: 14px; line-height: 1.55; resize: vertical; color: var(--ink); transition: border-color .15s, box-shadow .15s; }
+  .textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .samples { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 14px; }
+  .chip { height: 28px; padding: 0 10px; border: 1px solid var(--line); border-radius: 99px; background: var(--surface); font-size: 12.5px; color: var(--ink-2); cursor: pointer; transition: border-color .15s, color .15s; }
+  .chip:hover { border-color: var(--line-strong); color: var(--ink); }
+  .result { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 16px; min-height: 196px; }
+  .result-empty { color: var(--ink-3); font-size: 13.5px; display: grid; gap: 4px; }
+  .result-empty strong { color: var(--ink-2); font-weight: 500; }
+  .result-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .result-product { color: var(--ink-2); font-size: 13px; }
+  .reply-text { font-size: 14.5px; line-height: 1.6; margin: 0 0 14px; }
+  .checks { list-style: none; padding: 12px 0 0; margin: 0; border-top: 1px solid var(--line); display: grid; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
+  .checks li { display: flex; align-items: center; gap: 6px; }
+  .checks .icon { width: 14px; height: 14px; color: var(--accent); }
+  .checks .is-fail { color: var(--danger); }
+  .checks .is-fail .icon { color: var(--danger); }
+
+  /* ---------- Persona ---------- */
+  .persona { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  .persona section { padding: 18px; border-right: 1px solid var(--line); }
+  .persona section:last-child { border-right: 0; }
+  .persona h3 { font-size: 13px; font-weight: 600; margin: 0 0 10px; }
+  .persona ul, .persona ol { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13.5px; display: grid; gap: 6px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-family: var(--mono); font-size: 12px; padding: 2px 7px; border-radius: 4px; background: var(--danger-soft); color: var(--danger); }
+  .persona-bio { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; color: var(--ink-2); font-size: 13.5px; }
+  .persona-bio img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+
+  /* ---------- Lander ---------- */
+  .lander { display: grid; grid-template-columns: 390px 1fr; gap: 32px; align-items: start; }
+  .device { width: 390px; height: 760px; border: 1px solid var(--line-strong); border-radius: 28px; padding: 8px; background: var(--surface); box-shadow: 0 12px 32px -12px oklch(0.2 0.01 85 / 0.18); }
+  .device iframe { width: 100%; height: 100%; border: 0; border-radius: 21px; background: var(--bg); }
+  .kv { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 10px 20px; font-size: 13.5px; }
+  .kv dt { color: var(--ink-3); }
+  .kv dd { margin: 0; }
+
+  /* ---------- Activity ---------- */
+  .log { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 12px 14px; max-height: 420px; overflow: auto; font-family: var(--mono); font-size: 12.5px; line-height: 1.7; color: var(--ink-2); }
+  .log-empty { color: var(--ink-3); font-family: var(--font); font-size: 13.5px; }
+
+  /* ---------- Empty IP ---------- */
+  .empty-ip { max-width: 520px; padding: 48px 40px; }
+  .empty-ip h1 { font-size: 20px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.015em; }
+  .empty-ip p { color: var(--ink-2); margin: 0 0 16px; }
+  .empty-ip ol { color: var(--ink-2); padding-left: 18px; display: grid; gap: 6px; margin: 0 0 20px; }
+  .empty-ip code { font-family: var(--mono); font-size: 12.5px; background: var(--rail); padding: 1px 5px; border-radius: 4px; color: var(--ink); }
+
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 8px); opacity: 0; background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: var(--radius-sm); font-size: 13px; transition: opacity .2s var(--ease), transform .2s var(--ease); pointer-events: none; }
+  .toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1080px) {
+    .tester, .lander { grid-template-columns: 1fr; }
+    .persona { grid-template-columns: 1fr; }
+    .persona section { border-right: 0; border-bottom: 1px solid var(--line); }
+    .persona section:last-child { border-bottom: 0; }
+  }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    .rail { position: static; height: auto; flex-direction: row; align-items: center; gap: 8px; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+    .workspace { padding: 0 6px 0 0; }
+    .workspace-text, .rail-heading, .ip-handle, .rail-foot .user-text, .rail-foot .user-mark { display: none; }
+    .ip-list { display: flex; gap: 4px; }
+    .rail-foot { margin: 0 0 0 auto; border: 0; padding: 4px; }
+    .page-head { padding: 20px 16px 0; }
+    .panel { padding: 18px 16px 48px; }
+    .title-actions { margin-left: 0; width: 100%; }
+    .product { min-width: 0; }
+    th, td { padding: 10px 10px; }
+    .post { grid-template-columns: 44px 1fr; }
+    .post-media { width: 44px; height: 56px; }
+    .post-actions { grid-column: 2; flex-direction: row; }
+    .device { width: 100%; max-width: 390px; height: 700px; }
+    .col-hide-sm { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
 </head>
-<body class="min-h-full flex flex-col bg-[#0B0F17] text-slate-200 antialiased selection:bg-amber-500 selection:text-slate-950">
+<body>
 
-  <!-- PIN LOCK OVERLAY -->
-  <div id="lock-screen" class="fixed inset-0 z-50 bg-[#0B0F17] flex flex-col items-center justify-center p-4">
-    <div class="w-full max-w-sm bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl flex flex-col items-center text-center">
-      <div class="relative mb-4">
-        <img src="/assets/emma/emma_desk.jpg" alt="Emma" class="w-16 h-16 rounded-full object-cover ring-2 ring-emerald-500/80 shadow-lg">
-        <span class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 rounded-full ring-2 ring-slate-900"></span>
+<!-- PIN gate -->
+<main class="gate" id="gate" hidden>
+  <form class="gate-box" id="gate-form" novalidate>
+    <h1>Control</h1>
+    <p>Private workspace for ahmadzufaar's affiliate IPs.</p>
+    <label class="field-label" for="pin">PIN</label>
+    <input class="input" id="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" aria-describedby="pin-error">
+    <p class="field-error" id="pin-error" hidden>That PIN didn't match. Try again.</p>
+    <button class="btn btn-primary" type="submit">Unlock</button>
+  </form>
+</main>
+
+<!-- App -->
+<div class="app" id="app" hidden>
+  <nav class="rail" aria-label="Workspace">
+    <div class="workspace">
+      <div class="workspace-mark" aria-hidden="true">Z</div>
+      <div class="workspace-text">
+        <div class="workspace-name">Control</div>
+        <div class="workspace-sub">Affiliate IPs</div>
       </div>
-      
-      <h2 class="text-base font-extrabold text-white tracking-tight">EMMA ENGINE</h2>
-      <p class="text-xs text-slate-400 mt-1 mb-6">Restricted Operations Access • Enter 4-Digit PIN</p>
-
-      <form id="pin-form" class="w-full flex flex-col items-center gap-3">
-        <input 
-          type="password" 
-          id="pin-input" 
-          maxlength="6"
-          placeholder="••••" 
-          class="w-full text-center tracking-[0.5em] text-2xl font-black py-3 px-4 bg-slate-950 border border-slate-700/80 focus:border-amber-500 rounded-2xl text-white focus:outline-none transition-all shadow-inner"
-          autofocus
-        />
-        <p id="pin-error" class="hidden text-xs text-rose-400 font-semibold">Incorrect PIN. Try again.</p>
-        <button 
-          type="submit" 
-          class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-500/20 transition-all active:scale-95"
-        >
-          Unlock Operations Control 🔐
-        </button>
-      </form>
-
-      <p class="text-[10px] text-slate-500 mt-6">&copy; 2026 Emma's Daily Finds • Confidential</p>
     </div>
-  </div>
-
-  <!-- MAIN APP CONTAINER (Unlocked) -->
-  <div id="dashboard-app" class="hidden flex-1 flex flex-col">
-
-    <!-- TOP HEADER BAR -->
-    <header class="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-xl sticky top-0 z-40 px-5 py-3.5">
-      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        <!-- Brand & Persona -->
-        <div class="flex items-center gap-3">
-          <div class="relative">
-            <img src="/assets/emma/emma_desk.jpg" alt="Emma" class="w-10 h-10 rounded-full object-cover ring-2 ring-emerald-500/80">
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-slate-950"></span>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h1 class="text-sm font-extrabold tracking-tight text-white">EMMA ENGINE</h1>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">OPERATIONS PORTAL</span>
-            </div>
-            <p class="text-xs text-slate-400 font-medium">@curated_byemma • Amazon US Tier-1 Affiliate Engine</p>
-          </div>
-        </div>
-
-        <!-- Live Badges & Quick Links -->
-        <div class="flex items-center gap-2.5">
-          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-xs">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span class="text-slate-300 font-medium">Tag: <strong class="text-amber-400 mono font-semibold">curatedbyem0f-20</strong></span>
-          </div>
-
-          <a href="/" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition-colors">
-            <span>Live Lander ↗</span>
-          </a>
-
-          <button id="btn-lock" title="Lock Dashboard" class="p-2 rounded-xl bg-slate-800/80 hover:bg-rose-500/20 hover:text-rose-400 text-slate-400 border border-slate-700 transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-          </button>
-        </div>
+    <div class="rail-heading" id="ip-heading">IPs</div>
+    <ul class="ip-list" id="ip-list" aria-labelledby="ip-heading"></ul>
+    <div class="rail-foot">
+      <div class="user-mark" aria-hidden="true">AZ</div>
+      <div class="user-text">
+        <div class="user-name">@ahmadzufaar</div>
+        <div class="user-mode" id="mode-label">Read-only</div>
       </div>
-    </header>
+      <button class="btn btn-ghost btn-sm" id="lock-btn" title="Lock" aria-label="Lock workspace">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      </button>
+    </div>
+  </nav>
 
-    <!-- CONTENT WRAPPER -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+  <div class="main" id="main"></div>
+</div>
 
-      <!-- METRICS GRID -->
-      <section class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <!-- Metric 1: Slots -->
-        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
-            <span>Master Catalog</span>
-            <span class="text-emerald-400 font-bold">100% Locked</span>
-          </div>
-          <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-black text-white">10</span>
-            <span class="text-xs text-slate-400 font-semibold">Evergreen Slots (#1 - #10)</span>
-          </div>
-          <div class="mt-2 text-[11px] text-slate-500">
-            ★ 4.5+ Rating Minimum
-          </div>
-        </div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-        <!-- Metric 2: Content Bank -->
-        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
-            <span>Broadcast Bank</span>
-            <span class="text-amber-400 font-bold">6 Curated</span>
-          </div>
-          <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-black text-white">6</span>
-            <span class="text-xs text-slate-400 font-semibold">Threads Content Posts</span>
-          </div>
-          <div class="mt-2 text-[11px] text-slate-500">
-            With 35mm photo assets
-          </div>
-        </div>
-
-        <!-- Metric 3: Affiliate Tag -->
-        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
-            <span>Associate StoreID</span>
-            <span class="text-emerald-400 font-bold">24-Hr Cookie</span>
-          </div>
-          <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-lg font-black mono text-amber-400">curatedbyem0f-20</span>
-          </div>
-          <div class="mt-2 text-[11px] text-slate-500">
-            Official Amazon US Associates
-          </div>
-        </div>
-
-        <!-- Metric 4: Cloudflare Pages -->
-        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-xs text-slate-400 font-medium">
-            <span>Bio Destination</span>
-            <span class="text-emerald-400 font-bold">● Active CDN</span>
-          </div>
-          <div class="mt-2 truncate">
-            <a href="/" target="_blank" class="text-sm font-bold text-white hover:text-amber-400 transition-colors">curatedbyemma.pages.dev ↗</a>
-          </div>
-          <div class="mt-2 text-[11px] text-slate-500">
-            Global Edge Network
-          </div>
-        </div>
-      </section>
-
-      <!-- TABBED NAVIGATION -->
-      <nav class="flex items-center gap-2 border-b border-slate-800/80 pb-2 overflow-x-auto custom-scroll text-sm font-semibold">
-        <button class="tab-btn active px-4 py-2 rounded-xl bg-slate-800 text-white transition-colors" data-tab="tab-catalog">
-          📦 Product Catalog (#1 - #10)
-        </button>
-        <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-broadcast">
-          📣 Threads Content Bank
-        </button>
-        <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-simulator">
-          🎯 Pain-Point Hunter Simulator
-        </button>
-        <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-persona">
-          👤 Emma Persona Rules
-        </button>
-        <button class="tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors" data-tab="tab-lander">
-          📱 Mobile Lander Preview
-        </button>
-      </nav>
-
-      <!-- TAB 1: PRODUCT CATALOG -->
-      <section id="tab-catalog" class="tab-content flex flex-col gap-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-base font-bold text-white">Immutable Master Catalog (#1 - #10)</h2>
-            <p class="text-xs text-slate-400">All 10 evergreen problem solvers tagged with <code class="text-amber-400 mono">curatedbyem0f-20</code>.</p>
-          </div>
-          <span class="text-xs text-slate-400">10 Verified Products</span>
-        </div>
-
-        <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-          <!-- Injected via JavaScript -->
-        </div>
-      </section>
-
-      <!-- TAB 2: THREADS CONTENT BANK -->
-      <section id="tab-broadcast" class="tab-content hidden flex flex-col gap-4">
-        <div>
-          <h2 class="text-base font-bold text-white">Threads Content Bank & Organic Scripts</h2>
-          <p class="text-xs text-slate-400">Ready-to-post curated storytelling threads. Use the "Copy Text" button to post anytime from mobile or desktop.</p>
-        </div>
-
-        <div id="broadcast-list" class="flex flex-col gap-3">
-          <!-- Injected via JavaScript -->
-        </div>
-      </section>
-
-      <!-- TAB 3: PAIN-POINT SIMULATOR -->
-      <section id="tab-simulator" class="tab-content hidden flex flex-col gap-5">
-        <div>
-          <h2 class="text-base font-bold text-white">Contextual Pain-Point Hunter Simulator</h2>
-          <p class="text-xs text-slate-400">Runs directly in-browser. Paste any complaint to preview Emma's authentic, non-bot reply and target slot.</p>
-        </div>
-
-        <!-- Sample Chips -->
-        <div class="flex flex-col gap-2">
-          <span class="text-xs font-semibold text-slate-400">Quick Test Samples (Click to test):</span>
-          <div class="flex flex-wrap gap-2 text-xs">
-            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="My 7 month old wakes up crying every hour and won't go down. I am running on 2 hours of sleep.">
-              👶 "Baby crying at night"
-            </button>
-            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="Golden retriever shedding is out of control. My black velvet couch looks like a sheep.">
-              🐕 "Dog hair covering couch"
-            </button>
-            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="Sitting in this cheap office chair 9 hours a day is literally destroying my lower spine.">
-              🪑 "Office chair lower back agony"
-            </button>
-            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="Holding my phone for a 5 hour flight from NY to LA gave me a severe neck cramp.">
-              ✈️ "Neck cramp holding phone on plane"
-            </button>
-            <button class="sample-chip px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-colors" data-text="My charging cables keep sliding off my nightstand and falling into the gap behind the bed.">
-              🔌 "Cables falling behind nightstand"
-            </button>
-          </div>
-        </div>
-
-        <!-- Textarea & Action -->
-        <div class="flex flex-col gap-2">
-          <label class="text-xs font-semibold text-slate-400">Input Complaint or Thread Text:</label>
-          <textarea id="sim-input" rows="3" class="w-full bg-slate-900 border border-slate-800 focus:border-amber-500 rounded-xl p-3.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition-colors" placeholder="Type or paste any Threads post here..."></textarea>
-          <div class="flex justify-end">
-            <button id="btn-run-sim" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors">
-              Run Match & Generate Reply
-            </button>
-          </div>
-        </div>
-
-        <!-- Simulation Result Card -->
-        <div id="sim-result" class="hidden bg-slate-900/80 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold">MATCH FOUND</span>
-              <span id="res-slot-badge" class="px-2 py-0.5 rounded-md bg-slate-800 text-white font-extrabold text-xs">Slot #2</span>
-            </div>
-            <span id="res-product-title" class="text-xs font-bold text-slate-300 truncate max-w-[280px]">Fisher-Price Otter</span>
-          </div>
-
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Emma's Generated Response:</span>
-              <button id="btn-copy-reply" class="text-[11px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1">
-                📋 Copy Reply
-              </button>
-            </div>
-            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 text-sm text-slate-200 leading-relaxed font-medium">
-              <p id="res-reply-text"></p>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <span>✓ Zero direct links in comment</span>
-            <span>✓ Traffic hook: <strong class="text-slate-300">"bio #[slot]"</strong></span>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 4: EMMA PERSONA RULES -->
-      <section id="tab-persona" class="tab-content hidden flex flex-col gap-4">
-        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col gap-4">
-          <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
-            <img src="/assets/emma/emma_couch.jpg" alt="Emma" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-slate-800">
-            <div>
-              <h3 class="text-base font-extrabold text-white">Emma (@curated_byemma)</h3>
-              <p class="text-xs text-slate-400">29 y/o Seattle-based consumer researcher • Candid, anti-hype product curator</p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Banned Words -->
-            <div class="bg-red-500/5 border border-red-500/20 rounded-xl p-4">
-              <h4 class="text-xs font-bold text-red-400 mb-2 uppercase tracking-wider">🚫 Strict Banned Phrases (Shadowban Triggers)</h4>
-              <div class="flex flex-wrap gap-1.5 text-xs">
-                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">link in bio</span>
-                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">affiliate link</span>
-                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">buy now</span>
-                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">game-changer</span>
-                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">run don't walk</span>
-                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-300 font-mono">revolutionary</span>
-              </div>
-            </div>
-
-            <!-- Signature Phrases -->
-            <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4">
-              <h4 class="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-wider">✨ Signature Authentic Triggers</h4>
-              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-                <li>"sounds dramatic but..."</li>
-                <li>"the consensus favorite is..."</li>
-                <li>"saved my sanity"</li>
-                <li>"kept the exact one under #[SLOT] in my bio"</li>
-                <li>"zero sponsored fluff"</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Ethical Rules -->
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-slate-300 leading-relaxed space-y-2">
-            <h4 class="font-bold text-white uppercase tracking-wider text-[11px]">Ethical Persona Contract:</h4>
-            <p>1. <strong>Never lie:</strong> If Emma doesn't personally own it, cite customer consensus, sister/mom/family experience, or high review counts.</p>
-            <p>2. <strong>Zero comment links:</strong> Never post raw URLs or Amazon links in comments (preserves account health and prevents algorithmic shadowbans).</p>
-            <p>3. <strong>Immutable slots:</strong> Products never get reordered. Slot #3 is always the Lumbar cushion. Slot #7 is always the Plane mount.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 5: MOBILE LANDER PREVIEW -->
-      <section id="tab-lander" class="tab-content hidden flex flex-col items-center gap-4">
-        <div class="w-full flex items-center justify-between">
-          <div>
-            <h2 class="text-base font-bold text-white">Live Mobile Landing Page</h2>
-            <p class="text-xs text-slate-400">Deployed live on Cloudflare Pages Edge CDN (<a href="/" target="_blank" class="text-amber-400 hover:underline">curatedbyemma.pages.dev</a>)</p>
-          </div>
-          <button onclick="document.getElementById('lander-frame').src='/?t=' + Date.now()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition-colors">
-            🔄 Refresh Frame
-          </button>
-        </div>
-
-        <!-- Phone Bezel Frame -->
-        <div class="relative w-[390px] h-[780px] bg-slate-900 rounded-[44px] p-3 shadow-2xl border-4 border-slate-800 ring-1 ring-slate-700/50 flex flex-col overflow-hidden">
-          <div class="w-24 h-4 bg-slate-950 rounded-full mx-auto mb-2 flex-shrink-0"></div>
-          <iframe id="lander-frame" src="/" class="w-full flex-1 rounded-[32px] border-0 bg-white"></iframe>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <script>
-    // --- AUTHENTICATION & PIN CHECK (PIN: 2707) ---
-    const CORRECT_PIN = "2707";
-    const lockScreen = document.getElementById("lock-screen");
-    const dashboardApp = document.getElementById("dashboard-app");
-    const pinForm = document.getElementById("pin-form");
-    const pinInput = document.getElementById("pin-input");
-    const pinError = document.getElementById("pin-error");
-    const btnLock = document.getElementById("btn-lock");
-
-    function checkAuth() {
-      if (sessionStorage.getItem("emma_control_auth") === CORRECT_PIN) {
-        lockScreen.classList.add("hidden");
-        dashboardApp.classList.remove("hidden");
-      } else {
-        lockScreen.classList.remove("hidden");
-        dashboardApp.classList.add("hidden");
-        pinInput.value = "";
-        pinInput.focus();
-      }
-    }
-
-    pinForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (pinInput.value.trim() === CORRECT_PIN) {
-        sessionStorage.setItem("emma_control_auth", CORRECT_PIN);
-        pinError.classList.add("hidden");
-        checkAuth();
-      } else {
-        pinError.classList.remove("hidden");
-        pinInput.value = "";
-        pinInput.focus();
-      }
-    });
-
-    btnLock.addEventListener("click", () => {
-      sessionStorage.removeItem("emma_control_auth");
-      checkAuth();
-    });
-
-    checkAuth();
-
-    // --- TAB SWITCHING LOGIC ---
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    tabBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabBtns.forEach(b => {
-          b.className = 'tab-btn px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 transition-colors';
-        });
-        btn.className = 'tab-btn active px-4 py-2 rounded-xl bg-slate-800 text-white transition-colors';
-
-        tabContents.forEach(tc => tc.classList.add('hidden'));
-        const target = document.getElementById(btn.dataset.tab);
-        if (target) target.classList.remove('hidden');
-      });
-    });
-
-    // --- MASTER CATALOG DATA ---
-    const CATALOG = [
-      {
-        "slot": 1,
-        "category": "Pets & Fur",
-        "title": "PetLovers Extra-Sticky Pet Hair Lint Roller (5 Pack)",
-        "pain_point": "Pet hair covering couch, clothes, rugs",
-        "hook": "Traps embedded fur regular vacuums miss",
-        "rating": 4.6,
-        "reviews": "39,300",
-        "velocity": "10k+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/812M1RJAdEL._AC_UL320_.jpg",
-        "url": "https://www.amazon.com/dp/B07GV57JYJ?tag=curatedbyem0f-20"
-      },
-      {
-        "slot": 2,
-        "category": "Sleep & Kids",
-        "title": "Fisher-Price Soothe & Snuggle Calming Otter Plush",
-        "pain_point": "Baby crying, toddler sleep struggles, exhaustion",
-        "hook": "Rhythmic breathing calms fussy babies to sleep",
-        "rating": 4.7,
-        "reviews": "59,700",
-        "velocity": "5k+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/61yMGP6pujL._AC_UL320_.jpg",
-        "url": "https://www.amazon.com/dp/B07N1JP56L?tag=curatedbyem0f-20"
-      },
-      {
-        "slot": 3,
-        "category": "Back & Posture",
-        "title": "Ergonomic Memory Foam Lumbar Support Pillow",
-        "pain_point": "Lower back pain from long sitting / desk work",
-        "hook": "Instant lower-back relief during long desk hours",
-        "rating": 4.4,
-        "reviews": "27,400",
-        "velocity": "10k+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/81Qm1-Fja2L._AC_UL320_.jpg",
-        "url": "https://www.amazon.com/dp/B074C9F45S?tag=curatedbyem0f-20"
-      },
-      {
-        "slot": 4,
-        "category": "Kitchen Frustrations",
-        "title": "TrendPlain Glass Olive Oil Sprayer for Cooking",
-        "pain_point": "Pouring too much oil, uneven spraying on air fryer",
-        "hook": "Even, clog-free mist for air fryers & salads",
-        "rating": 4.6,
-        "reviews": "49,100",
-        "velocity": "2k+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/71Sx9YQ00fL._AC_UL320_.jpg",
-        "url": "https://www.amazon.com/dp/B0CY1S56JZ?tag=curatedbyem0f-20"
-      },
-      {
-        "slot": 5,
-        "category": "Deep Clean",
-        "title": "Cordless Electric Power Spin Scrubber with Extension",
-        "pain_point": "Tiring bathroom scrub, tile grime, bathtub cleaning",
-        "hook": "Cleans tile & tub grout with zero scrubbing",
-        "rating": 4.4,
-        "reviews": "8,900",
-        "velocity": "20k+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/71GhDHqOwNL._AC_UY218_.jpg",
-        "url": "https://www.amazon.com/dp/B0C1NJDTTX?tag=curatedbyem0f-20"
-      },
-      {
-        "slot": 6,
-        "category": "Desk & Clutter",
-        "title": "Smartish Magnetic Desktop Cable Wrangler Organizer",
-        "pain_point": "Tangled charging cables dropping off desk & nightstands",
-        "hook": "Stops cords from dropping behind desks",
-        "rating": 4.6,
-        "reviews": "5,200",
-        "velocity": "1k+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/7123kAuMpIL._AC_UY218_.jpg",
-        "url": "https://www.amazon.com/dp/B07BB4YXHW?tag=curatedbyem0f-20"
-      },
-      {
-        "slot": 7,
-        "category": "Travel & Commute",
-        "title": "Perilogics Universal Airplane Flight Phone Mount",
-        "pain_point": "Holding phone during flights/trains, neck strain",
-        "hook": "Hands-free screen on any plane tray",
-        "rating": 4.6,
-        "reviews": "22,900",
-        "velocity": "500+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/71P9DdPma2L._AC_UY218_.jpg",
-        "url": "https://www.amazon.com/dp/B08TKPRKBN?tag=curatedbyem0f-20"
-      },
-      {
-        "slot": 8,
-        "category": "Travel & Clothing",
-        "title": "OGHom Compact Handheld Garment Steamer",
-        "pain_point": "Wrinkled clothes from luggage, no iron board in hotels",
-        "hook": "Smooths wrinkles in 60s with zero iron",
-        "rating": 4.3,
-        "reviews": "2,400",
-        "velocity": "30k+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/71vshmAdKuL._AC_UY218_.jpg",
-        "url": "https://www.amazon.com/dp/B0FYF2X322?tag=curatedbyem0f-20"
-      },
-      {
-        "slot": 9,
-        "category": "Deep Sleep",
-        "title": "TOPOINT 3D Contoured Bluetooth Sleep Eye Mask",
-        "pain_point": "Room light waking, snoring partner, sleep earphone pain",
-        "hook": "100% blackout with thin flat sleep audio",
-        "rating": 4.3,
-        "reviews": "13,200",
-        "velocity": "1k+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/71a4Pm7uBCL._AC_UL320_.jpg",
-        "url": "https://www.amazon.com/dp/B07TPL5K7W?tag=curatedbyem0f-20"
-      },
-      {
-        "slot": 10,
-        "category": "Car Detailing",
-        "title": "PULIDIKI Reusable Car Interior Cleaning Putty Gel",
-        "pain_point": "Dust and crumbs trapped in tight car AC vents & seams",
-        "hook": "Pulls dust & crumbs from tight AC vents",
-        "rating": 4.1,
-        "reviews": "101,000",
-        "velocity": "10k+ bought in past month",
-        "image": "https://m.media-amazon.com/images/I/71WpCXsPbML._AC_UL320_.jpg",
-        "url": "https://www.amazon.com/dp/B07SBFDZ6T?tag=curatedbyem0f-20"
-      }
-    ];
-
-    function renderCatalog() {
-      const container = document.getElementById("catalog-grid");
-      container.innerHTML = "";
-      CATALOG.forEach(p => {
-        const card = document.createElement("div");
-        card.className = "bg-slate-900/70 border border-slate-800/90 rounded-2xl p-3.5 flex items-center gap-3.5 hover:border-slate-700 transition-colors";
-        card.innerHTML = `
-          <div class="relative w-16 h-16 rounded-xl bg-white p-1 flex-shrink-0 flex items-center justify-center overflow-hidden">
-            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain">
-            <span class="absolute top-1 left-1 bg-slate-950 text-white text-[9px] font-black px-1.5 py-0.2 rounded">#${p.slot}</span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between gap-1 mb-0.5">
-              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">${p.category}</span>
-              <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">${p.velocity}</span>
-            </div>
-            <h4 class="text-xs font-bold text-white truncate">${p.title}</h4>
-            <p class="text-[11px] text-slate-400 mt-0.5 truncate">${p.hook}</p>
-            <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-800 text-[11px]">
-              <span class="text-amber-400 font-bold">★ ${p.rating} (${p.reviews})</span>
-              <a href="${p.url}" target="_blank" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1">
-                Amazon Link ↗
-              </a>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // --- BROADCAST CONTENT BANK ---
-    const BROADCASTS = [
-      {
-        "id": "intro_manifesto",
-        "title": "Emma's Curation Manifesto",
-        "text": `testing viral amazon products so you don't waste your money.
-
-my 3 rules before anything makes the list:
-1. 4.5★ rating minimum
-2. 5k+ verified reviews (zero fake review bots)
-3. actually solves an everyday headache
-
-master list of 10 audited problem solvers is updated on my page ✨`,
-        "image": "/assets/emma/emma_desk.jpg",
-        "slots": ["#1 - #10"]
-      },
-      {
-        "id": "desk_lumbar_slot3",
-        "title": "Desk Back Pain / Lumbar Relief (Slot #3)",
-        "text": `sitting in an office chair 8+ hours a day was slowly wrecking my lower back.
-
-before spending $700 on a new chair, tried an ergonomic high-density memory foam cushion backed by 27k reviews.
-
-3 weeks in and genuinely zero aches. kept the exact one under #3 on my page.`,
-        "image": "/assets/emma/emma_cafe.jpg",
-        "slots": ["#3"]
-      },
-      {
-        "id": "travel_flight_mount_slot7",
-        "title": "Airplane Tray-Table Phone Mount (Slot #7)",
-        "text": `if you have a flight coming up, please do not hold your phone for 4 hours with severe neck strain.
-
-that $21 universal airplane tray-table clamp mount is the single best travel hack i've tested all year. hands-free movie setup right at eye level.
-
-cataloged under #7 on my profile list.`,
-        "image": null,
-        "slots": ["#7"]
-      },
-      {
-        "id": "pet_hair_couch_slot1",
-        "title": "Pet Hair & Couch Relief (Slot #1)",
-        "text": `vacuuming only gets about 60% of pet hair off couches and car seats. regular lint rollers run out in 2 minutes.
-
-that extra-sticky 5-pack with 40k reviews is the only thing that actually pulls up deep stubborn fur.
-
-saved under #1 on my page.`,
-        "image": "/assets/emma/emma_couch.jpg",
-        "slots": ["#1"]
-      },
-      {
-        "id": "daily_sanity_savers_roundup",
-        "title": "3 Daily Sanity Savers Roundup (Slots #6, #4, #2)",
-        "text": `3 random amazon problem solvers that genuinely saved my sanity this week:
-
-1) magnetic cable wrangler so charging cords stop sliding off the nightstand (#6)
-2) glass oil sprayer that actually mists without clogging your air fryer (#4)
-3) the breathing otter plush that calms fussy babies to sleep (#2)
-
-all numbered on my page if you want to check the verified reviews.`,
-        "image": null,
-        "slots": ["#6", "#4", "#2"]
-      },
-      {
-        "id": "spin_scrubber_deepclean_slot5",
-        "title": "Deep Clean Without Kneeling (Slot #5)",
-        "text": `scrubbing tile grout and tubs on your knees is literal torture.
-
-electric power spin scrubbers are viral for a reason—cuts deep cleaning time in half with zero elbow grease.
-
-cataloged the highest-rated one with extension pole under #5 on my page.`,
-        "image": "/assets/emma/emma_kitchen.jpg",
-        "slots": ["#5"]
-      }
-    ];
-
-    function renderBroadcasts() {
-      const container = document.getElementById("broadcast-list");
-      container.innerHTML = "";
-      BROADCASTS.forEach(b => {
-        const row = document.createElement("div");
-        row.className = "p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 transition-all";
-
-        const imgPreview = b.image 
-          ? `<img src="${b.image}" class="w-14 h-14 rounded-xl object-cover ring-1 ring-slate-700 flex-shrink-0" alt="Preview">`
-          : `<div class="w-14 h-14 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-xs text-slate-600 font-mono flex-shrink-0">TEXT</div>`;
-
-        row.innerHTML = `
-          <div class="flex items-start gap-3.5 flex-1 min-w-0">
-            ${imgPreview}
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-xs font-bold text-white">${b.title}</span>
-                <span class="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">Target: ${b.slots.join(', ')}</span>
-              </div>
-              <p class="text-xs text-slate-300 line-clamp-2 leading-relaxed">${b.text}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
-            <button class="btn-copy-post px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 text-xs font-bold border border-slate-700 transition-colors flex items-center gap-1" data-text="${encodeURIComponent(b.text)}">
-              📋 Copy Text
-            </button>
-          </div>
-        `;
-        container.appendChild(row);
-      });
-
-      // Bind copy buttons
-      document.querySelectorAll('.btn-copy-post').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const text = decodeURIComponent(btn.dataset.text);
-          navigator.clipboard.writeText(text);
-          const orig = btn.innerHTML;
-          btn.innerHTML = "✓ Copied!";
-          btn.classList.add("bg-emerald-500", "text-slate-950");
-          setTimeout(() => {
-            btn.innerHTML = orig;
-            btn.classList.remove("bg-emerald-500", "text-slate-950");
-          }, 2000);
-        });
-      });
-    }
-
-    // --- IN-BROWSER INTENT SIMULATOR ---
-    function matchSlot(postText) {
-      const text = postText.toLowerCase();
-      // 1. Pets & Fur
-      if ((text.includes("dog hair") || text.includes("cat hair") || text.includes("pet hair") || text.includes("retriever") || text.includes("fur") || text.includes("shedding") || text.includes("lint") || text.includes("couch hair") || text.includes("dog") || text.includes("cat")) && (text.includes("hair") || text.includes("fur") || text.includes("couch") || text.includes("sofa") || text.includes("vacuum") || text.includes("shedding") || text.includes("clean"))) return 1;
-      // 2. Baby & Sleep
-      if ((text.includes("baby") || text.includes("toddler") || text.includes("infant") || text.includes("newborn") || text.includes("kid") || text.includes("month old") || text.includes("months old") || text.includes("sleep regression")) && (text.includes("sleep") || text.includes("screaming") || text.includes("crying") || text.includes("awake") || text.includes("wake") || text.includes("zombie") || text.includes("night") || text.includes("nap") || text.includes("colic"))) return 2;
-      // 3. Back & Posture
-      if (text.includes("back pain") || text.includes("lower back") || text.includes("chair") || text.includes("desk") || text.includes("spine") || text.includes("slouching") || text.includes("posture") || text.includes("lumbar") || text.includes("sitting")) return 3;
-      // 4. Air Fryer / Oil
-      if (text.includes("air fryer") || text.includes("olive oil") || text.includes("oil spray") || text.includes("greasy") || text.includes("oil bottle") || text.includes("mist sprayer")) return 4;
-      // 5. Deep Cleaning
-      if (text.includes("scrub") || text.includes("grout") || text.includes("tile") || text.includes("shower") || text.includes("bathtub") || text.includes("bathroom clean") || text.includes("soap scum")) return 5;
-      // 6. Desk & Cable Clutter
-      if (text.includes("cable") || text.includes("cord") || text.includes("charger") || text.includes("desk clutter") || text.includes("wire") || text.includes("nightstand cord")) return 6;
-      // 7. Airplane / Flight Phone Mount
-      if (text.includes("airplane") || text.includes("flight") || text.includes("flying") || text.includes("plane") || text.includes("seatback") || text.includes("tray table") || text.includes("holding phone")) return 7;
-      // 8. Wrinkles / Steamer
-      if (text.includes("wrinkle") || text.includes("wrinkled") || text.includes("ironing") || text.includes("steamer") || text.includes("suitcase clothes") || text.includes("iron board")) return 8;
-      // 9. Adult Sleep / Insomnia
-      if (text.includes("insomnia") || text.includes("snoring") || text.includes("light waking") || text.includes("can't sleep") || text.includes("sleep mask") || text.includes("partner snores")) return 9;
-      // 10. Car Cleaning
-      if (text.includes("car vent") || text.includes("car dust") || text.includes("cup holder") || text.includes("car crumb") || text.includes("car detailing") || text.includes("car interior")) return 10;
-      return null;
-    }
-
-    const TEMPLATES = {
+<script>
+/* =========================================================
+   IP REGISTRY — add a new IP by appending an object here.
+   ========================================================= */
+const PROJECTS = [
+  {
+    id: "emma",
+    name: "Emma's Daily Finds",
+    persona: "Emma",
+    handle: "@curated_byemma",
+    threadsUrl: "https://www.threads.net/@curated_byemma",
+    landerUrl: "https://curatedbyemma.pages.dev",
+    avatar: "/assets/emma/emma_desk.jpg",
+    market: "Amazon US",
+    tag: "curatedbyem0f-20",
+    status: "active",
+    bio: "29, Seattle. Practical consumer researcher. Candid, anti-hype, cites consensus when she hasn't owned it.",
+    catalog: [
+      { slot: 1, category: "Pet hair", title: "PetLovers Extra-Sticky Lint Roller (5 pack)", hook: "Traps embedded fur regular vacuums miss", rating: 4.6, reviews: 39300, velocity: "10K+", image: "https://m.media-amazon.com/images/I/812M1RJAdEL._AC_UL320_.jpg", asin: "B07GV57JYJ" },
+      { slot: 2, category: "Toddler sleep", title: "Fisher-Price Calming Otter Sleep Soother", hook: "Rhythmic breathing calms fussy babies", rating: 4.7, reviews: 59700, velocity: "5K+", image: "https://m.media-amazon.com/images/I/61yMGP6pujL._AC_UL320_.jpg", asin: "B07N1JP56L" },
+      { slot: 3, category: "Desk setup", title: "Ergonomic Memory Foam Lumbar Cushion", hook: "Lower-back relief for long desk hours", rating: 4.4, reviews: 27400, velocity: "10K+", image: "https://m.media-amazon.com/images/I/81Qm1-Fja2L._AC_UL320_.jpg", asin: "B074C9F45S" },
+      { slot: 4, category: "Kitchen", title: "TrendPlain Glass Olive Oil Mister", hook: "Even, clog-free mist for air fryers", rating: 4.6, reviews: 49100, velocity: "2K+", image: "https://m.media-amazon.com/images/I/71Sx9YQ00fL._AC_UL320_.jpg", asin: "B0CY1S56JZ" },
+      { slot: 5, category: "Deep clean", title: "Cordless Electric Spin Scrubber", hook: "Tile and tub grout without kneeling", rating: 4.4, reviews: 8900, velocity: "20K+", image: "https://m.media-amazon.com/images/I/71GhDHqOwNL._AC_UY218_.jpg", asin: "B0C1NJDTTX" },
+      { slot: 6, category: "Cable clutter", title: "Smartish Magnetic Cable Wrangler", hook: "Stops cords dropping behind desks", rating: 4.6, reviews: 5200, velocity: "1K+", image: "https://m.media-amazon.com/images/I/7123kAuMpIL._AC_UY218_.jpg", asin: "B07BB4YXHW" },
+      { slot: 7, category: "Flights", title: "Perilogics Airplane Tray-Table Phone Mount", hook: "Hands-free screen on any plane tray", rating: 4.6, reviews: 22900, velocity: "500+", image: "https://m.media-amazon.com/images/I/71P9DdPma2L._AC_UY218_.jpg", asin: "B08TKPRKBN" },
+      { slot: 8, category: "Travel", title: "OGHom Compact Handheld Garment Steamer", hook: "Smooths wrinkles in 60s, no iron", rating: 4.3, reviews: 2400, velocity: "30K+", image: "https://m.media-amazon.com/images/I/71vshmAdKuL._AC_UY218_.jpg", asin: "B0FYF2X322" },
+      { slot: 9, category: "Adult sleep", title: "TOPOINT 3D Bluetooth Sleep Mask", hook: "Full blackout with flat sleep audio", rating: 4.3, reviews: 13200, velocity: "1K+", image: "https://m.media-amazon.com/images/I/71a4Pm7uBCL._AC_UL320_.jpg", asin: "B07TPL5K7W" },
+      { slot: 10, category: "Car", title: "PULIDIKI Reusable Car Detailing Putty", hook: "Pulls dust and crumbs from AC vents", rating: 4.1, reviews: 101000, velocity: "10K+", image: "https://m.media-amazon.com/images/I/71WpCXsPbML._AC_UL320_.jpg", asin: "B07SBFDZ6T" }
+    ],
+    posts: [
+      { id: "intro_manifesto", title: "Curation manifesto", slots: [], image: "/assets/emma/emma_desk.jpg",
+        text: "testing viral amazon products so you don't waste your money.\n\nmy 3 rules before anything makes the list:\n1. 4.5★ rating minimum\n2. 5k+ verified reviews (zero fake review bots)\n3. actually solves an everyday headache\n\nmaster list of 10 audited problem solvers is updated on my page ✨" },
+      { id: "desk_lumbar_slot3", title: "Desk back pain", slots: [3], image: "/assets/emma/emma_cafe.jpg",
+        text: "sitting in an office chair 8+ hours a day was slowly wrecking my lower back.\n\nbefore spending $700 on a new chair, tried an ergonomic high-density memory foam cushion backed by 27k reviews.\n\n3 weeks in and genuinely zero aches. kept the exact one under #3 on my page." },
+      { id: "travel_flight_mount_slot7", title: "Flight phone mount", slots: [7], image: null,
+        text: "if you have a flight coming up, please do not hold your phone for 4 hours with severe neck strain.\n\nthat $21 universal airplane tray-table clamp mount is the single best travel hack i've tested all year. hands-free movie setup right at eye level.\n\ncataloged under #7 on my profile list." },
+      { id: "pet_hair_couch_slot1", title: "Pet hair on the couch", slots: [1], image: "/assets/emma/emma_couch.jpg",
+        text: "vacuuming only gets about 60% of pet hair off couches and car seats. regular lint rollers run out in 2 minutes.\n\nthat extra-sticky 5-pack with 40k reviews is the only thing that actually pulls up deep stubborn fur.\n\nsaved under #1 on my page." },
+      { id: "daily_sanity_savers_roundup", title: "Three sanity savers", slots: [6, 4, 2], image: null,
+        text: "3 random amazon problem solvers that genuinely saved my sanity this week:\n\n1) magnetic cable wrangler so charging cords stop sliding off the nightstand (#6)\n2) glass oil sprayer that actually mists without clogging your air fryer (#4)\n3) the breathing otter plush that calms fussy babies to sleep (#2)\n\nall numbered on my page if you want to check the verified reviews." },
+      { id: "spin_scrubber_deepclean_slot5", title: "Deep clean without kneeling", slots: [5], image: "/assets/emma/emma_kitchen.jpg",
+        text: "scrubbing tile grout and tubs on your knees is literal torture.\n\nelectric power spin scrubbers are viral for a reason—cuts deep cleaning time in half with zero elbow grease.\n\ncataloged the highest-rated one with extension pole under #5 on my page." }
+    ],
+    replyRules: [
+      { slot: 1, all: [["dog hair","cat hair","pet hair","retriever","fur","shedding","lint","dog","cat"], ["hair","fur","couch","sofa","vacuum","shedding","clean"]] },
+      { slot: 2, all: [["baby","toddler","infant","newborn","kid","month old","months old","sleep regression"], ["sleep","screaming","crying","awake","wake","night","nap","colic"]] },
+      { slot: 3, any: ["back pain","lower back","chair","desk","spine","slouching","posture","lumbar","sitting"] },
+      { slot: 4, any: ["air fryer","olive oil","oil spray","greasy","oil bottle","mist sprayer"] },
+      { slot: 5, any: ["scrub","grout","tile","shower","bathtub","bathroom clean","soap scum"] },
+      { slot: 6, any: ["cable","cord","charger","desk clutter","wire"] },
+      { slot: 7, any: ["airplane","flight","flying","plane","seatback","tray table","holding phone"] },
+      { slot: 8, any: ["wrinkle","wrinkled","ironing","steamer","suitcase clothes","iron board"] },
+      { slot: 9, any: ["insomnia","snoring","light waking","can't sleep","sleep mask","partner snores"] },
+      { slot: 10, any: ["car vent","car dust","cup holder","car crumb","car detailing","car interior"] }
+    ],
+    replies: {
       1: "ugh velvet and dog hair is the absolute worst combo. standard sticky tape rollers never worked for us, but that mega extra-sticky roller has almost 40k reviews for a reason. saved the exact one under #1 in my bio if you need it.",
       2: "night wakeups are brutal, sending you so much coffee. my sister went through the exact same thing with her 7-month-old and swore the breathing rhythm otter was the only thing that actually calmed him down. cataloged it under #2 in my bio if you want to look at the reviews.",
       3: "sitting all day ruined my lower back too. before you spend $600 on a whole new chair, try a high-density memory foam lumbar cushion first. literally saved my posture. kept the top-rated one at bio #3.",
@@ -711,49 +375,399 @@ cataloged the highest-rated one with extension pole under #5 on my page.`,
       8: "ironing boards take way too much effort when traveling. a compact handheld travel steamer takes wrinkles out in like 30 seconds. cataloged the #1 amazon pick under #8 in my bio.",
       9: "if light or your partner's snoring is keeping you up, look into 3D bluetooth eye masks with flat speakers. total blackout and you can sleep on your side without ear pain. kept the top one at bio #9.",
       10: "cleaning crumbs and dust out of car air vents with wipes is basically impossible. that reusable detailing cleaning gel grabs everything in one press. saved under #10 in my bio."
-    };
+    },
+    samples: [
+      ["Baby up all night", "My 7 month old wakes up crying every hour and won't go down. I am running on 2 hours of sleep."],
+      ["Dog hair on couch", "Golden retriever shedding is out of control. My black velvet couch looks like a sheep."],
+      ["Office back pain", "Sitting in this cheap office chair 9 hours a day is literally destroying my lower spine."],
+      ["Phone on a flight", "Holding my phone for a 5 hour flight from NY to LA gave me a severe neck cramp."],
+      ["Cables behind bed", "My charging cables keep sliding off my nightstand and falling into the gap behind the bed."]
+    ],
+    banned: ["link in bio", "affiliate link", "buy now", "game-changer", "run don't walk", "revolutionary", "must-have", "best product ever"],
+    signatures: ["sounds dramatic but…", "the consensus favorite is…", "saved my sanity", "kept the exact one under #[slot] in my bio", "zero sponsored fluff"],
+    rules: [
+      "Never lie. If she hasn't owned it, cite review consensus or family experience.",
+      "No links in comments. Replies point to “bio #[slot]” only.",
+      "Slots are permanent. Never reorder #1–#10; new products start at #11."
+    ]
+  }
+];
 
-    const simInput = document.getElementById("sim-input");
-    const simResult = document.getElementById("sim-result");
-    const resSlotBadge = document.getElementById("res-slot-badge");
-    const resProductTitle = document.getElementById("res-product-title");
-    const resReplyText = document.getElementById("res-reply-text");
-    const btnCopyReply = document.getElementById("btn-copy-reply");
+/* ========================================================= */
+const PIN = "2707";
+const AUTH_KEY = "control_auth";
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const fmt = n => n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K" : String(n);
+const icons = {
+  external: '<svg class="icon" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
+  copy: '<svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>',
+  check: '<svg class="icon" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></svg>',
+  x: '<svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  plus: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  send: '<svg class="icon" viewBox="0 0 24 24"><path d="M5 12h13"/><path d="m13 6 6 6-6 6"/></svg>',
+  star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>'
+};
 
-    document.querySelectorAll(".sample-chip").forEach(chip => {
-      chip.addEventListener("click", () => {
-        simInput.value = chip.dataset.text;
-        runSim();
-      });
+const state = { ip: null, tab: "catalog", live: false, published: {}, logs: [] };
+
+/* ---------- Auth ---------- */
+function showApp() { $("#gate").hidden = true; $("#app").hidden = false; boot(); }
+function showGate() { $("#app").hidden = true; $("#gate").hidden = false; $("#pin").value = ""; $("#pin").focus(); }
+$("#gate-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const ok = $("#pin").value.trim() === PIN;
+  $("#pin").setAttribute("aria-invalid", String(!ok));
+  $("#pin-error").hidden = ok;
+  if (ok) { sessionStorage.setItem(AUTH_KEY, "1"); showApp(); } else { $("#pin").value = ""; $("#pin").focus(); }
+});
+$("#lock-btn").addEventListener("click", () => { sessionStorage.removeItem(AUTH_KEY); showGate(); });
+
+/* ---------- Live mode (localhost server) ---------- */
+async function detectLive() {
+  try {
+    const r = await fetch("/api/broadcast", { cache: "no-store" });
+    if (!r.ok) throw 0;
+    const data = await r.json();
+    state.live = true;
+    state.published = {};
+    (data.queue || []).forEach(q => { if (q.published) state.published[q.id] = q.published_at; });
+  } catch { state.live = false; }
+  $("#mode-label").textContent = state.live ? "Live · localhost" : "Read-only";
+}
+async function fetchLogs() {
+  if (!state.live) return;
+  try { const r = await fetch("/api/logs", { cache: "no-store" }); state.logs = (await r.json()).logs || []; } catch {}
+}
+
+/* ---------- Routing ---------- */
+function readHash() {
+  const [ip, tab] = location.hash.replace(/^#\/?/, "").split("/");
+  state.ip = ip || PROJECTS[0].id;
+  state.tab = tab || "catalog";
+}
+function go(ip, tab) { location.hash = `#/${ip}/${tab || "catalog"}`; }
+window.addEventListener("hashchange", () => { readHash(); render(); });
+
+/* ---------- Rail ---------- */
+function renderRail() {
+  $("#ip-list").innerHTML = PROJECTS.map(p => `
+    <li><button class="ip-link" data-ip="${p.id}" ${state.ip === p.id ? 'aria-current="page"' : ""}>
+      <img class="ip-avatar" src="${p.avatar}" alt="">
+      <span><span class="ip-name">${esc(p.persona)}</span><br><span class="ip-handle">${esc(p.handle)}</span></span>
+      <span class="status-dot ${p.status === "active" ? "" : "is-paused"}" title="${p.status === "active" ? "Active" : "Paused"}"></span>
+    </button></li>`).join("") + `
+    <li><button class="ip-link ip-add" data-ip="new" ${state.ip === "new" ? 'aria-current="page"' : ""}>${icons.plus}<span>New IP</span></button></li>`;
+  document.querySelectorAll(".ip-link").forEach(b => b.addEventListener("click", () => go(b.dataset.ip)));
+}
+
+/* ---------- Main ---------- */
+const TABS = [
+  ["catalog", "Catalog", p => p.catalog.length],
+  ["content", "Content", p => p.posts.length],
+  ["replies", "Reply tester"],
+  ["persona", "Persona"],
+  ["lander", "Lander"],
+  ["activity", "Activity", null, true]
+];
+
+function render() {
+  renderRail();
+  const main = $("#main");
+  if (state.ip === "new") { main.innerHTML = renderNewIp(); return; }
+  const p = PROJECTS.find(x => x.id === state.ip) || PROJECTS[0];
+  const tabs = TABS.filter(t => !t[3] || state.live);
+  if (!tabs.some(t => t[0] === state.tab)) state.tab = "catalog";
+  const publishedCount = p.posts.filter(x => state.published[x.id]).length;
+
+  main.innerHTML = `
+    <header class="page-head">
+      <div class="title-row">
+        <img class="title-avatar" src="${p.avatar}" alt="">
+        <div>
+          <h1>${esc(p.name)}</h1>
+          <div class="title-meta">${esc(p.handle)} · ${esc(p.market)}</div>
+        </div>
+        <div class="title-actions">
+          <a class="btn" href="${p.threadsUrl}" target="_blank" rel="noopener">Threads ${icons.external}</a>
+          <a class="btn" href="${p.landerUrl}" target="_blank" rel="noopener">Lander ${icons.external}</a>
+        </div>
+      </div>
+      <dl class="facts">
+        <div><dt>Status</dt><dd><span class="pill ${p.status === "active" ? "pill-ok" : "pill-muted"}">${p.status === "active" ? "Active" : "Paused"}</span></dd></div>
+        <div><dt>Tracking ID</dt><dd class="mono">${esc(p.tag)}</dd></div>
+        <div><dt>Slots</dt><dd>#1–#${p.catalog.length}</dd></div>
+        <div><dt>Posts</dt><dd>${state.live ? `${publishedCount} of ${p.posts.length} published` : `${p.posts.length} drafted`}</dd></div>
+      </dl>
+      <div class="tabs" role="tablist" aria-label="${esc(p.persona)} sections">
+        ${tabs.map(([id, label, count]) => `
+          <button class="tab" role="tab" id="tab-${id}" aria-selected="${state.tab === id}" aria-controls="panel" tabindex="${state.tab === id ? 0 : -1}" data-tab="${id}">
+            ${label}${count ? `<span class="count">${count(p)}</span>` : ""}
+          </button>`).join("")}
+      </div>
+    </header>
+    <section class="panel" id="panel" role="tabpanel" aria-labelledby="tab-${state.tab}">
+      ${({ catalog: renderCatalog, content: renderContent, replies: renderReplies, persona: renderPersona, lander: renderLander, activity: renderActivity })[state.tab](p)}
+    </section>`;
+
+  const tabEls = [...document.querySelectorAll(".tab")];
+  tabEls.forEach((t, i) => {
+    t.addEventListener("click", () => go(p.id, t.dataset.tab));
+    t.addEventListener("keydown", e => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      const next = tabEls[(i + (e.key === "ArrowRight" ? 1 : -1) + tabEls.length) % tabEls.length];
+      next.focus(); go(p.id, next.dataset.tab);
     });
+  });
+  bindPanel(p);
+}
 
-    document.getElementById("btn-run-sim").addEventListener("click", runSim);
+function renderCatalog(p) {
+  return `
+    <div class="panel-intro">
+      <div>
+        <h2>Master catalog</h2>
+        <p>Slot numbers are referenced in live replies and posts. Never reorder; new products start at #${p.catalog.length + 1}.</p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Slot</th><th>Product</th><th class="col-hide-sm">Category</th>
+          <th class="num col-hide-sm">Rating</th><th class="num col-hide-sm">Bought / mo</th><th class="num"><span class="sr-only">Link</span></th>
+        </tr></thead>
+        <tbody>
+          ${p.catalog.map(it => `
+            <tr>
+              <td class="slot">#${it.slot}</td>
+              <td><div class="product">
+                <img class="thumb" src="${it.image}" alt="" loading="lazy" width="40" height="40">
+                <div><div class="product-title">${esc(it.title)}</div><div class="product-hook">${esc(it.hook)}</div></div>
+              </div></td>
+              <td class="col-hide-sm muted">${esc(it.category)}</td>
+              <td class="num col-hide-sm"><span class="rating">${icons.star}${it.rating.toFixed(1)}</span> <span class="muted">(${fmt(it.reviews)})</span></td>
+              <td class="num col-hide-sm">${esc(it.velocity)}</td>
+              <td class="num"><a class="row-link" href="https://www.amazon.com/dp/${it.asin}?tag=${p.tag}" target="_blank" rel="noopener">Amazon ${icons.external}</a></td>
+            </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
 
-    function runSim() {
-      const text = simInput.value.trim();
-      if (!text) return;
-      const slot = matchSlot(text);
-      if (slot) {
-        const prod = CATALOG.find(p => p.slot === slot);
-        resSlotBadge.innerText = `Slot #${slot}`;
-        resProductTitle.innerText = prod.title;
-        resReplyText.innerText = TEMPLATES[slot];
-        simResult.classList.remove("hidden");
-      } else {
-        alert("No slot matched for this text. Try keywords like sleep, dog hair, back pain, or air fryer.");
-      }
-    }
+function renderContent(p) {
+  return `
+    <div class="panel-intro">
+      <div>
+        <h2>Threads posts</h2>
+        <p>${state.live ? "Publishing runs through the local browser session. One post at a time; wait for the status to change." : "Read-only here. Copy a post to publish from your phone, or open this page on localhost to publish directly."}</p>
+      </div>
+    </div>
+    <ul class="post-list">
+      ${p.posts.map(post => {
+        const pub = state.published[post.id];
+        const status = !state.live ? "" : pub
+          ? `<span class="pill pill-ok">Published ${new Date(pub).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>`
+          : `<span class="pill pill-warn">Queued</span>`;
+        const slots = post.slots.length ? `<span class="pill pill-muted">${post.slots.map(s => "#" + s).join(" ")}</span>` : `<span class="pill pill-muted">Profile</span>`;
+        return `
+        <li class="post" data-post="${post.id}">
+          ${post.image ? `<img class="post-media" src="${post.image}" alt="" loading="lazy">` : `<div class="post-media is-text">Text</div>`}
+          <div>
+            <div class="post-head"><span class="post-title">${esc(post.title)}</span>${slots}${status}</div>
+            <p class="post-body is-clamped">${esc(post.text)}</p>
+            <button class="post-expand" data-expand>Show full post</button>
+          </div>
+          <div class="post-actions">
+            <button class="btn btn-sm" data-copy="${post.id}">${icons.copy}Copy</button>
+            ${state.live && !pub ? `<button class="btn btn-sm btn-primary" data-publish="${post.id}">${icons.send}Publish</button>` : ""}
+          </div>
+        </li>`;
+      }).join("")}
+    </ul>`;
+}
 
-    btnCopyReply.addEventListener("click", () => {
-      navigator.clipboard.writeText(resReplyText.innerText);
-      const orig = btnCopyReply.innerHTML;
-      btnCopyReply.innerHTML = "✓ Copied!";
-      setTimeout(() => btnCopyReply.innerHTML = orig, 2000);
-    });
+function renderReplies(p) {
+  return `
+    <div class="panel-intro">
+      <div>
+        <h2>Reply tester</h2>
+        <p>Paste a real Threads complaint to see which slot it maps to and the reply ${esc(p.persona)} would leave.</p>
+      </div>
+    </div>
+    <div class="tester">
+      <div>
+        <label class="field-label" for="sim-input">Post text</label>
+        <textarea class="textarea" id="sim-input" placeholder="e.g. my lower back is killing me after sitting all day"></textarea>
+        <div class="samples" aria-label="Sample posts">
+          ${p.samples.map(([label, text]) => `<button class="chip" data-sample="${esc(text)}">${esc(label)}</button>`).join("")}
+        </div>
+        <button class="btn btn-primary" id="sim-run">Match and draft reply</button>
+      </div>
+      <div class="result" id="sim-result" aria-live="polite">
+        <div class="result-empty"><strong>No post tested yet</strong>Pick a sample or paste a post, then run the match.</div>
+      </div>
+    </div>`;
+}
 
-    // Initialize
-    renderCatalog();
-    renderBroadcasts();
-  </script>
+function renderPersona(p) {
+  return `
+    <div class="persona-bio"><img src="${p.avatar}" alt=""><div><strong style="color:var(--ink);font-weight:600">${esc(p.persona)}</strong><br>${esc(p.bio)}</div></div>
+    <div class="persona">
+      <section><h3>Never write</h3><div class="tags">${p.banned.map(b => `<span class="tag">${esc(b)}</span>`).join("")}</div></section>
+      <section><h3>Signature phrasing</h3><ul>${p.signatures.map(s => `<li>${esc(s)}</li>`).join("")}</ul></section>
+      <section><h3>Ground rules</h3><ol>${p.rules.map(r => `<li>${esc(r)}</li>`).join("")}</ol></section>
+    </div>`;
+}
+
+function renderLander(p) {
+  return `
+    <div class="lander">
+      <div class="device"><iframe src="${p.landerUrl}" title="${esc(p.name)} lander preview" loading="lazy"></iframe></div>
+      <div>
+        <div class="panel-intro"><div><h2>Bio lander</h2><p>The page every reply points to. Live from Cloudflare Pages.</p></div></div>
+        <dl class="kv">
+          <dt>URL</dt><dd><a href="${p.landerUrl}" target="_blank" rel="noopener">${p.landerUrl.replace("https://", "")}</a></dd>
+          <dt>Tracking ID</dt><dd class="mono">${esc(p.tag)}</dd>
+          <dt>Disclosure</dt><dd>“As an Amazon Associate I earn from qualifying purchases.”</dd>
+          <dt>Hosting</dt><dd>Cloudflare Pages, deploys from <span class="mono">main</span></dd>
+        </dl>
+        <p style="margin-top:20px"><button class="btn" id="reload-lander">Reload preview</button></p>
+      </div>
+    </div>`;
+}
+
+function renderActivity() {
+  return `
+    <div class="panel-intro"><div><h2>Activity</h2><p>Local server log. Refreshes every 3 seconds while this tab is open.</p></div></div>
+    <div class="log" id="log">${state.logs.length ? state.logs.map(esc).join("<br>") : '<span class="log-empty">Nothing logged yet.</span>'}</div>`;
+}
+
+function renderNewIp() {
+  return `
+    <div class="empty-ip">
+      <h1>Add a new IP</h1>
+      <p>Each IP is one persona with its own catalog, posts, reply rules and lander. Emma is the template.</p>
+      <ol>
+        <li>Duplicate the <code>emma</code> object in <code>PROJECTS</code> at the top of <code>public/control/index.html</code>.</li>
+        <li>Give it a new <code>id</code>, handle, tracking ID and lander URL.</li>
+        <li>Replace the catalog, posts and reply rules, then push to <code>main</code>.</li>
+      </ol>
+      <button class="btn" onclick="go('${PROJECTS[0].id}')">Back to ${esc(PROJECTS[0].persona)}</button>
+    </div>`;
+}
+
+/* ---------- Panel behaviour ---------- */
+let logTimer = null;
+function bindPanel(p) {
+  clearInterval(logTimer);
+
+  document.querySelectorAll("[data-expand]").forEach(b => b.addEventListener("click", () => {
+    const body = b.previousElementSibling;
+    const open = body.classList.toggle("is-clamped");
+    b.textContent = open ? "Show full post" : "Show less";
+  }));
+
+  document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
+    const post = p.posts.find(x => x.id === b.dataset.copy);
+    await copy(post.text, b);
+  }));
+
+  document.querySelectorAll("[data-publish]").forEach(b => b.addEventListener("click", () => publish(p, b)));
+
+  const input = $("#sim-input");
+  if (input) {
+    document.querySelectorAll("[data-sample]").forEach(c => c.addEventListener("click", () => { input.value = c.dataset.sample; runMatch(p); }));
+    $("#sim-run").addEventListener("click", () => runMatch(p));
+    input.addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) runMatch(p); });
+  }
+
+  const reload = $("#reload-lander");
+  if (reload) reload.addEventListener("click", () => { const f = $(".device iframe"); f.src = p.landerUrl + "?t=" + Date.now(); });
+
+  if (state.tab === "activity") {
+    logTimer = setInterval(async () => {
+      await fetchLogs();
+      const el = $("#log");
+      if (el) { el.innerHTML = state.logs.length ? state.logs.map(esc).join("<br>") : '<span class="log-empty">Nothing logged yet.</span>'; el.scrollTop = el.scrollHeight; }
+    }, 3000);
+  }
+}
+
+function matchSlot(p, text) {
+  const t = text.toLowerCase();
+  const has = list => list.some(k => t.includes(k));
+  for (const r of p.replyRules) {
+    if (r.all ? r.all.every(has) : has(r.any)) return r.slot;
+  }
+  return null;
+}
+
+function runMatch(p) {
+  const text = $("#sim-input").value.trim();
+  const out = $("#sim-result");
+  if (!text) { $("#sim-input").focus(); return; }
+  const slot = matchSlot(p, text);
+  if (!slot) {
+    out.innerHTML = `<div class="result-empty"><strong>No slot matches this post</strong>${esc(p.persona)} stays quiet here. Replying off-topic reads as spam. Add a keyword rule if this should map to a product.</div>`;
+    return;
+  }
+  const item = p.catalog.find(c => c.slot === slot);
+  const reply = p.replies[slot];
+  const lower = reply.toLowerCase();
+  const bannedHit = p.banned.find(b => lower.includes(b));
+  const hasLink = /https?:\/\/|amzn\.|\.com/.test(lower);
+  out.innerHTML = `
+    <div class="result-head"><span class="pill pill-ok">Slot #${slot}</span><span class="result-product">${esc(item.title)}</span></div>
+    <p class="reply-text">${esc(reply)}</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-sm" id="copy-reply">${icons.copy}Copy reply</button></div>
+    <ul class="checks">
+      <li class="${hasLink ? "is-fail" : ""}">${hasLink ? icons.x : icons.check}${hasLink ? "Contains a link" : "No links in the reply"}</li>
+      <li class="${bannedHit ? "is-fail" : ""}">${bannedHit ? icons.x : icons.check}${bannedHit ? `Uses banned phrase “${esc(bannedHit)}”` : "No banned phrases"}</li>
+      <li>${icons.check}Points to bio #${slot}</li>
+    </ul>`;
+  $("#copy-reply").addEventListener("click", e => copy(reply, e.currentTarget));
+}
+
+async function copy(text, btn) {
+  try { await navigator.clipboard.writeText(text); } catch {
+    const ta = Object.assign(document.createElement("textarea"), { value: text });
+    document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
+  }
+  const orig = btn.innerHTML;
+  btn.innerHTML = `${icons.check}Copied`; btn.classList.add("is-done");
+  setTimeout(() => { btn.innerHTML = orig; btn.classList.remove("is-done"); }, 1600);
+}
+
+async function publish(p, btn) {
+  const id = btn.dataset.publish;
+  document.querySelectorAll("[data-publish]").forEach(b => b.disabled = true);
+  btn.textContent = "Publishing…";
+  try {
+    const r = await fetch("/api/broadcast/publish", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || "Request failed");
+    toast("Publishing in the background. This takes about a minute.");
+    const started = Date.now();
+    const poll = setInterval(async () => {
+      await detectLive();
+      if (state.published[id]) { clearInterval(poll); toast("Posted to Threads."); render(); }
+      else if (Date.now() - started > 150000) { clearInterval(poll); toast("No confirmation yet. Check the Activity tab."); render(); }
+    }, 5000);
+  } catch (err) {
+    toast(`Couldn't start publishing: ${err.message}`);
+    render();
+  }
+}
+
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("is-on");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("is-on"), 3200);
+}
+
+/* ---------- Boot ---------- */
+async function boot() { readHash(); render(); await detectLive(); await fetchLogs(); render(); }
+if (sessionStorage.getItem(AUTH_KEY)) showApp(); else showGate();
+</script>
 </body>
 </html>

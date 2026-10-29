@@ -39,8 +39,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         url = urllib.parse.urlparse(self.path)
         path = url.path
 
-        if path == "/" or path == "/dashboard":
-            self.serve_file(os.path.join(BASE_DIR, "dashboard.html"), "text/html")
+        if path in ("/", "/control", "/control/", "/dashboard"):
+            self.serve_file(os.path.join(BASE_DIR, "public", "control", "index.html"), "text/html; charset=utf-8")
         elif path == "/api/overview":
             self.handle_get_overview()
         elif path == "/api/catalog":

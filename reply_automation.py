@@ -241,8 +241,19 @@ def send_approved_reply(queue_id):
         page.goto(direct_post_url, wait_until="domcontentloaded", timeout=25000)
         page.wait_for_timeout(3500)
 
+        # Check if page is deleted or 404
+        content_lower = page.content().lower()
+        if "isn't available" in content_lower or "page not found" in content_lower:
+            browser.close()
+            raise Exception("Threads post returned 404 or is no longer available.")
+
         composer = page.locator("div[role='textbox'][contenteditable='true']").first
-        composer.wait_for(state="visible", timeout=10000)
+        try:
+            composer.wait_for(state="visible", timeout=10000)
+        except Exception:
+            browser.close()
+            raise Exception("Reply textbox not found (post may have replies disabled, or login wall appeared).")
+
         composer.click()
         page.wait_for_timeout(500)
         page.keyboard.type(reply_text, delay=22)

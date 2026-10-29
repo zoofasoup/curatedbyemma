@@ -266,7 +266,13 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 reply_automation.send_approved_reply(queue_id)
                 add_log(f"✓ Reply #{queue_id} successfully sent to Threads!")
             except Exception as e:
-                add_log(f"[X] Failed to send reply #{queue_id}: {e}")
+                err_str = str(e)
+                add_log(f"[X] Failed to send reply #{queue_id}: {err_str}")
+                try:
+                    import database as db
+                    db.update_queue_status(queue_id, "failed")
+                except Exception:
+                    pass
         t = threading.Thread(target=worker, daemon=True)
         t.start()
         self.send_json({"status": "dispatching", "id": queue_id})

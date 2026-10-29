@@ -11,6 +11,7 @@ from threads_engine import generate_honest_reply, match_product_slot
 from threads_broadcast import CURATED_QUEUE, load_history, publish_thread, get_next_unposted
 
 import db
+import auto_worker
 
 PORT = 7860
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -57,6 +58,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_get_replies()
         elif path == "/api/queue":
             self.handle_get_queue()
+        elif path == "/api/autopilot":
+            self.send_json(auto_worker.get_status())
         elif path.startswith("/assets/"):
             # Serve public assets (photos)
             asset_path = os.path.join(BASE_DIR, "public", path.lstrip("/"))
@@ -91,6 +94,12 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_approve_queue(data)
         elif path == "/api/queue/reject":
             self.handle_reject_queue(data)
+        elif path == "/api/autopilot/toggle":
+            if auto_worker.WORKER_RUNNING:
+                auto_worker.stop_worker()
+            else:
+                auto_worker.start_worker()
+            self.send_json(auto_worker.get_status())
         else:
             self.send_error(404, "Not Found")
 

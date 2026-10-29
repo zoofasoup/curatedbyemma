@@ -461,14 +461,16 @@ async function fetchLogs() {
 
 async function fetchAnalytics() {
   try {
-    const [r1, r2, r3] = await Promise.all([
+    const [r1, r2, r3, r4] = await Promise.all([
       fetch("/api/analytics", { cache: "no-store" }),
       fetch("/api/replies", { cache: "no-store" }),
-      fetch("/api/queue", { cache: "no-store" })
+      fetch("/api/queue", { cache: "no-store" }),
+      fetch("/api/autopilot", { cache: "no-store" })
     ]);
     if (r1.ok) state.metrics = (await r1.json()).metrics || [];
     if (r2.ok) state.dbReplies = (await r2.json()).replies || [];
     if (r3.ok) state.approvalQueue = (await r3.json()).queue || [];
+    if (r4.ok) state.autopilot = await r4.json();
   } catch {}
 }
 
@@ -502,10 +504,33 @@ function render() {
   bindActions(p);
 }
 
-/* 1. Queue View (Linear Triage Inbox) */
+/* 1. Queue View (Linear Triage Inbox with Smart Filters & AutoPilot) */
 function renderQueueView(p, pendingCount) {
   const queue = state.approvalQueue || [];
   const replies = state.dbReplies || [];
+  const ap = state.autopilot || { running: false, sent_today: 0, daily_limit: 25 };
+
+  const viralCount = queue.filter(x => (x.engagement_tier || "").includes("VIRAL")).length;
+  const sniperCount = queue.filter(x => !(x.engagement_tier || "").includes("VIRAL")).length;
+
+  state.filterTier = state.filterTier || "all";
+  state.filterSlot = state.filterSlot || "all";
+  state.filterSearch = state.filterSearch || "";
+
+  const filteredQueue = queue.filter(item => {
+    const isViral = (item.engagement_tier || "").includes("VIRAL");
+    if (state.filterTier === "viral" && !isViral) return false;
+    if (state.filterTier === "sniper" && isViral) return false;
+    if (state.filterSlot !== "all" && String(item.matched_slot) !== String(state.filterSlot)) return false;
+    if (state.filterSearch) {
+      const q = state.filterSearch.toLowerCase();
+      const matchAuthor = (item.author_username || "").toLowerCase().includes(q);
+      const matchText = (item.thread_text || "").toLowerCase().includes(q);
+      const matchProd = (item.product_name || "").toLowerCase().includes(q);
+      if (!matchAuthor && !matchText && !matchProd) return false;
+    }
+    return true;
+  });
 
   return `
     <header class="workspace-head">
@@ -520,13 +545,70 @@ function renderQueueView(p, pendingCount) {
     </header>
 
     <div class="workspace-content">
-      ${queue.length === 0 ? `
-        <div class="empty-box">
-          <h3>Inbox Zero</h3>
-          <p>No pending drafts to review. Click "Scan Threads" to hunt for fresh real-world complaints.</p>
-          <button class="btn btn-sm btn-solid" onclick="document.querySelector('#scan-now-btn').click()">Scan Threads Now</button>
+      <!-- 1. Stats & AutoPilot Bar -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px;">
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;">
+          <div style="font-size:11px;color:var(--ink-3);text-transform:uppercase;font-weight:600;">Total Pending</div>
+          <div style="font-size:20px;font-weight:700;color:var(--ink);margin-top:2px;">${queue.length}</div>
         </div>
-      ` : queue.map(item => {
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;">
+          <div style="font-size:11px;color:#92400e;text-transform:uppercase;font-weight:600;">🔥 Viral Hijack</div>
+          <div style="font-size:20px;font-weight:700;color:#b45309;margin-top:2px;">${viralCount}</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;">
+          <div style="font-size:11px;color:#065f46;text-transform:uppercase;font-weight:600;">⚡ Fresh Sniper</div>
+          <div style="font-size:20px;font-weight:700;color:#047857;margin-top:2px;">${sniperCount}</div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:11px;color:var(--ink-3);text-transform:uppercase;font-weight:600;">Auto-Pilot (${ap.sent_today}/${ap.daily_limit} today)</div>
+            <div style="font-size:12px;font-weight:600;margin-top:2px;">
+              ${ap.running ? '<span style="color:var(--accent);">● Active (Auto-Dispatch)</span>' : '<span style="color:var(--ink-3);">○ Paused (Manual)</span>'}
+            </div>
+          </div>
+          <button class="btn btn-sm ${ap.running ? 'btn-ghost' : 'btn-solid'}" id="toggle-autopilot-btn" style="font-size:11px;padding:4px 10px;">
+            ${ap.running ? 'Pause' : 'Start Auto'}
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Filter & Search Bar -->
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:8px 12px;">
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-sm filter-tier-btn ${state.filterTier === 'all' ? 'btn-solid' : 'btn-ghost'}" data-tier="all">All (${queue.length})</button>
+          <button class="btn btn-sm filter-tier-btn ${state.filterTier === 'viral' ? 'btn-solid' : 'btn-ghost'}" data-tier="viral">🔥 Viral (${viralCount})</button>
+          <button class="btn btn-sm filter-tier-btn ${state.filterTier === 'sniper' ? 'btn-solid' : 'btn-ghost'}" data-tier="sniper">⚡ Sniper (${sniperCount})</button>
+        </div>
+
+        <select id="queue-slot-filter" style="padding:5px 8px;border-radius:var(--radius-sm);border:1px solid var(--line-strong);font-size:12px;background:var(--bg);color:var(--ink);cursor:pointer;">
+          <option value="all">All 10 Slots</option>
+          ${[1,2,3,4,5,6,7,8,9,10].map(s => {
+            const cnt = queue.filter(x => x.matched_slot === s).length;
+            return `<option value="${s}" ${state.filterSlot === String(s) ? 'selected' : ''}>Slot #${s} (${cnt})</option>`;
+          }).join("")}
+        </select>
+
+        <div style="flex:1;min-width:160px;">
+          <input type="text" id="queue-search-input" value="${esc(state.filterSearch || '')}" placeholder="Search author, keyword, or slot…" style="width:100%;box-sizing:border-box;padding:5px 10px;border-radius:var(--radius-sm);border:1px solid var(--line-strong);font-size:12px;background:var(--bg);color:var(--ink);" />
+        </div>
+
+        ${(state.filterTier !== 'all' || state.filterSlot !== 'all' || state.filterSearch) ? `
+          <button class="btn btn-sm btn-ghost" id="reset-filters-btn" style="color:var(--ink-3);font-size:11px;">✕ Clear Filter</button>
+        ` : ''}
+      </div>
+
+      <!-- 3. Cards List -->
+      ${filteredQueue.length === 0 ? `
+        <div class="empty-box">
+          <h3>${queue.length === 0 ? 'Inbox Zero' : 'No Leads Match Filters'}</h3>
+          <p>${queue.length === 0 ? 'No pending drafts to review. Click "Scan Threads" to hunt for fresh real-world complaints.' : 'Try resetting your search query, slot, or tier filter.'}</p>
+          ${queue.length === 0 ? `
+            <button class="btn btn-sm btn-solid" onclick="document.querySelector('#scan-now-btn').click()">Scan Threads Now</button>
+          ` : `
+            <button class="btn btn-sm btn-ghost" id="empty-reset-filters-btn">Reset Filters</button>
+          `}
+        </div>
+      ` : filteredQueue.map(item => {
         // Strip legacy bracket prefix if present
         const cleanComplaint = (item.thread_text || "").replace(/^\[.*?\]\s*/, "");
         const isViral = (item.engagement_tier || "").includes("VIRAL");
@@ -811,6 +893,69 @@ function bindActions(p) {
       await fetchAnalytics();
       render();
       toast("Queue refreshed.");
+    };
+  }
+
+  // AutoPilot Toggle
+  const apBtn = $("#toggle-autopilot-btn");
+  if (apBtn) {
+    apBtn.onclick = async () => {
+      apBtn.disabled = true;
+      try {
+        const res = await fetch("/api/autopilot/toggle", { method: "POST" });
+        if (res.ok) {
+          state.autopilot = await res.json();
+          render();
+          toast(state.autopilot.running ? "AutoPilot STARTED: Capped at 25 replies/day." : "AutoPilot PAUSED.");
+        }
+      } catch (e) {
+        toast("Error toggling AutoPilot: " + e.message);
+      } finally {
+        apBtn.disabled = false;
+      }
+    };
+  }
+
+  // Tier filter buttons
+  document.querySelectorAll(".filter-tier-btn").forEach(b => {
+    b.onclick = () => {
+      state.filterTier = b.dataset.tier;
+      render();
+    };
+  });
+
+  // Slot dropdown filter
+  const slotSel = $("#queue-slot-filter");
+  if (slotSel) {
+    slotSel.onchange = (e) => {
+      state.filterSlot = e.target.value;
+      render();
+    };
+  }
+
+  // Search input with cursor position preservation
+  const searchInput = $("#queue-search-input");
+  if (searchInput) {
+    searchInput.oninput = (e) => {
+      state.filterSearch = e.target.value;
+      const cursorPos = e.target.selectionStart;
+      render();
+      const updatedInput = $("#queue-search-input");
+      if (updatedInput) {
+        updatedInput.focus();
+        updatedInput.setSelectionRange(cursorPos, cursorPos);
+      }
+    };
+  }
+
+  // Reset filter buttons
+  const resetBtn = $("#reset-filters-btn") || $("#empty-reset-filters-btn");
+  if (resetBtn) {
+    resetBtn.onclick = () => {
+      state.filterTier = "all";
+      state.filterSlot = "all";
+      state.filterSearch = "";
+      render();
     };
   }
 

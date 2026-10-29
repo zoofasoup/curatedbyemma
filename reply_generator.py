@@ -303,6 +303,18 @@ def evaluate_and_draft_local(post_text, author="user"):
     text_lower = post_text.lower()
 
     # 1. HARD REJECT LIST (Immediate veto)
+    # Non-English language veto (Indonesian, Malay, etc.)
+    non_english_markers = [
+        "kak", "bayiku", "anakku", "banget", "nggak", "ngga", "tidak", "bisa", "udah",
+        "nih", "tuh", "deh", "dgn", "bgt", "gak", "korang", "kat", "boleh", "je",
+        "dah", "tak", "nak", "tu", "saya", "aku", "gue", "lu", "kalo", "kalau",
+        "tidur", "kebangun", "malam", "pagi", "sakit", "punggung", "kursi", "kasur", "belakang"
+    ]
+    tokens = set(re.findall(r'\b[a-z]+\b', text_lower))
+    matched_foreign = [w for w in non_english_markers if w in tokens]
+    if len(matched_foreign) >= 1:
+        return {"verdict": "REJECT", "reason": f"Non-English language detected ('{matched_foreign[0]}') — Emma only targets US English market"}
+
     memorial_words = [
         "passed away", "died", "funeral", "grave", "rip", "grandfather", "grandmother",
         "lolo", "lola", "ancestor", "memory of", "childhood", "growing up", "undas",
@@ -435,6 +447,9 @@ def generate_reply_llm(post_text, author="user", timeout=25):
     system_instruction = f"""You are Emma (@curated_byemma), a 29-year-old practical consumer researcher in Seattle. You review everyday viral Amazon products and give completely honest, down-to-earth recommendations on Threads.
 
 RULES:
+0. STRICT ENGLISH ONLY (US Market Target):
+   - The user post MUST be primarily written in English.
+   - If the post is in Indonesian, Malay, Tagalog, Spanish, or any non-English language, REJECT IT IMMEDIATELY with reason "Non-English post". Emma only operates in the US English market.
 1. STRICT "NEVER LIE" & CONTEXT RELEVANCE:
    - Does one of your 10 catalog items GENUINELY solve this user's exact problem?
    - If someone's problem is NOT solved by your products (e.g. medical spine injury, thrown-out back spasms while vacuuming floor under couch, wanting robot vacuums, dog chewing walls), you MUST REJECT.

@@ -55,6 +55,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_get_analytics()
         elif path == "/api/replies":
             self.handle_get_replies()
+        elif path == "/api/queue":
+            self.handle_get_queue()
         elif path.startswith("/assets/"):
             # Serve public assets (photos)
             asset_path = os.path.join(BASE_DIR, "public", path.lstrip("/"))
@@ -85,6 +87,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_update_metrics(data)
         elif path == "/api/automation/run":
             self.handle_run_automation(data)
+        elif path == "/api/queue/approve":
+            self.handle_approve_queue(data)
+        elif path == "/api/queue/reject":
+            self.handle_reject_queue(data)
         else:
             self.send_error(404, "Not Found")
 
@@ -243,6 +249,36 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         t = threading.Thread(target=worker, daemon=True)
         t.start()
         self.send_json({"status": "started", "target": count, "message": "Reply session started in background"})
+
+    def handle_get_queue(self):
+        try:
+            items = db.get_pending_queue("emma")
+            self.send_json({"status": "ok", "queue": items})
+        except Exception as e:
+            self.send_json({"error": str(e)}, status=500)
+
+    def handle_approve_queue(self, data):
+        queue_id = int(data.get("id"))
+        def worker():
+            add_log(f"🚀 User approved reply #{queue_id}. Dispatching to Threads...")
+            try:
+                import reply_automation
+                reply_automation.send_approved_reply(queue_id)
+                add_log(f"✓ Reply #{queue_id} successfully sent to Threads!")
+            except Exception as e:
+                add_log(f"[X] Failed to send reply #{queue_id}: {e}")
+        t = threading.Thread(target=worker, daemon=True)
+        t.start()
+        self.send_json({"status": "dispatching", "id": queue_id})
+
+    def handle_reject_queue(self, data):
+        try:
+            queue_id = int(data.get("id"))
+            db.update_queue_status(queue_id, "rejected")
+            add_log(f"[-] Reply #{queue_id} discarded by user.")
+            self.send_json({"status": "rejected", "id": queue_id})
+        except Exception as e:
+            self.send_json({"error": str(e)}, status=400)
 
 def start_server():
     server = ThreadingHTTPServer(("0.0.0.0", PORT), DashboardHandler)

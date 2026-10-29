@@ -51,6 +51,22 @@ def init_db():
     )
     """)
 
+    # 2B. Review Queue for Human-In-The-Loop Approval
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS reply_approval_queue (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ip_id TEXT NOT NULL,
+        author_username TEXT,
+        thread_url TEXT NOT NULL,
+        thread_text TEXT NOT NULL,
+        matched_slot INTEGER NOT NULL,
+        product_name TEXT NOT NULL,
+        draft_reply TEXT NOT NULL,
+        status TEXT DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
     # 3. Slot Experiment & 7-Day Performance Metrics
     c.execute("""
     CREATE TABLE IF NOT EXISTS slot_metrics (
@@ -98,6 +114,38 @@ def get_slot_analytics(ip_id="emma"):
     rows = [dict(r) for r in c.fetchall()]
     conn.close()
     return rows
+
+def get_pending_queue(ip_id="emma"):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+    SELECT * FROM reply_approval_queue 
+    WHERE ip_id = ? AND status = 'pending'
+    ORDER BY created_at DESC
+    """, (ip_id,))
+    rows = [dict(r) for r in c.fetchall()]
+    conn.close()
+    return rows
+
+def add_to_queue(ip_id, author, thread_url, thread_text, slot, product_name, draft_reply):
+    conn = get_connection()
+    c = conn.cursor()
+    # Check if thread already in queue
+    c.execute("SELECT id FROM reply_approval_queue WHERE thread_url = ?", (thread_url,))
+    if not c.fetchone():
+        c.execute("""
+        INSERT INTO reply_approval_queue (ip_id, author_username, thread_url, thread_text, matched_slot, product_name, draft_reply, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
+        """, (ip_id, author, thread_url, thread_text, slot, product_name, draft_reply))
+        conn.commit()
+    conn.close()
+
+def update_queue_status(queue_id, new_status):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("UPDATE reply_approval_queue SET status = ? WHERE id = ?", (new_status, queue_id))
+    conn.commit()
+    conn.close()
 
 def get_recent_replies(ip_id="emma", limit=20):
     conn = get_connection()

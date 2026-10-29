@@ -421,7 +421,7 @@ const icons = {
   star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>'
 };
 
-const state = { ip: null, tab: "catalog", live: false, published: {}, logs: [], metrics: [], dbReplies: [] };
+const state = { ip: null, tab: "catalog", live: false, published: {}, logs: [], metrics: [], dbReplies: [], approvalQueue: [] };
 
 /* ---------- Auth ---------- */
 function showApp() { $("#gate").hidden = true; $("#app").hidden = false; boot(); }
@@ -454,12 +454,14 @@ async function fetchLogs() {
 async function fetchAnalytics() {
   if (!state.live) return;
   try {
-    const [r1, r2] = await Promise.all([
+    const [r1, r2, r3] = await Promise.all([
       fetch("/api/analytics", { cache: "no-store" }),
-      fetch("/api/replies", { cache: "no-store" })
+      fetch("/api/replies", { cache: "no-store" }),
+      fetch("/api/queue", { cache: "no-store" })
     ]);
     if (r1.ok) state.metrics = (await r1.json()).metrics || [];
     if (r2.ok) state.dbReplies = (await r2.json()).replies || [];
+    if (r3.ok) state.approvalQueue = (await r3.json()).queue || [];
   } catch {}
 }
 
@@ -663,6 +665,44 @@ function renderExperiments(p) {
       </table>
     </div>
 
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 10px;">
+      <h3 style="font-size:14px;font-weight:600;margin:0;">Human Approval Queue (Review Before Send)</h3>
+      <span class="pill pill-muted" id="queue-count-pill">${(state.approvalQueue || []).length} Pending</span>
+    </div>
+
+    <div id="approval-queue-list" style="margin-bottom:28px;">
+      ${(!state.approvalQueue || state.approvalQueue.length === 0) ? `
+        <div style="border:1px dashed var(--line-strong);border-radius:var(--radius);padding:18px;text-align:center;color:var(--ink-3);font-size:13.5px;">
+          No pending drafts in queue. Click <strong>"🚀 Run Session (Batch 5)"</strong> to hunt for fresh threads with strict context check.
+        </div>
+      ` : state.approvalQueue.map(item => `
+        <div style="border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:16px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div>
+              <span class="pill pill-ok" style="font-weight:600;">Slot #${item.matched_slot}: ${esc(item.product_name)}</span>
+              <span style="font-size:13px;color:var(--ink-2);margin-left:8px;">Target: <strong>@${esc(item.author_username)}</strong></span>
+            </div>
+            <a href="${item.thread_url}" target="_blank" rel="noopener" class="btn btn-sm btn-ghost" style="font-size:12px;">View Thread ↗</a>
+          </div>
+
+          <div style="background:var(--rail);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;color:var(--ink-2);margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-3);margin-bottom:4px;">Original Complaint Post:</div>
+            “${esc(item.thread_text)}”
+          </div>
+
+          <div style="font-size:13.5px;color:var(--ink);line-height:1.55;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--accent);margin-bottom:4px;">Crafted 4-Part Honest Reply:</div>
+            “${esc(item.draft_reply)}”
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-sm btn-accent approve-btn" data-id="${item.id}" style="background:var(--accent);color:#fff;border-color:var(--accent);">✓ Approve & Send to Threads</button>
+            <button class="btn btn-sm btn-ghost reject-btn" data-id="${item.id}" style="color:var(--danger);">✕ Discard</button>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+
     <h3 style="font-size:14px;font-weight:600;margin:0 0 10px;">Recent Reply Audit Stream (SQLite)</h3>
     <div class="log" style="max-height:260px;">
       ${replies.length === 0 ? `<div class="log-empty">No automated replies recorded in DB yet. Ready for first run.</div>` : replies.map(r => `
@@ -837,6 +877,48 @@ function bindPanel(p) {
       toast("Analytics data refreshed from SQLite.");
     });
   }
+
+  document.querySelectorAll(".approve-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
+      btn.disabled = true;
+      btn.textContent = "Sending to Threads…";
+      try {
+        const res = await fetch("/api/queue/approve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: Number(id) })
+        });
+        toast("Reply approved! Dispatched in background.");
+        setTimeout(async () => {
+          await fetchAnalytics();
+          render();
+        }, 4000);
+      } catch (err) {
+        toast("Error approving: " + err.message);
+        btn.disabled = false;
+      }
+    });
+  });
+
+  document.querySelectorAll(".reject-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const id = btn.dataset.id;
+      btn.disabled = true;
+      try {
+        await fetch("/api/queue/reject", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: Number(id) })
+        });
+        toast("Draft discarded.");
+        await fetchAnalytics();
+        render();
+      } catch (err) {
+        toast("Error: " + err.message);
+      }
+    });
+  });
 
   document.querySelectorAll(".edit-slot-btn").forEach(btn => {
     btn.addEventListener("click", async () => {

@@ -14,6 +14,7 @@ import random
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 import db
+import reply_generator
 
 # -------------------------------------------------------------
 # 1. TEMPLATES: THE 4-PART HONEST RESEARCHER FRAMEWORK
@@ -142,6 +143,12 @@ def run_reply_automation(max_replies_this_run=2, dry_run=False):
                     if cur.fetchone():
                         continue
 
+                    # STRICT CONTEXT EVALUATOR (Never Lie & Reject Family/Memorial/Joke Context)
+                    eval_res = reply_generator.evaluate_and_draft_local(text, author=author)
+                    if eval_res["verdict"] == "REJECT":
+                        print(f"  [-] Hard REJECTED post by @{author}: {eval_res.get('reason')}")
+                        continue
+
                     # Extract the direct post URL from card
                     post_link_el = post_el.locator("a[href*='/post/']").first
                     if post_link_el.count() == 0:
@@ -151,62 +158,34 @@ def run_reply_automation(max_replies_this_run=2, dry_run=False):
                         continue
                     direct_post_url = "https://www.threads.net" + post_href if post_href.startswith("/") else post_href
 
-                    thread_id = f"th_{slot}_{abs(hash(direct_post_url))}"
-                    reply_text = random.choice(FRAMEWORK_TEMPLATES[slot])
+                    matched_slot = eval_res["slot"]
+                    product_name = eval_res["product_name"]
+                    reply_text = eval_res["reply_draft"]
 
-                    print(f"  -> Found valid complaint by @{author}:")
-                    print(f"     URL: {direct_post_url}")
-                    print(f"     Text: \"{text[:70]}...\"")
-                    print(f"  -> Prepared Honest Reply (Slot #{slot}):")
-                    print(f"     \"{reply_text}\"")
+                    print(f"  [✓] ACCEPTED Genuine Complaint by @{author}:")
+                    print(f"      Product: Slot #{matched_slot} ({product_name})")
+                    print(f"      URL: {direct_post_url}")
+                    print(f"      Original Text: \"{text[:75]}...\"")
+                    print(f"      Crafted 4-Part Reply: \"{reply_text}\"")
 
-                    if dry_run:
-                        print("  [DRY-RUN] Reply logged without sending.")
-                    else:
-                        # Navigate directly to the post detail page for rock-solid reply composer
-                        try:
-                            print(f"  -> Opening direct post page...")
-                            page.goto(direct_post_url, wait_until="domcontentloaded", timeout=25000)
-                            page.wait_for_timeout(3500)
+                    # Add to Human Approval Queue in SQLite
+                    db.add_to_queue(
+                        ip_id="emma",
+                        author=author,
+                        thread_url=direct_post_url,
+                        thread_text=text,
+                        slot=matched_slot,
+                        product_name=product_name,
+                        draft_reply=reply_text
+                    )
 
-                            # Locate the lexical textbox on detail page
-                            composer = page.locator("div[role='textbox'][contenteditable='true']").first
-                            composer.wait_for(state="visible", timeout=10000)
-                            composer.click()
-                            page.wait_for_timeout(500)
-                            page.keyboard.type(reply_text, delay=22)
-                            page.wait_for_timeout(1000)
-
-                            # Native submit via Control+Enter & Meta+Enter (universal on Threads Web)
-                            page.keyboard.press("Control+Enter")
-                            page.wait_for_timeout(500)
-                            page.keyboard.press("Meta+Enter")
-                            page.wait_for_timeout(4000)
-                            print(f"  [✓] Successfully submitted honest reply to @{author} on {direct_post_url}!")
-                        except Exception as e:
-                            print(f"  [!] Failed to send reply via direct page: {e}")
-                            continue
-
-                    # Record to SQLite
+                    # Also mark thread as scraped to prevent re-processing
+                    thread_id = f"th_{matched_slot}_{abs(hash(direct_post_url))}"
                     cur.execute("""
                     INSERT OR IGNORE INTO threads_scraped (id, ip_id, author_username, thread_text, detected_category, matched_slot)
                     VALUES (?, 'emma', ?, ?, ?, ?)
-                    """, (thread_id, author, text, sq["category"], slot))
+                    """, (thread_id, author, text, product_name, matched_slot))
                     conn.commit()
-                    conn.close() # Close local handle before calling db.log_reply
-
-                    db.log_reply(
-                        ip_id="emma",
-                        slot=slot,
-                        reply_text=reply_text,
-                        hook_variant="honest_researcher_4part",
-                        thread_id=thread_id,
-                        status="sent" if not dry_run else "dry_run"
-                    )
-                    
-                    # Reopen connection for subsequent loop iterations
-                    conn = db.get_connection()
-                    cur = conn.cursor()
 
                     replies_completed += 1
                     
@@ -224,6 +203,70 @@ def run_reply_automation(max_replies_this_run=2, dry_run=False):
 
     print(f"\n[✓] Automation run finished. Total replies logged/sent: {replies_completed}")
     return replies_completed
+
+def send_approved_reply(queue_id):
+    """
+    Called when user approves a draft from the dashboard queue.
+    Submits the reply to Threads using native Control+Enter shortcut.
+    """
+    conn = db.get_connection()
+    c = conn.cursor()
+    c.execute("SELECT * FROM reply_approval_queue WHERE id = ?", (queue_id,))
+    item = c.fetchone()
+    if not item:
+        conn.close()
+        raise Exception(f"Queue item #{queue_id} not found")
+
+    if not os.path.exists(SESSION_PATH):
+        conn.close()
+        raise Exception("threads_session.json not found")
+
+    with open(SESSION_PATH, "r") as f:
+        session_data = json.load(f)
+    cookies = session_data.get("cookies", [])
+
+    direct_post_url = item["thread_url"]
+    reply_text = item["draft_reply"]
+    slot = item["matched_slot"]
+    author = item["author_username"]
+
+    print(f"[*] Dispatching approved reply to @{author} ({direct_post_url})...")
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True, args=['--disable-ipv6'])
+        ctx = browser.new_context(viewport={"width": 1280, "height": 800})
+        ctx.add_cookies(cookies)
+        page = ctx.new_page()
+
+        page.goto(direct_post_url, wait_until="domcontentloaded", timeout=25000)
+        page.wait_for_timeout(3500)
+
+        composer = page.locator("div[role='textbox'][contenteditable='true']").first
+        composer.wait_for(state="visible", timeout=10000)
+        composer.click()
+        page.wait_for_timeout(500)
+        page.keyboard.type(reply_text, delay=22)
+        page.wait_for_timeout(1000)
+
+        # Submit via Control+Enter & Meta+Enter
+        page.keyboard.press("Control+Enter")
+        page.wait_for_timeout(500)
+        page.keyboard.press("Meta+Enter")
+        page.wait_for_timeout(4000)
+        browser.close()
+
+    # Update SQLite
+    db.update_queue_status(queue_id, "approved")
+    db.log_reply(
+        ip_id="emma",
+        slot=slot,
+        reply_text=reply_text,
+        hook_variant="honest_researcher_4part",
+        thread_id=f"th_{slot}_{abs(hash(direct_post_url))}",
+        status="sent"
+    )
+    print(f"[✓] Approved reply #{queue_id} successfully sent and logged!")
+    return True
 
 if __name__ == "__main__":
     is_dry = "--dry-run" in sys.argv

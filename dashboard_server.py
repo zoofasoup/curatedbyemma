@@ -83,6 +83,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_broadcast_publish(data)
         elif path == "/api/analytics/update":
             self.handle_update_metrics(data)
+        elif path == "/api/automation/run":
+            self.handle_run_automation(data)
         else:
             self.send_error(404, "Not Found")
 
@@ -224,6 +226,23 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.send_json({"status": "success", "slot": slot})
         except Exception as e:
             self.send_json({"error": str(e)}, status=400)
+
+    def handle_run_automation(self, data):
+        count = int(data.get("count", 5))
+        dry_run = bool(data.get("dry_run", False))
+
+        def worker():
+            add_log(f"⚡ Starting Reply Automation Batch (Target: {count} replies, dry_run={dry_run})...")
+            try:
+                import reply_automation
+                sent = reply_automation.run_reply_automation(max_replies_this_run=count, dry_run=dry_run)
+                add_log(f"✓ Automation Batch Finished! Total replies completed: {sent}")
+            except Exception as e:
+                add_log(f"[X] Automation failed: {e}")
+
+        t = threading.Thread(target=worker, daemon=True)
+        t.start()
+        self.send_json({"status": "started", "target": count, "message": "Reply session started in background"})
 
 def start_server():
     server = ThreadingHTTPServer(("0.0.0.0", PORT), DashboardHandler)

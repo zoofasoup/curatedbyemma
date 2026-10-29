@@ -591,7 +591,8 @@ function renderExperiments(p) {
         <h2>Testing & Experiment DB</h2>
         <p>Current 7-Day Cycle: <strong>Oct 28 – Nov 04</strong> · Target: <strong>20 replies / slot</strong> to evaluate conversion.</p>
       </div>
-      <div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sm btn-accent" id="run-batch-btn" style="background:var(--accent);color:#fff;border-color:var(--accent);">🚀 Run Session (Batch 5)</button>
         <button class="btn btn-sm" id="refresh-db-btn">Refresh DB</button>
       </div>
     </div>
@@ -803,8 +804,29 @@ function bindPanel(p) {
     input.addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) runMatch(p); });
   }
 
-  const reload = $("#reload-lander");
-  if (reload) reload.addEventListener("click", () => { const f = $(".device iframe"); f.src = p.landerUrl + "?t=" + Date.now(); });
+  const runBatch = $("#run-batch-btn");
+  if (runBatch) {
+    runBatch.addEventListener("click", async () => {
+      runBatch.disabled = true;
+      runBatch.textContent = "Running…";
+      try {
+        const res = await fetch("/api/automation/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ count: 5, dry_run: false })
+        });
+        const data = await res.json();
+        toast("Batch 5 started in background! Pacing: 3-6m cooldown.");
+      } catch (err) {
+        toast("Failed to start batch: " + err.message);
+      } finally {
+        setTimeout(() => {
+          runBatch.disabled = false;
+          runBatch.textContent = "🚀 Run Session (Batch 5)";
+        }, 3000);
+      }
+    });
+  }
 
   const refreshDb = $("#refresh-db-btn");
   if (refreshDb) {

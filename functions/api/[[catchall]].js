@@ -5,8 +5,8 @@
  */
 export async function onRequest(context) {
   const url = new URL(context.request.url);
-  const vpsHost = "http://202.10.42.133:7860";
-  const targetUrl = `${vpsHost}${url.pathname}${url.search}`;
+  const backendHost = "https://stopped-myth-dividend-applies.trycloudflare.com";
+  const targetUrl = `${backendHost}${url.pathname}${url.search}`;
 
   const requestInit = {
     method: context.request.method,

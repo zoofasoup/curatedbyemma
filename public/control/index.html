@@ -268,6 +268,15 @@
         </button>
       </li>
       <li>
+        <button class="nav-btn" data-nav="sent">
+          <span class="nav-btn-left">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>Sent Replies</span>
+          </span>
+          <span class="nav-badge" id="rail-sent-badge">0</span>
+        </button>
+      </li>
+      <li>
         <button class="nav-btn" data-nav="rules">
           <span class="nav-btn-left">
             <svg class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -307,6 +316,75 @@
       </div>
       <button class="btn btn-sm" id="reload-lander-btn">Reload Preview</button>
     </div>
+  </div>
+</div>
+
+<!-- Slot Swapper Modal -->
+<div id="swap-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:var(--surface);width:100%;max-width:480px;border-radius:var(--radius);border:1px solid var(--line);box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);padding:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <h2 style="font-size:16px;font-weight:700;margin:0;" id="swap-modal-title">Swap Slot Product</h2>
+      <button type="button" class="btn btn-sm btn-ghost" id="close-swap-modal-btn">✕</button>
+    </div>
+    <form id="swap-modal-form" style="display:flex;flex-direction:column;gap:10px;">
+      <input type="hidden" id="swap-slot-num">
+      <div>
+        <label class="field-label">Product Title</label>
+        <input class="input" id="swap-title" required placeholder="e.g. Sunrise Alarm Clock Wake Up Light...">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <label class="field-label">Amazon ASIN</label>
+          <input class="input" id="swap-asin" required placeholder="e.g. B08TKPRKBN">
+        </div>
+        <div>
+          <label class="field-label">Category</label>
+          <input class="input" id="swap-cat" required placeholder="e.g. Bedroom / Sleep">
+        </div>
+      </div>
+      <div>
+        <label class="field-label">Image URL</label>
+        <input class="input" id="swap-img" required placeholder="https://m.media-amazon.com/images/I/...">
+      </div>
+      <div>
+        <label class="field-label">Target Pain-Point / Hook</label>
+        <input class="input" id="swap-hook" required placeholder="e.g. Grogginess from loud blaring morning alarms">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <label class="field-label">Price ($)</label>
+          <input class="input" id="swap-price" type="number" step="0.01" value="29.99">
+        </div>
+        <div>
+          <label class="field-label">Monthly Velocity</label>
+          <input class="input" id="swap-velocity" value="5K+ bought in past month">
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;">
+        <button type="button" class="btn btn-sm btn-ghost" id="cancel-swap-modal-btn">Cancel</button>
+        <button type="submit" class="btn btn-sm btn-solid">Save & Deploy to Bio 🚀</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Session Cookie Updater Modal -->
+<div id="session-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:var(--surface);width:100%;max-width:520px;border-radius:var(--radius);border:1px solid var(--line);box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);padding:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <h2 style="font-size:16px;font-weight:700;margin:0;">Update Threads Login Cookies</h2>
+      <button type="button" class="btn btn-sm btn-ghost" id="close-session-modal-btn">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--ink-2);margin-bottom:12px;line-height:1.4;">
+      Paste your exported Threads/Instagram cookies JSON below (from EditThisCookie or browser DevTools). System will validate and save directly on VPS without terminal SSH.
+    </p>
+    <form id="session-modal-form" style="display:flex;flex-direction:column;gap:10px;">
+      <textarea id="session-cookies-input" rows="8" placeholder='[{"name": "sessionid", "value": "..."}, {"name": "ds_user_id", "value": "..."}]' style="width:100%;padding:10px;font-family:var(--font-mono);font-size:11px;border-radius:var(--radius-sm);border:1px solid var(--line-strong);background:var(--bg);color:var(--ink);resize:vertical;"></textarea>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+        <button type="button" class="btn btn-sm btn-ghost" id="cancel-session-modal-btn">Cancel</button>
+        <button type="submit" class="btn btn-sm btn-solid">Save Cookies & Verify 🔑</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -412,6 +490,7 @@ const state = {
   metrics: [],
   dbReplies: [],
   approvalQueue: [],
+  sentReplies: [],
   published: {}
 };
 
@@ -423,6 +502,7 @@ const TAB_MAP = {
   content: "posts",
   persona: "rules",
   replies: "rules",
+  sent: "sent",
   lander: "products",
   activity: "queue"
 };
@@ -462,13 +542,14 @@ async function fetchLogs() {
 
 async function fetchAnalytics() {
   try {
-    const [r1, r2, r3, r4, r5, r6] = await Promise.all([
+    const [r1, r2, r3, r4, r5, r6, r7] = await Promise.all([
       fetch("/api/analytics", { cache: "no-store" }),
       fetch("/api/replies", { cache: "no-store" }),
       fetch("/api/queue", { cache: "no-store" }),
       fetch("/api/autopilot", { cache: "no-store" }),
       fetch("/api/session/health", { cache: "no-store" }),
-      fetch("/api/track/stats", { cache: "no-store" })
+      fetch("/api/track/stats", { cache: "no-store" }),
+      fetch("/api/replies/sent", { cache: "no-store" })
     ]);
     if (r1.ok) state.metrics = (await r1.json()).metrics || [];
     if (r2.ok) state.dbReplies = (await r2.json()).replies || [];
@@ -476,6 +557,7 @@ async function fetchAnalytics() {
     if (r4.ok) state.autopilot = await r4.json();
     if (r5 && r5.ok) state.sessionHealth = await r5.json();
     if (r6 && r6.ok) state.landerAnalytics = await r6.json();
+    if (r7 && r7.ok) state.sentReplies = (await r7.json()).replies || [];
   } catch {}
 }
 
@@ -495,15 +577,18 @@ function render() {
     railBadge.textContent = pendingCount;
     railBadge.classList.toggle("is-alert", pendingCount > 0);
   }
+  const sentBadge = $("#rail-sent-badge");
+  if (sentBadge) {
+    sentBadge.textContent = (state.sentReplies || []).length;
+  }
 
   // Update Rail Session Health Status
   const sessionStatus = $("#rail-session-status");
   if (sessionStatus && state.sessionHealth) {
-    if (state.sessionHealth.healthy) {
-      sessionStatus.innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#047857;background:#ecfdf5;padding:1px 6px;border-radius:10px;border:1px solid #a7f3d0;" title="Valid session for @curated_byemma">🟢 Active (${state.sessionHealth.days_left}d)</span>`;
-    } else {
-      sessionStatus.innerHTML = `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#b91c1c;background:#fef2f2;padding:1px 6px;border-radius:10px;border:1px solid #fecaca;" title="Session expired or invalid">🔴 Session Expired</span>`;
-    }
+    const pill = state.sessionHealth.healthy
+      ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#047857;background:#ecfdf5;padding:1px 6px;border-radius:10px;border:1px solid #a7f3d0;" title="Valid session for @curated_byemma">🟢 Active (${state.sessionHealth.days_left}d)</span>`
+      : `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#b91c1c;background:#fef2f2;padding:1px 6px;border-radius:10px;border:1px solid #fecaca;" title="Session expired or invalid">🔴 Session Expired</span>`;
+    sessionStatus.innerHTML = `${pill} <button id="open-session-modal-btn" style="background:none;border:none;color:var(--accent);font-size:10px;text-decoration:underline;cursor:pointer;padding:0 2px;">Update</button>`;
   }
 
   const main = $("#main");
@@ -513,6 +598,8 @@ function render() {
     main.innerHTML = renderProductsView(p);
   } else if (state.tab === "posts") {
     main.innerHTML = renderPostsView(p);
+  } else if (state.tab === "sent") {
+    main.innerHTML = renderSentRepliesView(p);
   } else if (state.tab === "rules") {
     main.innerHTML = renderRulesView(p);
   }
@@ -560,6 +647,21 @@ function renderQueueView(p, pendingCount) {
     </header>
 
     <div class="workspace-content">
+      <!-- 0. Quick Sniper Tool -->
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="font-weight:700;font-size:12.5px;color:var(--ink);display:flex;align-items:center;gap:6px;">
+            <span>🎯 Quick Sniper</span>
+            <span style="font-size:11px;font-weight:400;color:var(--ink-3);">— Target any viral Threads post URL on-demand</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input id="quick-snipe-input" type="url" placeholder="Paste Threads post URL (e.g. https://www.threads.net/@username/post/...)..." style="flex:1;padding:7px 12px;border-radius:var(--radius-sm);border:1px solid var(--line-strong);font-size:12px;background:var(--bg);color:var(--ink);">
+          <button class="btn btn-sm btn-solid" id="quick-snipe-btn" style="white-space:nowrap;padding:0 14px;">⚡ Analyze & Snipe</button>
+        </div>
+        <div id="quick-snipe-box" style="display:none;margin-top:10px;padding:12px;background:var(--rail);border-radius:var(--radius-sm);border:1px solid var(--line);"></div>
+      </div>
+
       <!-- 1. Stats & AutoPilot Bar -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px;">
         <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;">
@@ -792,6 +894,7 @@ function renderProductsView(p) {
                   <td>${tierPill}</td>
                   <td class="num">
                     <div style="display:flex;gap:6px;justify-content:flex-end;">
+                      <button class="btn btn-sm btn-ghost swap-slot-btn" data-slot="${it.slot}" data-title="${esc(it.title)}" data-asin="${it.asin}" data-cat="${esc(it.category)}" data-hook="${esc(it.hook)}" data-img="${it.image}">🔄 Swap</button>
                       <button class="btn btn-sm btn-ghost edit-slot-btn" data-slot="${it.slot}" data-clicks="${m.amazon_clicks || 0}" data-sales="${m.amazon_sales || 0}" data-status="${m.status}">Update</button>
                       <a class="btn btn-sm btn-ghost" href="https://www.amazon.com/dp/${it.asin}?tag=${p.tag}" target="_blank" rel="noopener">Amazon ↗</a>
                     </div>
@@ -802,6 +905,62 @@ function renderProductsView(p) {
           </tbody>
         </table>
       </div>
+    </div>
+  `;
+}
+
+/* 2B. Sent Replies Inspector View */
+function renderSentRepliesView(p) {
+  const sent = state.sentReplies || [];
+  return `
+    <header class="workspace-head">
+      <div>
+        <h1>Sent Replies Inspector (${sent.length} Dispatched)</h1>
+        <p>Live archive of all honest 4-part recommendations Emma dispatched to Threads users.</p>
+      </div>
+      <div class="workspace-actions">
+        <button class="btn btn-sm btn-ghost" id="refresh-sent-btn">Refresh Feed</button>
+      </div>
+    </header>
+
+    <div class="workspace-content">
+      ${sent.length === 0 ? `
+        <div class="empty-state">
+          <div class="empty-icon">💬</div>
+          <h3>No sent replies yet</h3>
+          <p>Dispatched replies from Queue or AutoPilot will appear here with direct links.</p>
+        </div>
+      ` : `
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${sent.map(r => `
+            <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <strong style="color:var(--ink);font-size:13.5px;">@${esc(r.author_username)}</strong>
+                  <span class="badge" style="font-size:11px;padding:1px 6px;">Slot #${r.matched_slot}: ${esc(r.product_name)}</span>
+                  <span style="font-size:11px;color:var(--ink-3);">${r.created_at ? new Date(r.created_at).toLocaleString() : ''}</span>
+                </div>
+                <a class="btn btn-sm btn-solid" href="${r.thread_url}" target="_blank" rel="noopener" style="font-size:11px;padding:3px 10px;">
+                  Open on Threads ↗
+                </a>
+              </div>
+
+              <!-- Quoted target complaint -->
+              <div style="border-left:2px solid var(--line-strong);padding-left:10px;margin-bottom:10px;font-size:12.5px;color:var(--ink-2);line-height:1.4;">
+                “${esc(r.thread_text)}”
+              </div>
+
+              <!-- Emma's Honest Reply -->
+              <div style="background:var(--rail);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:var(--ink);line-height:1.45;border:1px solid var(--line);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--accent);margin-bottom:3px;">
+                  Emma's 4-Part Honest Reply
+                </div>
+                “${esc(r.draft_reply)}”
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      `}
     </div>
   `;
 }
@@ -1135,6 +1294,228 @@ function bindActions(p) {
     });
     const runSim = $("#sim-run");
     if (runSim) runSim.onclick = () => runSimulator(p);
+  }
+
+  // Refresh Sent Replies
+  const refreshSentBtn = $("#refresh-sent-btn");
+  if (refreshSentBtn) {
+    refreshSentBtn.onclick = async () => {
+      await fetchAnalytics();
+      render();
+      toast("Sent replies feed refreshed.");
+    };
+  }
+
+  // Quick Sniper Analyze
+  const snipeBtn = $("#quick-snipe-btn");
+  if (snipeBtn) {
+    snipeBtn.onclick = async () => {
+      const urlInput = $("#quick-snipe-input");
+      const url = (urlInput.value || "").trim();
+      const box = $("#quick-snipe-box");
+      if (!url) {
+        toast("Please enter a valid Threads post URL.");
+        return;
+      }
+      snipeBtn.disabled = true;
+      snipeBtn.textContent = "Analyzing…";
+      box.style.display = "block";
+      box.innerHTML = `<div style="color:var(--ink-2);font-size:12px;">⏳ Loading thread context via headless browser and evaluating Never-Lie...</div>`;
+
+      try {
+        const res = await fetch("/api/snipe/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+        if (data.status !== "ok") {
+          box.innerHTML = `<div style="color:var(--danger);font-size:12.5px;">❌ ${esc(data.message || "Failed to analyze post")}</div>`;
+          return;
+        }
+
+        const ev = data.evaluation || {};
+        if (ev.verdict === "REJECT") {
+          box.innerHTML = `
+            <div style="color:var(--danger);font-size:12.5px;font-weight:600;margin-bottom:4px;">❌ Thread Rejected by Never-Lie Gate</div>
+            <div style="font-size:12px;color:var(--ink-2);margin-bottom:4px;">Reason: ${esc(ev.reason || "Not matching catalog pain points")}</div>
+            <div style="font-size:11px;color:var(--ink-3);border-left:2px solid var(--line);padding-left:8px;">“${esc(data.thread_text)}”</div>
+          `;
+          return;
+        }
+
+        box.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="font-weight:700;color:var(--ink);font-size:13px;">✅ Matched Slot #${ev.slot}: ${esc(ev.product_name)}</div>
+            <span class="badge" style="font-size:10px;">@${esc(data.author)}</span>
+          </div>
+          <div style="font-size:12px;color:var(--ink-2);margin-bottom:8px;border-left:2px solid var(--accent);padding-left:8px;">
+            “${esc(data.thread_text)}”
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px;font-size:12px;margin-bottom:10px;">
+            <div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:2px;">Emma's Honest Reply</div>
+            “${esc(ev.reply_draft)}”
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <button class="btn btn-sm btn-ghost" id="quick-snipe-cancel">Discard</button>
+            <button class="btn btn-sm btn-solid" id="quick-snipe-send-btn" style="background:#047857;border-color:#047857;">Dispatch Reply Now 🚀</button>
+          </div>
+        `;
+
+        $("#quick-snipe-cancel").onclick = () => { box.style.display = "none"; };
+        $("#quick-snipe-send-btn").onclick = async () => {
+          const sendBtn = $("#quick-snipe-send-btn");
+          sendBtn.disabled = true;
+          sendBtn.textContent = "Dispatching…";
+          try {
+            const dispatchRes = await fetch("/api/snipe/dispatch", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                url: data.url,
+                reply_text: ev.reply_draft,
+                slot: ev.slot,
+                author: data.author,
+                thread_text: data.thread_text
+              })
+            });
+            const dData = await dispatchRes.json();
+            if (dData.status === "ok") {
+              toast(`✅ Dispatched successfully to @${data.author}!`);
+              box.style.display = "none";
+              urlInput.value = "";
+              await fetchAnalytics();
+              render();
+            } else {
+              toast("Dispatch error: " + (dData.message || "Unknown error"));
+            }
+          } catch (e) {
+            toast("Dispatch failed: " + e.message);
+          } finally {
+            sendBtn.disabled = false;
+          }
+        };
+
+      } catch (err) {
+        box.innerHTML = `<div style="color:var(--danger);font-size:12.5px;">❌ Request error: ${esc(err.message)}</div>`;
+      } finally {
+        snipeBtn.disabled = false;
+        snipeBtn.textContent = "⚡ Analyze & Snipe";
+      }
+    };
+  }
+
+  // Swap Slot Modal wiring
+  document.querySelectorAll(".swap-slot-btn").forEach(btn => {
+    btn.onclick = () => {
+      const slot = btn.dataset.slot;
+      $("#swap-slot-num").value = slot;
+      $("#swap-modal-title").textContent = `Swap Product for Slot #${slot}`;
+      $("#swap-title").value = btn.dataset.title || "";
+      $("#swap-asin").value = btn.dataset.asin || "";
+      $("#swap-cat").value = btn.dataset.cat || "";
+      $("#swap-hook").value = btn.dataset.hook || "";
+      $("#swap-img").value = btn.dataset.img || "";
+      $("#swap-modal").style.display = "flex";
+    };
+  });
+
+  const closeSwapBtn = $("#close-swap-modal-btn");
+  const cancelSwapBtn = $("#cancel-swap-modal-btn");
+  if (closeSwapBtn) closeSwapBtn.onclick = () => { $("#swap-modal").style.display = "none"; };
+  if (cancelSwapBtn) cancelSwapBtn.onclick = () => { $("#swap-modal").style.display = "none"; };
+
+  const swapForm = $("#swap-modal-form");
+  if (swapForm) {
+    swapForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const slot = Number($("#swap-slot-num").value);
+      const title = $("#swap-title").value.trim();
+      const asin = $("#swap-asin").value.trim();
+      const cat = $("#swap-cat").value.trim();
+      const hook = $("#swap-hook").value.trim();
+      const img = $("#swap-img").value.trim();
+      const price = parseFloat($("#swap-price").value) || 29.99;
+      const velocity = $("#swap-velocity").value.trim();
+
+      try {
+        const res = await fetch("/api/catalog/swap", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slot: slot,
+            product_data: {
+              title,
+              asin,
+              category: cat,
+              target_pain_point: hook,
+              hook: hook,
+              image_url: img,
+              price: price,
+              bought_past_month: velocity,
+              velocity: velocity,
+              affiliate_url: `https://www.amazon.com/dp/${asin}?tag=curatedbyem0f-20`
+            }
+          })
+        });
+        const data = await res.json();
+        if (data.status === "ok") {
+          toast(`✅ Slot #${slot} product swapped and deployed to Bio!`);
+          $("#swap-modal").style.display = "none";
+          // reload catalog
+          const catRes = await fetch("/api/catalog");
+          if (catRes.ok) {
+            p.catalog = await catRes.json();
+          }
+          await fetchAnalytics();
+          render();
+        } else {
+          toast("Swap failed: " + (data.error || "Unknown error"));
+        }
+      } catch (err) {
+        toast("Error swapping slot: " + err.message);
+      }
+    };
+  }
+
+  // Session Cookies Modal wiring
+  const openSessionBtn = $("#open-session-modal-btn");
+  if (openSessionBtn) {
+    openSessionBtn.onclick = () => {
+      $("#session-cookies-input").value = "";
+      $("#session-modal").style.display = "flex";
+    };
+  }
+  const closeSessionBtn = $("#close-session-modal-btn");
+  const cancelSessionBtn = $("#cancel-session-modal-btn");
+  if (closeSessionBtn) closeSessionBtn.onclick = () => { $("#session-modal").style.display = "none"; };
+  if (cancelSessionBtn) cancelSessionBtn.onclick = () => { $("#session-modal").style.display = "none"; };
+
+  const sessionForm = $("#session-modal-form");
+  if (sessionForm) {
+    sessionForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const raw = $("#session-cookies-input").value.trim();
+      if (!raw) return;
+      try {
+        const res = await fetch("/api/session/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cookies: raw })
+        });
+        const data = await res.json();
+        if (data.status === "ok") {
+          toast("✅ Threads session updated and verified!");
+          $("#session-modal").style.display = "none";
+          state.sessionHealth = data.health;
+          render();
+        } else {
+          toast("Session update failed: " + (data.error || "Invalid cookie format"));
+        }
+      } catch (err) {
+        toast("Error updating session: " + err.message);
+      }
+    };
   }
 
   // Polling on queue

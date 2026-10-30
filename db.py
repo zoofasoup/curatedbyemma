@@ -332,6 +332,22 @@ def get_lander_analytics():
         "recent_events": recent
     }
 
+def get_approved_replies_detailed(ip_id="emma", limit=100):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+    SELECT 
+        id, author_username, thread_url, thread_text, matched_slot, 
+        product_name, draft_reply, engagement_tier, likes_count, replies_count, created_at
+    FROM reply_approval_queue
+    WHERE ip_id = ? AND status = 'approved'
+    ORDER BY id DESC
+    LIMIT ?
+    """, (ip_id, limit))
+    rows = [dict(r) for r in c.fetchall()]
+    conn.close()
+    return rows
+
 if __name__ == "__main__":
     init_db()
     print("Database initialized successfully at", DB_PATH)

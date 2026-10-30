@@ -12,6 +12,8 @@ from threads_broadcast import CURATED_QUEUE, load_history, publish_thread, get_n
 
 import db
 import auto_worker
+import catalog_manager
+import threads_sniper_single
 
 PORT = 7860
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -95,6 +97,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_get_analytics()
         elif path == "/api/replies":
             self.handle_get_replies()
+        elif path == "/api/replies/sent":
+            self.send_json({"status": "ok", "replies": db.get_approved_replies_detailed("emma")})
         elif path == "/api/queue":
             self.handle_get_queue()
         elif path == "/api/autopilot":
@@ -163,6 +167,53 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             else:
                 auto_worker.start_worker()
             self.send_json(auto_worker.get_status())
+        elif path == "/api/snipe/analyze":
+            target_url = data.get("url", "").strip()
+            if not target_url:
+                self.send_json({"error": "Missing URL"}, status=400)
+                return
+            res = threads_sniper_single.analyze_thread_url(target_url)
+            self.send_json(res)
+        elif path == "/api/snipe/dispatch":
+            target_url = data.get("url", "").strip()
+            reply_text = data.get("reply_text", "").strip()
+            slot = int(data.get("slot", 1))
+            author = data.get("author", "user")
+            thread_text = data.get("thread_text", "")
+            if not target_url or not reply_text:
+                self.send_json({"error": "Missing parameters"}, status=400)
+                return
+            res = threads_sniper_single.dispatch_quick_snipe(target_url, reply_text, slot, author, thread_text)
+            self.send_json(res)
+        elif path == "/api/catalog/swap":
+            slot = int(data.get("slot", 1))
+            prod_data = data.get("product_data", {})
+            if not prod_data:
+                self.send_json({"error": "Missing product data"}, status=400)
+                return
+            success = catalog_manager.update_slot_product(slot, prod_data)
+            self.send_json({"status": "ok" if success else "error", "slot": slot})
+        elif path == "/api/session/update":
+            raw_cookies = data.get("cookies")
+            if not raw_cookies:
+                self.send_json({"error": "Missing cookies"}, status=400)
+                return
+            try:
+                if isinstance(raw_cookies, str):
+                    parsed_cookies = json.loads(raw_cookies)
+                else:
+                    parsed_cookies = raw_cookies
+                if isinstance(parsed_cookies, dict) and "cookies" in parsed_cookies:
+                    parsed_cookies = parsed_cookies["cookies"]
+                if not isinstance(parsed_cookies, list):
+                    self.send_json({"error": "Cookies must be a list"}, status=400)
+                    return
+                session_path = os.path.join(BASE_DIR, "threads_session.json")
+                with open(session_path, "w", encoding="utf-8") as f:
+                    json.dump({"cookies": parsed_cookies}, f, indent=2)
+                self.send_json({"status": "ok", "health": get_session_health()})
+            except Exception as e:
+                self.send_json({"error": f"Failed to save cookies: {e}"}, status=400)
         else:
             self.send_error(404, "Not Found")
 

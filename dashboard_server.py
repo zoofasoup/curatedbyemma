@@ -17,6 +17,45 @@ PORT = 7860
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_BUFFER = []
 
+def get_session_health():
+    session_path = os.path.join(BASE_DIR, "threads_session.json")
+    if not os.path.exists(session_path):
+        return {
+            "healthy": False,
+            "status": "missing",
+            "message": "threads_session.json not found"
+        }
+    try:
+        with open(session_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        cookies = data.get("cookies", [])
+        now = time.time()
+        user_id = None
+        min_expiry = None
+        for c in cookies:
+            if c.get("name") == "ds_user_id":
+                user_id = c.get("value")
+            exp = c.get("expires", -1)
+            if exp and exp > now:
+                if min_expiry is None or exp < min_expiry:
+                    min_expiry = exp
+        days_left = round((min_expiry - now) / 86400, 1) if min_expiry else -1
+        is_healthy = len(cookies) > 5 and (days_left > 1 or days_left == -1)
+        return {
+            "healthy": is_healthy,
+            "status": "active" if is_healthy else "expiring_soon",
+            "username": "curated_byemma",
+            "user_id": user_id,
+            "cookies_count": len(cookies),
+            "days_left": days_left
+        }
+    except Exception as e:
+        return {
+            "healthy": False,
+            "status": "error",
+            "message": str(e)
+        }
+
 def add_log(msg: str):
     timestamp = datetime.now().strftime("%H:%M:%S")
     entry = f"[{timestamp}] {msg}"
@@ -60,6 +99,18 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_get_queue()
         elif path == "/api/autopilot":
             self.send_json(auto_worker.get_status())
+        elif path == "/api/session/health":
+            self.send_json(get_session_health())
+        elif path == "/api/track/stats":
+            self.send_json(db.get_lander_analytics())
+        elif path == "/api/track/click":
+            params = urllib.parse.parse_qs(url.query)
+            slot = int(params.get("slot", [0])[0]) if params.get("slot") else None
+            prod = params.get("product", [""])[0]
+            ref = self.headers.get("Referer", "")
+            ua = self.headers.get("User-Agent", "")
+            db.log_lander_event("slot_click", slot=slot, product_name=prod, referrer=ref, user_agent=ua)
+            self.send_json({"status": "ok"})
         elif path.startswith("/assets/"):
             # Serve public assets (photos)
             asset_path = os.path.join(BASE_DIR, "public", path.lstrip("/"))
@@ -94,6 +145,18 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_approve_queue(data)
         elif path == "/api/queue/reject":
             self.handle_reject_queue(data)
+        elif path == "/api/track":
+            try:
+                evt = data.get("event", "slot_click")
+                slot = data.get("slot")
+                slot_int = int(slot) if slot is not None else None
+                prod = data.get("product", "")
+                ref = data.get("referrer", self.headers.get("Referer", ""))
+                ua = self.headers.get("User-Agent", "")
+                db.log_lander_event(evt, slot=slot_int, product_name=prod, referrer=ref, user_agent=ua)
+                self.send_json({"status": "ok"})
+            except Exception as e:
+                self.send_json({"error": str(e)}, status=400)
         elif path == "/api/autopilot/toggle":
             if auto_worker.WORKER_RUNNING:
                 auto_worker.stop_worker()
@@ -135,6 +198,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 "brand": "Emma's Daily Finds",
                 "session_active": session_exists
             },
+            "session_health": get_session_health(),
+            "lander_analytics": db.get_lander_analytics(),
             "catalog_total": len(catalog),
             "landing_page_url": "https://curatedbyemma.pages.dev",
             "broadcast": {

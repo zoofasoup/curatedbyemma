@@ -336,6 +336,22 @@
         card.rel = "noopener noreferrer";
         card.className = "group relative w-full bg-white border border-slate-200/80 hover:border-slate-300 rounded-2xl p-3 transition-all duration-150 flex items-center gap-3 clean-card-shadow active:scale-[0.99]";
 
+        card.addEventListener("click", () => {
+          try {
+            const payload = JSON.stringify({
+              event: "slot_click",
+              slot: p.slot,
+              product: p.title,
+              referrer: document.referrer || "direct"
+            });
+            if (navigator.sendBeacon) {
+              navigator.sendBeacon("/api/track", payload);
+            } else {
+              fetch("/api/track", { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, keepalive: true }).catch(() => {});
+            }
+          } catch(e) {}
+        });
+
         card.innerHTML = `
           <!-- Thumbnail Frame with # Slot Tag (Clean & Square) -->
           <div class="relative flex-shrink-0 w-[82px] h-[82px] rounded-xl bg-[#F8F9FA] p-1.5 border border-slate-100 flex items-center justify-center overflow-hidden">
@@ -441,6 +457,19 @@
     });
 
     renderProducts();
+
+    // Outbound Analytics: Track Lander Pageview (Single Fire)
+    try {
+      const pvPayload = JSON.stringify({
+        event: "pageview",
+        referrer: document.referrer || "direct"
+      });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon("/api/track", pvPayload);
+      } else {
+        fetch("/api/track", { method: "POST", headers: { "Content-Type": "application/json" }, body: pvPayload, keepalive: true }).catch(() => {});
+      }
+    } catch(e) {}
   </script>
 </body>
 </html>

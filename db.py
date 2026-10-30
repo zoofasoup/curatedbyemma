@@ -118,6 +118,20 @@ def init_db():
         VALUES ('emma', ?, '2026-10-28', '2026-11-04', 20, 0, 'testing')
         """, (slot,))
 
+    # 4. Outbound Click & Lander Visits Tracking
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS lander_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_type TEXT NOT NULL, -- 'pageview', 'slot_click'
+        slot INTEGER,
+        product_name TEXT,
+        referrer TEXT,
+        user_agent TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+    c.execute("CREATE INDEX IF NOT EXISTS idx_lander_events_type_slot ON lander_events (event_type, slot);")
+
     conn.commit()
     conn.close()
 
@@ -127,7 +141,8 @@ def get_slot_analytics(ip_id="emma"):
     c.execute("""
     SELECT 
         sm.*,
-        (SELECT COUNT(*) FROM replies_sent r WHERE r.ip_id = sm.ip_id AND r.slot = sm.slot AND r.status = 'sent') as live_replies_count
+        (SELECT COUNT(*) FROM replies_sent r WHERE r.ip_id = sm.ip_id AND r.slot = sm.slot AND r.status = 'sent') as live_replies_count,
+        (SELECT COUNT(*) FROM lander_events e WHERE e.event_type = 'slot_click' AND e.slot = sm.slot) as live_lander_clicks
     FROM slot_metrics sm
     WHERE sm.ip_id = ?
     ORDER BY sm.slot ASC
@@ -276,6 +291,46 @@ def update_slot_metrics(ip_id, slot, amazon_clicks=None, amazon_sales=None, stat
         c.execute(query, tuple(params))
         conn.commit()
     conn.close()
+
+def log_lander_event(event_type: str, slot: int = None, product_name: str = None, referrer: str = None, user_agent: str = None):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+    INSERT INTO lander_events (event_type, slot, product_name, referrer, user_agent)
+    VALUES (?, ?, ?, ?, ?)
+    """, (event_type, slot, product_name, referrer, user_agent))
+    conn.commit()
+    conn.close()
+
+def get_lander_analytics():
+    conn = get_connection()
+    c = conn.cursor()
+    # Total stats
+    pageviews_total = c.execute("SELECT count(*) FROM lander_events WHERE event_type = 'pageview'").fetchone()[0]
+    pageviews_today = c.execute("SELECT count(*) FROM lander_events WHERE event_type = 'pageview' AND date(created_at) = date('now')").fetchone()[0]
+    clicks_total = c.execute("SELECT count(*) FROM lander_events WHERE event_type = 'slot_click'").fetchone()[0]
+    clicks_today = c.execute("SELECT count(*) FROM lander_events WHERE event_type = 'slot_click' AND date(created_at) = date('now')").fetchone()[0]
+    
+    # Slot click breakdown
+    slot_clicks = dict(c.execute("SELECT slot, count(*) FROM lander_events WHERE event_type = 'slot_click' GROUP BY slot").fetchall())
+    
+    # Recent events
+    c.execute("""
+    SELECT id, event_type, slot, product_name, referrer, created_at 
+    FROM lander_events 
+    ORDER BY id DESC LIMIT 10
+    """)
+    recent = [dict(r) for r in c.fetchall()]
+    conn.close()
+    
+    return {
+        "pageviews_total": pageviews_total,
+        "pageviews_today": pageviews_today,
+        "clicks_total": clicks_total,
+        "clicks_today": clicks_today,
+        "slot_clicks": slot_clicks,
+        "recent_events": recent
+    }
 
 if __name__ == "__main__":
     init_db()

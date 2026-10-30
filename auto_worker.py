@@ -20,7 +20,35 @@ MAX_DELAY_SECONDS = 900  # 15 minutes
 WORKER_RUNNING = False
 WORKER_THREAD = None
 LAST_DISPATCH_TIME = None
+NEXT_DISPATCH_TIME = None
 WORKER_LOGS = []
+
+def get_next_target_preview():
+    """Returns metadata of the next pending lead AutoPilot will target."""
+    try:
+        conn = db.get_connection()
+        c = conn.cursor()
+        c.execute("""
+        SELECT id, author_username, matched_slot, product_name, engagement_tier, opportunity_score 
+        FROM reply_approval_queue 
+        WHERE ip_id = 'emma' AND status = 'pending'
+        ORDER BY opportunity_score DESC, likes_count DESC, created_at DESC
+        LIMIT 1
+        """)
+        row = c.fetchone()
+        conn.close()
+        if row:
+            return {
+                "id": row["id"],
+                "author": row["author_username"],
+                "slot": row["matched_slot"],
+                "product": row["product_name"],
+                "tier": row["engagement_tier"],
+                "score": row["opportunity_score"]
+            }
+    except Exception:
+        pass
+    return None
 
 def worker_log(msg: str):
     timestamp = datetime.now().strftime("%H:%M:%S")
@@ -92,13 +120,15 @@ def dispatch_next_highest_opportunity():
         return False, f"error: {e}"
 
 def worker_loop():
-    global WORKER_RUNNING
+    global WORKER_RUNNING, NEXT_DISPATCH_TIME
     worker_log(f"🟢 AutoPilot Worker started! Daily limit: {DAILY_LIMIT} replies/day.")
     while WORKER_RUNNING:
         sent_today = get_sent_today_count()
         if sent_today >= DAILY_LIMIT:
             worker_log(f"Daily quota reached ({sent_today}/{DAILY_LIMIT}). Sleeping for 30 minutes...")
+            NEXT_DISPATCH_TIME = time.time() + 1800
             time.sleep(1800)
+            NEXT_DISPATCH_TIME = None
             continue
 
         dispatched, status = dispatch_next_highest_opportunity()
@@ -108,16 +138,21 @@ def worker_loop():
             delay = random.randint(MIN_DELAY_SECONDS, MAX_DELAY_SECONDS)
             minutes = round(delay / 60, 1)
             worker_log(f"⏳ Sleeping {minutes} mins ({delay}s) before next check to stay natural & safe...")
+            NEXT_DISPATCH_TIME = time.time() + delay
             for _ in range(delay):
                 if not WORKER_RUNNING:
                     break
                 time.sleep(1)
+            NEXT_DISPATCH_TIME = None
         elif status == "queue_empty":
             # Queue empty, check again in 3 minutes
+            NEXT_DISPATCH_TIME = time.time() + 180
             time.sleep(180)
+            NEXT_DISPATCH_TIME = None
         else:
             time.sleep(60)
 
+    NEXT_DISPATCH_TIME = None
     worker_log("🔴 AutoPilot Worker stopped.")
 
 def start_worker():
@@ -130,8 +165,9 @@ def start_worker():
     return True
 
 def stop_worker():
-    global WORKER_RUNNING
+    global WORKER_RUNNING, NEXT_DISPATCH_TIME
     WORKER_RUNNING = False
+    NEXT_DISPATCH_TIME = None
     return True
 
 def get_status():
@@ -141,6 +177,8 @@ def get_status():
         "sent_today": sent_today,
         "daily_limit": DAILY_LIMIT,
         "last_dispatch": LAST_DISPATCH_TIME,
+        "next_dispatch_time": NEXT_DISPATCH_TIME,
+        "next_target": get_next_target_preview() if WORKER_RUNNING else None,
         "recent_logs": WORKER_LOGS[-10:]
     }
 

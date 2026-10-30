@@ -148,6 +148,13 @@ def get_pending_queue(ip_id="emma"):
     conn.close()
     return rows
 
+def get_pending_queue_count(ip_id="emma") -> int:
+    conn = get_connection()
+    c = conn.cursor()
+    count = c.execute("SELECT count(*) FROM reply_approval_queue WHERE ip_id = ? AND status = 'pending'", (ip_id,)).fetchone()[0]
+    conn.close()
+    return count
+
 def is_thread_already_processed(thread_url: str, ip_id: str = "emma") -> bool:
     """
     Strict deduplication check across:

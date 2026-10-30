@@ -90,6 +90,12 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=2, headles
     def log(msg):
         stream_log(msg, callback=log_callback)
 
+    # 0. Smart API Guard: If queue already has 50+ pending leads, stop to conserve OpenRouter API
+    pending_count = db.get_pending_queue_count("emma")
+    if pending_count >= 50:
+        log(f"🛑 Smart Queue Cap: Queue already has {pending_count} pending leads (cap: 50). Skipping scrape & LLM evaluation to conserve API.")
+        return []
+
     if not os.path.exists(SESSION_PATH):
         log("❌ threads_session.json not found! Please login first.")
         return []

@@ -68,13 +68,16 @@ def update_slot_product(slot: int, product_data: dict) -> bool:
                 })
 
             json_str = json.dumps(formatted_items, indent=4)
-            # Replace const CATALOG = [...] in public/index.html
-            pattern = r"const CATALOG = \[.*?\];"
-            replacement = f"const CATALOG = {json_str};"
-            new_html = re.sub(pattern, replacement, lander_html, flags=re.DOTALL)
-
-            with open(LANDER_PATH, "w", encoding="utf-8") as f:
-                f.write(new_html)
+            # Replace const CATALOG = [...] in public/index.html safely without regex backslash escapes
+            start_tag = "const CATALOG = ["
+            end_tag = "];"
+            start_idx = lander_html.find(start_tag)
+            if start_idx != -1:
+                end_idx = lander_html.find(end_tag, start_idx)
+                if end_idx != -1:
+                    new_html = lander_html[:start_idx] + f"const CATALOG = {json_str};" + lander_html[end_idx + len(end_tag):]
+                    with open(LANDER_PATH, "w", encoding="utf-8") as f:
+                        f.write(new_html)
         except Exception as e:
             print(f"Error updating public/index.html: {e}")
 

@@ -40,7 +40,11 @@ SEARCH_QUERIES = [
     {"slot": 1, "query": "dog hair couch vacuuming", "category": "Pet Hair Lint Roller"},
     {"slot": 1, "query": "cat shedding velvet sofa", "category": "Pet Hair Lint Roller"},
     {"slot": 7, "query": "flight neck pain holding phone", "category": "Airplane Phone Mount"},
-    {"slot": 7, "query": "airplane seat holding phone", "category": "Airplane Phone Mount"}
+    {"slot": 7, "query": "airplane seat holding phone", "category": "Airplane Phone Mount"},
+    {"slot": 5, "query": "sweater pilling ruined knit", "category": "Fabric Sweater Defuzzer"},
+    {"slot": 5, "query": "cardigan fuzz balls wool", "category": "Fabric Sweater Defuzzer"},
+    {"slot": 10, "query": "undercooked chicken dry turkey meat", "category": "Digital Meat Thermometer"},
+    {"slot": 10, "query": "cooking meat anxiety thermometer", "category": "Digital Meat Thermometer"}
 ]
 
 SESSION_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "threads_session.json")

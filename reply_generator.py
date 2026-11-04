@@ -153,25 +153,25 @@ CATALOG_SPECS = {
         ]
     },
     5: {
-        "name": "Cordless Electric Spin Scrubber",
-        "category": "Deep clean / Bathroom",
-        "rating": 4.4,
-        "reviews": 8900,
-        "honest_pros": "Motorized spinning heads clean tile grout, tubs, and baseboards without kneeling or back strain",
-        "honest_caveats": "Great for surface soap scum and grout dirt, but decade-old deep mold still needs a bleach treatment; battery runs ~75 minutes on high speed",
+        "name": "BEAUTURAL Fabric Shaver and Sweater Defuzzer",
+        "category": "Winter Knitwear / Fabric Care",
+        "rating": 4.5,
+        "reviews": 116000,
+        "honest_pros": "Dual-speed motorized rotary blades shave pills and fuzz off wool sweaters, knit cardigans, and fleece in 2 minutes",
+        "honest_caveats": "Garment must be stretched completely flat on a table so blade guard doesn't catch loose seams; empty lint trap regularly",
         "bio_slot": "#5",
         "draft_templates": [
             (
-                "scrubbing tile grout and tubs on your hands and knees is literal torture on your lower back. "
-                "electric power spin scrubbers with the extension handle cut cleaning time in half with zero elbow grease. "
-                "won't erase 10-year black mold without a separate bleaching gel, but for routine soap scum and bathroom grime it saved my back completely. "
-                "kept the highest-rated one cataloged under #5 on my page."
+                "throwing away an $80 sweater just because of surface fuzz and pilling hurts so much! "
+                "that beautural fabric defuzzer with 116k reviews literally brought my 3-year-old wool cardigans back to life in two minutes. "
+                "only rule is lay the fabric completely flat on a table so the guard doesn't snag loose threads, but it makes knits look brand new. "
+                "cataloged under #5 on my page. is it a wool knit or a fleece blanket?"
             ),
             (
-                "bent over the bathtub scrubbing grout until your spine aches is the absolute worst weekend chore. "
-                "that cordless spin scrubber with the telescoping rod has nearly 9k reviews and lets you stand upright while the motor does the work. "
-                "battery runs about 75 minutes so charge it beforehand, but it completely eliminated bathroom knee and back pain for me. "
-                "saved under #5 in my bio."
+                "chunky knit sweaters pilling after two washes is the most frustrating winter problem. "
+                "the beautural electric sweater shaver has over 115k verified reviews for a reason—it shaves off all the fuzzy bobbles without thinning the fabric. "
+                "just empty the clear lint chamber frequently so it doesn't slow down the motor, but it saved all my winter coats. "
+                "saved under #5 in my bio. what type of knit are you dealing with?"
             )
         ]
     },
@@ -268,25 +268,25 @@ CATALOG_SPECS = {
         ]
     },
     10: {
-        "name": "PULIDIKI Reusable Car Detailing Putty",
-        "category": "Car interior cleaning",
-        "rating": 4.1,
-        "reviews": 101000,
-        "honest_pros": "Flexible cleaning gel presses deep into AC air vents, gear shifts, and console crevices to grab dust and crumbs",
-        "honest_caveats": "Works wonders on dry dust, pet dander, and crumbs, but do NOT leave it inside a hot car glovebox in midsummer or it melts; not for liquid spills",
+        "name": "ThermoPro TP03B Digital Instant Read Meat Thermometer",
+        "category": "Thanksgiving / Holiday Kitchen Cooking",
+        "rating": 4.6,
+        "reviews": 151000,
+        "honest_pros": "Reads accurate internal food temperatures in 3-4 seconds with foldaway stainless probe and bright backlight",
+        "honest_caveats": "Do NOT leave the plastic body inside a hot oven or grill while door is shut; only probe touches the meat during measurement",
         "bio_slot": "#10",
         "draft_templates": [
             (
-                "cleaning crumbs and dust out of car air vents and cup holders with wipes is basically impossible. "
-                "that reusable cleaning putty with over 100k reviews presses into tiny crevices and lifts dust vacuums can't reach. "
-                "only rule is don't leave it in a baking hot glovebox during midsummer heat, but for vents and cup holders it is so satisfying. "
-                "saved under #10 in my bio."
+                "ugh the anxiety of dry holiday turkey or undercooked chicken is so real! "
+                "after comparing dozens of kitchen thermometers, that $15 folding thermopro with 150k verified reviews is the consensus winner. "
+                "reads accurately in 3 seconds flat. just don't leave the plastic body inside the oven door, only the probe touches meat. "
+                "cataloged under #10 on my page. are you hosting thanksgiving this year or just regular cooking?"
             ),
             (
-                "dust and pet hair stuck inside narrow car air vents is maddening because vacuums can't get inside. "
-                "that reusable cleaning slime with 100k+ reviews squishes right between the vent slats and pulls everything out clean. "
-                "just keep it in a cool spot so it doesn't sit in 100-degree summer heat, but it makes the interior look detailed in two minutes. "
-                "listed under #10 on my bio."
+                "guessing meat doneness by poking it always results in either leather-dry chicken or raw centers. "
+                "the thermopro instant read with 151k reviews gives an exact digital reading in 3 seconds so you never overcook. "
+                "probe folds right into the handle so it's super safe in drawers. "
+                "saved under #10 in my bio. what's the main dish you usually cook?"
             )
         ]
     }

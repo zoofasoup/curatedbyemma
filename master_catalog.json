@@ -60,19 +60,20 @@
     "slot_number": 4
   },
   {
-    "asin": "B0C1NJDTTX",
-    "category": "Home & Deep Clean",
-    "target_pain_point": "Tiring bathroom scrub, tile grime, bathtub cleaning",
-    "title": "Electric Spin Scrubber, Cordless Cleaning Brush for Bathroom,Home",
-    "price": 39.99,
+    "asin": "B01NAQD0KD",
+    "category": "Winter Knitwear Care",
+    "target_pain_point": "Pilling wool sweaters, bobbles on knitwear, fuzzy cardigans looking worn out",
+    "title": "BEAUTURAL Fabric Shaver and Lint Remover, Sweater Defuzzer with 2-Speeds, 2 Replaceable Stainless Steel Blades",
+    "price": "$13.99",
     "currency": "USD",
-    "rating": 4.4,
-    "reviews_count": 8900,
-    "bought_past_month": "20K+ bought in past month",
+    "rating": 4.5,
+    "reviews_count": 116000,
+    "bought_past_month": "30K+ bought in past month",
     "winning_score": 90.0,
-    "image_url": "https://m.media-amazon.com/images/I/71GhDHqOwNL._AC_UY218_.jpg",
+    "image_url": "https://m.media-amazon.com/images/I/71Rjssfr4wL._AC_UL320_.jpg",
     "affiliate_url": "https://www.amazon.com/dp/B0C1NJDTTX?tag=curatedbyem0f-20",
-    "slot_number": 5
+    "slot_number": 5,
+    "cat_tag": "HOME"
   },
   {
     "asin": "B07BB4YXHW",
@@ -135,18 +136,19 @@
     "slot_number": 9
   },
   {
-    "asin": "B081T7N948",
-    "category": "Car & Daily Hacks",
-    "target_pain_point": "Dust and crumbs in car air vents and cup holders",
-    "title": "PULIDIKI Car Cleaning Gel Car Clean Putty, Universal Car Interior Cleaner",
-    "price": 7.99,
+    "asin": "B01IHHLB3W",
+    "category": "Thanksgiving / Kitchen",
+    "target_pain_point": "Undercooked holiday meat, dry turkey anxiety, rubbery chicken",
+    "title": "ThermoPro TP03B Digital Instant Read Meat Thermometer with Backlight, Waterproof Kitchen Cooking Food Thermometer",
+    "price": "$14.99",
     "currency": "USD",
-    "rating": 4.1,
-    "reviews_count": 101200,
-    "bought_past_month": "10K+ bought in past month",
+    "rating": 4.6,
+    "reviews_count": 151000,
+    "bought_past_month": "50K+ bought in past month",
     "winning_score": 73.0,
-    "image_url": "https://m.media-amazon.com/images/I/71WpCXsPbML._AC_UL320_.jpg",
+    "image_url": "https://m.media-amazon.com/images/I/61CHaEhw9ML._AC_UL320_.jpg",
     "affiliate_url": "https://www.amazon.com/dp/B081T7N948?tag=curatedbyem0f-20",
-    "slot_number": 10
+    "slot_number": 10,
+    "cat_tag": "KITCHEN"
   }
 ]

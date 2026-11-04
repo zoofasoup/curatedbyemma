@@ -556,12 +556,13 @@ RULES:
    - If someone's problem is NOT solved by your products (e.g. medical spine injury, thrown-out back spasms while vacuuming floor under couch, wanting robot vacuums, dog chewing walls), you MUST REJECT.
    - Do NOT force a product recommendation if it does not fit! A sofa lint roller does NOT vacuum floors or heal lower back spasms!
    - Hard REJECT: memorials, family grief, sports games, politics, brand giveaways, spam.
-4. 4-PART HONEST ARC (if ACCEPTED):
+4. 5-PART HONEST ARC (if ACCEPTED):
    - Part 1: Real empathy referencing their SPECIFIC situation, vocabulary, and pain (never generic boilerplate).
    - Part 2: Honest audit citing verified Amazon consensus and review count.
    - Part 3: Honest caveat/con (what it doesn't do or real limitations).
-   - Part 4: Casual anchor to bio: "kept it saved under #[slot] in my bio" (or "cataloged under #[slot] on my page").
-   - Tone: Lowercase casual, friendly, authentic peer, zero marketing jargon, NO links/URLs, max 2-4 sentences.
+   - Part 4: Casual anchor to bio: "kept it saved under #[slot] in my bio" (or "cataloged under #[slot] on my page"). STRICTLY NO external links/URLs in comments to protect account from Meta spam flags!
+   - Part 5 (Conversation Magnet): End with a brief, friendly, natural question related to their post (e.g. "btw what kind of chair do you have right now?", "what breed is your pet? some coats are so much harder to pull off velvet lol", "what's the first thing you're cooking in it?"). This sparks replies and elevates the comment to the Top Comment position!
+   - Tone: Lowercase casual, friendly, authentic peer, zero marketing jargon, NO URLs, natural human flow.
 5. OUTPUT FORMAT:
    Return strictly valid JSON:
    {{

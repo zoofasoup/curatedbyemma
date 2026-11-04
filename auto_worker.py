@@ -12,6 +12,7 @@ import threading
 from datetime import datetime
 import db
 import reply_automation
+import threads_broadcast
 
 DAILY_LIMIT = 25
 MIN_DELAY_SECONDS = 420  # 7 minutes
@@ -83,11 +84,21 @@ def dispatch_next_highest_opportunity():
 
     conn = db.get_connection()
     c = conn.cursor()
+    # Priority Order: Strict VIRAL HIJACK first (highest visibility), then high-likes, then score
     c.execute("""
     SELECT id, author_username, matched_slot, product_name, engagement_tier, likes_count, replies_count, opportunity_score 
     FROM reply_approval_queue 
     WHERE ip_id = 'emma' AND status = 'pending'
-    ORDER BY opportunity_score DESC, likes_count DESC, created_at DESC
+    ORDER BY 
+        CASE 
+            WHEN engagement_tier LIKE '%VIRAL%' THEN 1 
+            WHEN likes_count >= 15 THEN 2 
+            ELSE 3 
+        END ASC,
+        likes_count DESC, 
+        replies_count DESC,
+        opportunity_score DESC, 
+        created_at DESC
     LIMIT 1
     """)
     item = c.fetchone()
@@ -119,10 +130,49 @@ def dispatch_next_highest_opportunity():
         db.update_queue_status(queue_id, "failed")
         return False, f"error: {e}"
 
+LAST_BROADCAST_CHECK = 0
+
+def check_and_run_daily_broadcast():
+    """
+    Publishes 1 high-converting curated broadcast micro-thread to Emma's feed
+    once per calendar day, to keep the profile fresh and trustworthy.
+    """
+    global LAST_BROADCAST_CHECK
+    now = time.time()
+    # Check at most once every 30 minutes
+    if now - LAST_BROADCAST_CHECK < 1800:
+        return False
+    LAST_BROADCAST_CHECK = now
+
+    try:
+        history = threads_broadcast.load_history()
+        today_str = datetime.now().strftime("%Y-%m-%d")
+        
+        # Check if already posted today
+        for h in history:
+            if h.get("status") == "success" and h.get("timestamp", "").startswith(today_str):
+                return False
+                
+        next_item = threads_broadcast.get_next_unposted()
+        if not next_item:
+            return False
+            
+        worker_log(f"📢 Publishing today's curated profile broadcast: '{next_item['title']}'...")
+        success = threads_broadcast.publish_thread(next_item, headless=True)
+        if success:
+            worker_log(f"✅ Published profile broadcast: '{next_item['title']}'")
+        return success
+    except Exception as e:
+        worker_log(f"⚠️ Broadcast post skipped: {e}")
+        return False
+
 def worker_loop():
     global WORKER_RUNNING, NEXT_DISPATCH_TIME
     worker_log(f"🟢 AutoPilot Worker started! Daily limit: {DAILY_LIMIT} replies/day.")
     while WORKER_RUNNING:
+        # Check and publish 1 daily profile broadcast post if not done today
+        check_and_run_daily_broadcast()
+
         sent_today = get_sent_today_count()
         if sent_today >= DAILY_LIMIT:
             worker_log(f"Daily quota reached ({sent_today}/{DAILY_LIMIT}). Sleeping for 30 minutes...")

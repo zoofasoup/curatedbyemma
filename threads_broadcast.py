@@ -80,6 +80,53 @@ electric power spin scrubbers are viral for a reason—cuts deep cleaning time i
 cataloged the highest-rated one with extension pole under #5 on my page.""",
         "image": "public/assets/emma/emma_kitchen.jpg",
         "slots_mentioned": ["#5"]
+    },
+    {
+        "id": "holiday_airfryer_kitchen_slot4",
+        "title": "Air Fryer Holiday Cooking Hack (Slot #4)",
+        "text": """if you're hosting for the holidays or cooking everything in your air fryer right now:
+
+stop pouring oil directly or buying disposable aerosol cans that ruin the nonstick coating.
+
+that glass fan-spray oil mister with 50k reviews gives a clean wide mist with zero propellants. cataloged under #4 on my page ✨""",
+        "image": None,
+        "slots_mentioned": ["#4"]
+    },
+    {
+        "id": "side_sleeper_sleepmask_slot9",
+        "title": "Side Sleeper Restful Sleep (Slot #9)",
+        "text": """regular earbuds dig straight into your ear cartilage if you're a side sleeper.
+
+switched to that 3D contoured blackout mask with ultra-thin bluetooth speakers built in. zero pressure on your ears even sleeping on your side.
+
+audited with 13k reviews, saved under #9 on my page.""",
+        "image": None,
+        "slots_mentioned": ["#9"]
+    },
+    {
+        "id": "holiday_travel_steamer_slot8",
+        "title": "Wrinkle-Free Holiday Travel (Slot #8)",
+        "text": """holiday travel tip: hotel irons will literally ruin your nice sweaters and holiday outfits with rust water.
+
+that foldable 15-second handheld garment steamer is the only thing i pack for trips now. heats up instantly and works on delicate fabrics.
+
+cataloged under #8 on my page.""",
+        "image": None,
+        "slots_mentioned": ["#8"]
+    },
+    {
+        "id": "holiday_gift_roundup_under25",
+        "title": "4 Practical Holiday Gifts Under $25",
+        "text": """4 practical amazon finds under $25 that make genuinely useful holiday gifts (zero gimmicks):
+
+1. airplane seatback clamp mount for frequent flyers (#7)
+2. magnetic nightstand cord wrangler so chargers don't drop (#6)
+3. ultra-sticky pet hair roller that actually saves velvet couches (#1)
+4. memory foam lumbar cushion for anyone working at a desk (#3)
+
+all cataloged by number with verified review counts on my page ✨""",
+        "image": None,
+        "slots_mentioned": ["#7", "#6", "#1", "#3"]
     }
 ]
 

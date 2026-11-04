@@ -420,12 +420,21 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.send_json({"error": str(e)}, status=400)
 
 def start_server():
+    # Automatically start AutoPilot worker on boot so it runs 24/7 without manual intervention
+    try:
+        if not auto_worker.WORKER_RUNNING:
+            auto_worker.start_worker()
+            add_log("🟢 AutoPilot Worker auto-started on boot.")
+    except Exception as e:
+        add_log(f"⚠️ Failed to auto-start AutoPilot: {e}")
+
     server = ThreadingHTTPServer(("0.0.0.0", PORT), DashboardHandler)
     add_log(f"🚀 Affiliate Engine Dashboard running at http://localhost:{PORT}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         add_log("Dashboard stopped.")
+        auto_worker.stop_worker()
         server.server_close()
 
 if __name__ == "__main__":

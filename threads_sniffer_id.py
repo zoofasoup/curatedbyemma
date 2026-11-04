@@ -1,0 +1,168 @@
+"""
+Indonesian Threads Sniffer & Lead Scorer for Shopee Affiliate Engine.
+Scrapes Indonesian Threads queries, matches problem solvers, and queues high-converting leads under ip_id='shopee_id'.
+"""
+
+import os
+import sys
+import json
+import time
+from datetime import datetime
+from playwright.sync_api import sync_playwright
+import db
+import reply_generator_id
+
+SESSION_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "threads_session.json")
+
+INDONESIAN_QUERIES = [
+    {"slug": "serbuk", "query": "wajan gosong kerak"},
+    {"slug": "serbuk", "query": "panci gosong bersihin"},
+    {"slug": "rak", "query": "kamar mandi kosan sempit"},
+    {"slug": "rak", "query": "rak tempel tanpa bor"},
+    {"slug": "pel", "query": "males ngepel lantai"},
+    {"slug": "pel", "query": "kain pel peras"},
+    {"slug": "tawas", "query": "ketiak bau asem"},
+    {"slug": "tawas", "query": "deodorant bikin kuning"},
+    {"slug": "acne", "query": "jerawat batu sakit"},
+    {"slug": "acne", "query": "jerawat mendem"}
+]
+
+def stream_log(msg):
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    print(f"[{timestamp}] [Shopee-Indo] {msg}")
+    sys.stdout.flush()
+
+def run_sniffer_indo(max_queries=2, headless=True):
+    pending_count = db.get_pending_queue_count("shopee_id")
+    if pending_count >= 50:
+        stream_log(f"🛑 Smart Queue Cap: Queue already has {pending_count} pending leads for Shopee Indo. Skipping scrape.")
+        return 0
+
+    if not os.path.exists(SESSION_PATH):
+        stream_log("❌ threads_session.json not found!")
+        return 0
+
+    with open(SESSION_PATH, "r") as f:
+        session_data = json.load(f)
+    cookies = session_data.get("cookies", [])
+
+    conn = db.get_connection()
+    c = conn.cursor()
+
+    total_added = 0
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=headless,
+            args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+        )
+        context = browser.new_context(viewport={"width": 1280, "height": 800})
+        context.add_cookies(cookies)
+        page = context.new_page()
+
+        # Intercept GraphQL / search
+        extracted_posts = []
+
+        def handle_response(response):
+            if "graphql" in response.url.lower():
+                try:
+                    data = response.json()
+                    # walk json to find post nodes
+                    def walk(node):
+                        if isinstance(node, dict):
+                            if "caption" in node and "user" in node:
+                                text = node.get("caption", {}).get("text", "")
+                                author = node.get("user", {}).get("username", "")
+                                code = node.get("code", "")
+                                likes = node.get("like_count", 0)
+                                replies = node.get("reply_count", 0)
+                                if text and author:
+                                    extracted_posts.append({
+                                        "text": text,
+                                        "author": author,
+                                        "url": f"https://www.threads.net/@{author}/post/{code}" if code else "",
+                                        "likes": likes,
+                                        "replies": replies
+                                    })
+                            for v in node.values():
+                                walk(v)
+                        elif isinstance(node, list):
+                            for item in node:
+                                walk(item)
+                    walk(data)
+                except Exception:
+                    pass
+
+        page.on("response", handle_response)
+
+        for q_entry in INDONESIAN_QUERIES[:max_queries]:
+            query = q_entry["query"]
+            search_url = f"https://www.threads.net/search?q={query.replace(' ', '%20')}&filter=recent"
+            stream_log(f"🔍 Searching Threads: '{query}'...")
+
+            try:
+                page.goto(search_url, wait_until="domcontentloaded", timeout=30000)
+                page.wait_for_timeout(3500)
+
+                # Scroll once
+                page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                page.wait_for_timeout(2500)
+
+                stream_log(f"   Extracted {len(extracted_posts)} posts from search.")
+
+                for post in extracted_posts:
+                    text = post["text"]
+                    author = post["author"]
+                    post_url = post["url"]
+                    likes = post["likes"]
+                    replies = post["replies"]
+
+                    if not post_url or not author:
+                        continue
+
+                    # Check duplicate
+                    c.execute("SELECT id FROM reply_approval_queue WHERE ip_id = 'shopee_id' AND thread_url = ?", (post_url,))
+                    if c.fetchone():
+                        continue
+
+                    # Evaluate context
+                    eval_res = reply_generator_id.evaluate_and_draft_id(text, author=author)
+                    if eval_res["verdict"] != "ACCEPT":
+                        continue
+
+                    slug = eval_res["slug"]
+                    prod_name = eval_res["product_name"]
+                    draft = eval_res["reply_draft"]
+
+                    tier = "🔥 VIRAL HIJACK" if (likes >= 15 or replies >= 5) else "⚡ FRESH SNIPER"
+                    score = min(100, 60 + (likes * 2) + (replies * 3))
+
+                    db.add_to_queue(
+                        ip_id="shopee_id",
+                        author=author,
+                        thread_url=post_url,
+                        thread_text=text,
+                        slot=0,
+                        product_name=f"Shopee: {prod_name} ({slug})",
+                        draft_reply=draft,
+                        likes_count=likes,
+                        replies_count=replies,
+                        engagement_tier=tier,
+                        opportunity_score=score
+                    )
+                    stream_log(f"✅ Added Shopee lead for @{author}: {prod_name} ({tier} | Score: {score})")
+                    total_added += 1
+
+                extracted_posts.clear()
+
+            except Exception as e:
+                stream_log(f"⚠️ Error searching '{query}': {e}")
+
+        conn.close()
+        browser.close()
+
+    stream_log(f"🎉 Shopee Sniffer finished. Added {total_added} new leads.")
+    return total_added
+
+if __name__ == "__main__":
+    run_sniffer_indo(max_queries=2, headless=True)

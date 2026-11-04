@@ -101,6 +101,15 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.send_json({"status": "ok", "replies": db.get_approved_replies_detailed("emma")})
         elif path == "/api/queue":
             self.handle_get_queue()
+        elif path == "/api/shopee/catalog":
+            cat_path = os.path.join(BASE_DIR, "catalog_shopee.json")
+            if os.path.exists(cat_path):
+                with open(cat_path, "r", encoding="utf-8") as f:
+                    self.send_json(json.load(f))
+            else:
+                self.send_json([])
+        elif path == "/api/shopee/queue":
+            self.send_json({"status": "ok", "queue": db.get_pending_queue("shopee_id")})
         elif path == "/api/autopilot":
             self.send_json(auto_worker.get_status())
         elif path == "/api/session/health":
@@ -149,6 +158,26 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.handle_approve_queue(data)
         elif path == "/api/queue/reject":
             self.handle_reject_queue(data)
+        elif path == "/api/shopee/update":
+            cat_path = os.path.join(BASE_DIR, "catalog_shopee.json")
+            slug = data.get("slug")
+            new_url = data.get("url", "").strip()
+            if not slug or not new_url:
+                self.send_json({"error": "Missing slug or url"}, status=400)
+                return
+            try:
+                with open(cat_path, "r", encoding="utf-8") as f:
+                    catalog = json.load(f)
+                for item in catalog:
+                    if item.get("slug") == slug:
+                        item["shopee_url"] = new_url
+                        break
+                with open(cat_path, "w", encoding="utf-8") as f:
+                    json.dump(catalog, f, indent=2)
+                add_log(f"🔄 Updated Shopee Affiliate URL for /{slug} -> {new_url}")
+                self.send_json({"status": "ok", "slug": slug, "new_url": new_url})
+            except Exception as e:
+                self.send_json({"error": str(e)}, status=500)
         elif path == "/api/track":
             try:
                 evt = data.get("event", "slot_click")

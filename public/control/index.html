@@ -277,6 +277,15 @@
         </button>
       </li>
       <li>
+        <button class="nav-btn" data-nav="shopee">
+          <span class="nav-btn-left">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Shopee Indo 🇮🇩</span>
+          </span>
+          <span class="nav-badge" style="background:#ee4d2d;color:white;font-weight:700;">NEW</span>
+        </button>
+      </li>
+      <li>
         <button class="nav-btn" data-nav="rules">
           <span class="nav-btn-left">
             <svg class="icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -542,14 +551,15 @@ async function fetchLogs() {
 
 async function fetchAnalytics() {
   try {
-    const [r1, r2, r3, r4, r5, r6, r7] = await Promise.all([
+    const [r1, r2, r3, r4, r5, r6, r7, r8] = await Promise.all([
       fetch("/api/analytics", { cache: "no-store" }),
       fetch("/api/replies", { cache: "no-store" }),
       fetch("/api/queue", { cache: "no-store" }),
       fetch("/api/autopilot", { cache: "no-store" }),
       fetch("/api/session/health", { cache: "no-store" }),
       fetch("/api/track/stats", { cache: "no-store" }),
-      fetch("/api/replies/sent", { cache: "no-store" })
+      fetch("/api/replies/sent", { cache: "no-store" }),
+      fetch("/api/shopee/catalog", { cache: "no-store" })
     ]);
     if (r1.ok) state.metrics = (await r1.json()).metrics || [];
     if (r2.ok) state.dbReplies = (await r2.json()).replies || [];
@@ -558,6 +568,7 @@ async function fetchAnalytics() {
     if (r5 && r5.ok) state.sessionHealth = await r5.json();
     if (r6 && r6.ok) state.landerAnalytics = await r6.json();
     if (r7 && r7.ok) state.sentReplies = (await r7.json()).replies || [];
+    if (r8 && r8.ok) state.shopeeCatalog = await r8.json();
   } catch {}
 }
 
@@ -600,6 +611,8 @@ function render() {
     main.innerHTML = renderPostsView(p);
   } else if (state.tab === "sent") {
     main.innerHTML = renderSentRepliesView(p);
+  } else if (state.tab === "shopee") {
+    main.innerHTML = renderShopeeView(p);
   } else if (state.tab === "rules") {
     main.innerHTML = renderRulesView(p);
   }
@@ -1047,6 +1060,106 @@ function renderRulesView(p) {
       </div>
     </div>
   `;
+}
+
+/* 5. Shopee Indo View (Direct Comment Cloaked Links Engine) */
+function renderShopeeView(p) {
+  const catalog = state.shopeeCatalog || [];
+  return `
+    <header class="workspace-head">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <h1>Shopee Affiliate Indo 🇮🇩</h1>
+          <span style="background:#ee4d2d;color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">ACTIVE ENGINE</span>
+        </div>
+        <p>Direct Comment Links via Cloudflare Edge Cloak (Anti-Spam & Instant Shopee App 302 Deep Link).</p>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary btn-sm" onclick="alert('Engine Shopee Indo aktif! Link di komentar Threads menggunakan /go/[slug] yang otomatis me-redirect ke Shopee App affiliate kamu.')">
+          ℹ️ Info Strategi
+        </button>
+      </div>
+    </header>
+
+    <div class="workspace-content">
+      <!-- Cloak Strategy Alert -->
+      <div style="background:#fff5f3;border:1px solid #ffd0c7;border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:24px;">🛡️</span>
+        <div>
+          <strong style="color:#d03b1d;font-size:13px;">Trik Cloaked Link Anti-Banned Meta / Threads</strong>
+          <div style="color:#7a2412;font-size:12px;margin-top:2px;line-height:1.5;">
+            Komentar bot di Threads menggunakan link bersih <code>curatedbyemma.pages.dev/go/[slug]</code>. Saat diklik di HP pengguna, Cloudflare Edge langsung me-redirect (302) dalam hitungan milidetik langsung membuka <strong>Aplikasi Shopee</strong> ke link affiliate kamu. Meta melihatnya sebagai tautan web bersih (bukan spam affiliate).
+          </div>
+        </div>
+      </div>
+
+      <!-- Shopee Catalog Cards -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        ${catalog.map(item => `
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="background:#f1f5f9;color:#334155;font-weight:700;font-size:11px;padding:2px 6px;border-radius:4px;">/${esc(item.slug)}</span>
+                  <strong style="font-size:15px;color:var(--ink);">${esc(item.title)}</strong>
+                  <span style="font-size:12px;color:#059669;font-weight:600;">${esc(item.price)}</span>
+                </div>
+                <div style="font-size:12px;color:var(--ink-3);margin-top:4px;">
+                  <strong>Target Problem:</strong> ${esc(item.target_pain)}
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="promptUpdateShopeeUrl('${esc(item.slug)}', '${esc(item.shopee_url)}')">
+                ✏️ Edit Link Shopee
+              </button>
+            </div>
+
+            <!-- Cloaked vs Destination URL -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#f8fafc;padding:10px 14px;border-radius:6px;font-size:12px;margin:10px 0;">
+              <div>
+                <span style="color:var(--ink-3);font-size:10px;text-transform:uppercase;font-weight:600;">Cloaked Link (Dipakai di Komentar):</span>
+                <div style="font-family:monospace;color:#2563eb;word-break:break-all;margin-top:2px;">
+                  https://curatedbyemma.pages.dev/go/${esc(item.slug)}
+                </div>
+              </div>
+              <div>
+                <span style="color:var(--ink-3);font-size:10px;text-transform:uppercase;font-weight:600;">Tujuan Link Shopee Affiliate:</span>
+                <div style="font-family:monospace;color:#475569;word-break:break-all;margin-top:2px;">
+                  ${esc(item.shopee_url)}
+                </div>
+              </div>
+            </div>
+
+            <!-- Sample Reply -->
+            <div style="background:#fafafa;border-left:3px solid #ee4d2d;padding:8px 12px;font-size:12px;color:#334155;border-radius:0 4px 4px 0;">
+              <span style="font-size:10px;font-weight:700;color:#ee4d2d;text-transform:uppercase;display:block;margin-bottom:2px;">Contoh Komentar Organik Bot:</span>
+              "${esc(item.sample_reply)}"
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+async function promptUpdateShopeeUrl(slug, currentUrl) {
+  const newUrl = prompt(`Masukkan link Shopee Affiliate baru untuk /go/${slug}:`, currentUrl);
+  if (!newUrl || newUrl.trim() === currentUrl) return;
+  try {
+    const res = await fetch("/api/shopee/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug: slug, url: newUrl.trim() })
+    });
+    if (res.ok) {
+      alert(`Link Shopee untuk /go/${slug} berhasil diperbarui!`);
+      await fetchAnalytics();
+      render();
+    } else {
+      alert("Gagal update link Shopee.");
+    }
+  } catch (e) {
+    alert("Error: " + e.message);
+  }
 }
 
 /* =========================================================

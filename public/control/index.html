@@ -427,12 +427,12 @@ const PROJECTS = [
       { slot: 2, category: "Toddler sleep", title: "Fisher-Price Calming Otter Sleep Soother", hook: "Rhythmic breathing calms fussy babies", rating: 4.7, reviews: 59700, velocity: "5K+", image: "https://m.media-amazon.com/images/I/61yMGP6pujL._AC_UL320_.jpg", asin: "B07N1JP56L" },
       { slot: 3, category: "Desk setup", title: "Ergonomic Memory Foam Lumbar Cushion", hook: "Lower-back relief for long desk hours", rating: 4.4, reviews: 27400, velocity: "10K+", image: "https://m.media-amazon.com/images/I/81Qm1-Fja2L._AC_UL320_.jpg", asin: "B074C9F45S" },
       { slot: 4, category: "Kitchen", title: "TrendPlain Glass Olive Oil Mister", hook: "Even, clog-free mist for air fryers", rating: 4.6, reviews: 49100, velocity: "2K+", image: "https://m.media-amazon.com/images/I/71Sx9YQ00fL._AC_UL320_.jpg", asin: "B0CY1S56JZ" },
-      { slot: 5, category: "Deep clean", title: "Cordless Electric Spin Scrubber", hook: "Tile and tub grout without kneeling", rating: 4.4, reviews: 8900, velocity: "20K+", image: "https://m.media-amazon.com/images/I/71GhDHqOwNL._AC_UY218_.jpg", asin: "B0C1NJDTTX" },
+      { slot: 5, category: "Winter knitwear", title: "BEAUTURAL Fabric Shaver & Lint Remover", hook: "Restores pilled sweaters & fuzzy cardigans", rating: 4.5, reviews: 116000, velocity: "30K+", image: "https://m.media-amazon.com/images/I/71Rjssfr4wL._AC_UL320_.jpg", asin: "B01NAQD0KD" },
       { slot: 6, category: "Cable clutter", title: "Smartish Magnetic Cable Wrangler", hook: "Stops cords dropping behind desks", rating: 4.6, reviews: 5200, velocity: "1K+", image: "https://m.media-amazon.com/images/I/7123kAuMpIL._AC_UY218_.jpg", asin: "B07BB4YXHW" },
       { slot: 7, category: "Flights", title: "Perilogics Airplane Tray-Table Phone Mount", hook: "Hands-free screen on any plane tray", rating: 4.6, reviews: 22900, velocity: "500+", image: "https://m.media-amazon.com/images/I/71P9DdPma2L._AC_UY218_.jpg", asin: "B08TKPRKBN" },
       { slot: 8, category: "Travel", title: "OGHom Compact Handheld Garment Steamer", hook: "Smooths wrinkles in 60s, no iron", rating: 4.3, reviews: 2400, velocity: "30K+", image: "https://m.media-amazon.com/images/I/71vshmAdKuL._AC_UY218_.jpg", asin: "B0FYF2X322" },
       { slot: 9, category: "Adult sleep", title: "TOPOINT 3D Bluetooth Sleep Mask", hook: "Full blackout with flat sleep audio", rating: 4.3, reviews: 13200, velocity: "1K+", image: "https://m.media-amazon.com/images/I/71a4Pm7uBCL._AC_UL320_.jpg", asin: "B07TPL5K7W" },
-      { slot: 10, category: "Car", title: "PULIDIKI Reusable Car Detailing Putty", hook: "Pulls dust and crumbs from AC vents", rating: 4.1, reviews: 101000, velocity: "10K+", image: "https://m.media-amazon.com/images/I/71WpCXsPbML._AC_UL320_.jpg", asin: "B07SBFDZ6T" }
+      { slot: 10, category: "Holiday cooking", title: "ThermoPro TP03B Digital Meat Thermometer", hook: "Instant 3s temp to prevent dry meat", rating: 4.6, reviews: 151000, velocity: "50K+", image: "https://m.media-amazon.com/images/I/61CHaEhw9ML._AC_UL320_.jpg", asin: "B01IHHLB3W" }
     ],
     posts: [
       { id: "intro_manifesto", title: "Curation manifesto", slots: [], image: "/assets/emma/emma_desk.jpg",
@@ -551,7 +551,7 @@ async function fetchLogs() {
 
 async function fetchAnalytics() {
   try {
-    const [r1, r2, r3, r4, r5, r6, r7, r8] = await Promise.all([
+    const [r1, r2, r3, r4, r5, r6, r7, r8, r9] = await Promise.all([
       fetch("/api/analytics", { cache: "no-store" }),
       fetch("/api/replies", { cache: "no-store" }),
       fetch("/api/queue", { cache: "no-store" }),
@@ -559,7 +559,8 @@ async function fetchAnalytics() {
       fetch("/api/session/health", { cache: "no-store" }),
       fetch("/api/track/stats", { cache: "no-store" }),
       fetch("/api/replies/sent", { cache: "no-store" }),
-      fetch("/api/shopee/catalog", { cache: "no-store" })
+      fetch("/api/shopee/catalog", { cache: "no-store" }),
+      fetch("/api/catalog", { cache: "no-store" })
     ]);
     if (r1.ok) state.metrics = (await r1.json()).metrics || [];
     if (r2.ok) state.dbReplies = (await r2.json()).replies || [];
@@ -569,6 +570,22 @@ async function fetchAnalytics() {
     if (r6 && r6.ok) state.landerAnalytics = await r6.json();
     if (r7 && r7.ok) state.sentReplies = (await r7.json()).replies || [];
     if (r8 && r8.ok) state.shopeeCatalog = await r8.json();
+    if (r9 && r9.ok) {
+      const rawCat = await r9.json();
+      if (Array.isArray(rawCat) && rawCat.length > 0) {
+        PROJECTS[0].catalog = rawCat.map(it => ({
+          slot: it.slot_number || it.slot,
+          category: it.category || "",
+          title: it.title || it.name || "",
+          hook: it.target_pain_point || it.hook || "",
+          rating: it.rating || 4.5,
+          reviews: it.reviews_count || it.reviews || 0,
+          velocity: it.bought_past_month || it.velocity || "",
+          image: it.image_url || it.image || "",
+          asin: it.asin || ""
+        }));
+      }
+    }
   } catch {}
 }
 

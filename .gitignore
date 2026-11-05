@@ -13,3 +13,4 @@ threads_session.json
 # Temporary Screenshots & Artifacts (ignore root png files)
 /*.png
 public/*_preview.png
+nemuaja/

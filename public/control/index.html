@@ -551,7 +551,7 @@ async function fetchLogs() {
 
 async function fetchAnalytics() {
   try {
-    const [r1, r2, r3, r4, r5, r6, r7, r8, r9] = await Promise.all([
+    const [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10] = await Promise.all([
       fetch("/api/analytics", { cache: "no-store" }),
       fetch("/api/replies", { cache: "no-store" }),
       fetch("/api/queue", { cache: "no-store" }),
@@ -560,7 +560,8 @@ async function fetchAnalytics() {
       fetch("/api/track/stats", { cache: "no-store" }),
       fetch("/api/replies/sent", { cache: "no-store" }),
       fetch("/api/shopee/catalog", { cache: "no-store" }),
-      fetch("/api/catalog", { cache: "no-store" })
+      fetch("/api/catalog", { cache: "no-store" }),
+      fetch("/api/shopee/queue", { cache: "no-store" })
     ]);
     if (r1.ok) state.metrics = (await r1.json()).metrics || [];
     if (r2.ok) state.dbReplies = (await r2.json()).replies || [];
@@ -570,6 +571,7 @@ async function fetchAnalytics() {
     if (r6 && r6.ok) state.landerAnalytics = await r6.json();
     if (r7 && r7.ok) state.sentReplies = (await r7.json()).replies || [];
     if (r8 && r8.ok) state.shopeeCatalog = await r8.json();
+    if (r10 && r10.ok) state.shopeeQueue = (await r10.json()).queue || [];
     if (r9 && r9.ok) {
       const rawCat = await r9.json();
       if (Array.isArray(rawCat) && rawCat.length > 0) {
@@ -1082,35 +1084,84 @@ function renderRulesView(p) {
 /* 5. Shopee Indo View (Direct Comment Cloaked Links Engine) */
 function renderShopeeView(p) {
   const catalog = state.shopeeCatalog || [];
+  const shopeeQueue = state.shopeeQueue || [];
+
   return `
     <header class="workspace-head">
       <div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <h1>Shopee Affiliate Indo 🇮🇩</h1>
-          <span style="background:#ee4d2d;color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">ACTIVE ENGINE</span>
+          <h1>NemuAja · Shopee Affiliate Indo 🇮🇩</h1>
+          <span style="background:#ee4d2d;color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">FASE 3 DYNAMIC</span>
+          <span style="background:#0284c7;color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;">ID: 11324391980</span>
         </div>
-        <p>Direct Comment Links via Cloudflare Edge Cloak (Anti-Spam & Instant Shopee App 302 Deep Link).</p>
+        <p>Direct Comment Links via Cloudflare Edge Cloak (nemuaja.pages.dev/go/[slug] → Shopee an_redir with 7-Day Cookie).</p>
       </div>
       <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary btn-sm" onclick="alert('Engine Shopee Indo aktif! Link di komentar Threads menggunakan /go/[slug] yang otomatis me-redirect ke Shopee App affiliate kamu.')">
-          ℹ️ Info Strategi
+        <button class="btn btn-primary btn-sm" id="sniff-shopee-btn" onclick="triggerShopeeSniff()">
+          🔍 Scan Leads Threads Indo
         </button>
       </div>
     </header>
 
     <div class="workspace-content">
-      <!-- Cloak Strategy Alert -->
+      <!-- Strategy Alert -->
       <div style="background:#fff5f3;border:1px solid #ffd0c7;border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;">
-        <span style="font-size:24px;">🛡️</span>
+        <span style="font-size:24px;">🚀</span>
         <div>
-          <strong style="color:#d03b1d;font-size:13px;">Trik Cloaked Link Anti-Banned Meta / Threads</strong>
+          <strong style="color:#d03b1d;font-size:13px;">Fase 3 Dynamic Engine Live: Zero Manual Work</strong>
           <div style="color:#7a2412;font-size:12px;margin-top:2px;line-height:1.5;">
-            Komentar bot di Threads menggunakan link bersih <code>curatedbyemma.pages.dev/go/[slug]</code>. Saat diklik di HP pengguna, Cloudflare Edge langsung me-redirect (302) dalam hitungan milidetik langsung membuka <strong>Aplikasi Shopee</strong> ke link affiliate kamu. Meta melihatnya sebagai tautan web bersih (bukan spam affiliate).
+            Semua link komentar bot otomatis dibungkus rapi: <code>nemuaja.pages.dev/go/[slug]</code>. Cloudflare Edge langsung me-redirect ke endpoint resmi Shopee <code>an_redir</code> dengan <strong>Affiliate ID: 11324391980</strong>. Pengguna langsung masuk ke aplikasi Shopee dan cookie komisi 7 hari otomatis tersimpan.
           </div>
         </div>
       </div>
 
-      <!-- Shopee Catalog Cards -->
+      <!-- Pending Shopee Approval Queue -->
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h2 style="font-size:16px;font-weight:700;color:var(--ink);">Leads Approval Queue (${shopeeQueue.length} pending)</h2>
+          <span style="font-size:12px;color:var(--ink-3);">Siap kirim ke Threads Indonesia</span>
+        </div>
+
+        ${shopeeQueue.length === 0 ? `
+          <div style="background:var(--surface);border:1px dashed var(--line);border-radius:var(--radius);padding:32px 20px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:8px;">🎯</div>
+            <div style="font-weight:600;color:var(--ink);">Belum ada antrian lead Shopee</div>
+            <div style="font-size:12px;color:var(--ink-3);margin-top:4px;">Klik tombol "🔍 Scan Leads Threads Indo" di kanan atas untuk memindai keluhan netizen secara otomatis.</div>
+          </div>
+        ` : `
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            ${shopeeQueue.map(item => `
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                  <div>
+                    <span style="background:#fee2e2;color:#991b1b;font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px;">${esc(item.engagement_tier || 'LEAD')}</span>
+                    <strong style="margin-left:6px;font-size:13px;color:var(--ink);">@${esc(item.author_username)}</strong>
+                    <span style="color:var(--ink-3);font-size:12px;margin-left:8px;">❤️ ${item.likes_count || 0} · 💬 ${item.replies_count || 0}</span>
+                  </div>
+                  <a href="${esc(item.thread_url)}" target="_blank" style="font-size:11px;color:#2563eb;text-decoration:none;">Buka Thread ↗</a>
+                </div>
+
+                <div style="background:#f8fafc;padding:10px 12px;border-radius:6px;font-size:12.5px;color:#1e293b;border-left:3px solid #cbd5e1;">
+                  "${esc(item.thread_text)}"
+                </div>
+
+                <div style="background:#fff7ed;padding:10px 12px;border-radius:6px;font-size:12.5px;color:#9a3412;border-left:3px solid #f97316;">
+                  <strong style="display:block;font-size:11px;text-transform:uppercase;margin-bottom:4px;color:#c2410c;">Draft Balasan NemuAja (${esc(item.product_name)}):</strong>
+                  "${esc(item.draft_reply)}"
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;gap:8px;">
+                  <button class="btn btn-secondary btn-sm" onclick="rejectQueueItem(${item.id})">❌ Tolak</button>
+                  <button class="btn btn-primary btn-sm" onclick="approveQueueItem(${item.id})">✅ Setujui & Kirim</button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `}
+      </div>
+
+      <!-- Shopee Catalog Presets -->
+      <h2 style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:12px;">Winning Core Presets (Pabrik Klik)</h2>
       <div style="display:flex;flex-direction:column;gap:14px;">
         ${catalog.map(item => `
           <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;">
@@ -1135,7 +1186,7 @@ function renderShopeeView(p) {
               <div>
                 <span style="color:var(--ink-3);font-size:10px;text-transform:uppercase;font-weight:600;">Cloaked Link (Dipakai di Komentar):</span>
                 <div style="font-family:monospace;color:#2563eb;word-break:break-all;margin-top:2px;">
-                  https://curatedbyemma.pages.dev/go/${esc(item.slug)}
+                  https://nemuaja.pages.dev/go/${esc(item.slug)}
                 </div>
               </div>
               <div>
@@ -1156,6 +1207,24 @@ function renderShopeeView(p) {
       </div>
     </div>
   `;
+}
+
+async function triggerShopeeSniff() {
+  const btn = document.getElementById("sniff-shopee-btn");
+  if (btn) btn.innerText = "⏳ Sedang Scan Threads...";
+  try {
+    const res = await fetch("/api/shopee/sniff", { method: "POST" });
+    const data = await res.json();
+    toast(data.message || "Scanner Threads Indo berjalan di latar belakang!");
+    setTimeout(async () => {
+      await fetchAnalytics();
+      render();
+    }, 4000);
+  } catch (err) {
+    toast("Error scan: " + err.message);
+  } finally {
+    if (btn) btn.innerText = "🔍 Scan Leads Threads Indo";
+  }
 }
 
 async function promptUpdateShopeeUrl(slug, currentUrl) {

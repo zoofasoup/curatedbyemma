@@ -109,7 +109,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             else:
                 self.send_json([])
         elif path == "/api/shopee/queue":
-            self.send_json({"status": "ok", "queue": db.get_pending_queue("shopee_id")})
+            self.send_json({"status": "ok", "queue": db.get_pending_queue("nemuaja") + db.get_pending_queue("shopee_id")})
         elif path == "/api/autopilot":
             self.send_json(auto_worker.get_status())
         elif path == "/api/session/health":
@@ -176,6 +176,15 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     json.dump(catalog, f, indent=2)
                 add_log(f"🔄 Updated Shopee Affiliate URL for /{slug} -> {new_url}")
                 self.send_json({"status": "ok", "slug": slug, "new_url": new_url})
+            except Exception as e:
+                self.send_json({"error": str(e)}, status=500)
+        elif path == "/api/shopee/sniff":
+            try:
+                import threads_sniffer_id
+                import threading
+                threading.Thread(target=threads_sniffer_id.run_sniffer_indo, kwargs={"max_queries": 3, "headless": True}, daemon=True).start()
+                add_log("🔍 Launched NemuAja Shopee Threads sniffer in background")
+                self.send_json({"status": "ok", "message": "NemuAja sniffer running"})
             except Exception as e:
                 self.send_json({"error": str(e)}, status=500)
         elif path == "/api/track":

@@ -1,6 +1,6 @@
 """
-Indonesian Threads Sniffer & Lead Scorer for Shopee Affiliate Engine.
-Scrapes Indonesian Threads queries, matches problem solvers, and queues high-converting leads under ip_id='shopee_id'.
+Indonesian Threads Sniffer & Lead Scorer for NemuAja Shopee Affiliate Engine (Fase 3).
+Scrapes Indonesian Threads queries, matches problem solvers dynamically, and queues high-converting leads under ip_id='nemuaja'.
 """
 
 import os
@@ -10,32 +10,40 @@ import time
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 import db
-import reply_generator_id
+import nemuaja_generator
 
 SESSION_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "threads_session.json")
 
+# High-intent Indonesian pain point queries
 INDONESIAN_QUERIES = [
-    {"slug": "serbuk", "query": "wajan gosong kerak"},
-    {"slug": "serbuk", "query": "panci gosong bersihin"},
-    {"slug": "rak", "query": "kamar mandi kosan sempit"},
-    {"slug": "rak", "query": "rak tempel tanpa bor"},
-    {"slug": "pel", "query": "males ngepel lantai"},
-    {"slug": "pel", "query": "kain pel peras"},
-    {"slug": "tawas", "query": "ketiak bau asem"},
-    {"slug": "tawas", "query": "deodorant bikin kuning"},
-    {"slug": "acne", "query": "jerawat batu sakit"},
-    {"slug": "acne", "query": "jerawat mendem"}
+    # Core Evergreen
+    "wajan gosong kerak",
+    "panci gosong bersihin",
+    "kamar mandi kosan sempit",
+    "rak tempel tanpa bor",
+    "males ngepel lantai",
+    "ketiak bau asem",
+    "deodorant bikin kuning",
+    "jerawat batu sakit",
+    "jerawat mendem",
+    # Dynamic Phase 3 Queries (Household, Pets, Hygiene)
+    "kucing pipis sembarangan",
+    "bau pesing kucing kasur",
+    "kipas angin kotor debu",
+    "sepatu putih dekil",
+    "kabel charger gampang rusak",
+    "baju kemeja lecek setrika"
 ]
 
 def stream_log(msg):
     timestamp = datetime.now().strftime("%H:%M:%S")
-    print(f"[{timestamp}] [Shopee-Indo] {msg}")
+    print(f"[{timestamp}] [NemuAja-Indo] {msg}")
     sys.stdout.flush()
 
-def run_sniffer_indo(max_queries=2, headless=True):
-    pending_count = db.get_pending_queue_count("shopee_id")
+def run_sniffer_indo(max_queries=3, headless=True):
+    pending_count = db.get_pending_queue_count("nemuaja")
     if pending_count >= 50:
-        stream_log(f"🛑 Smart Queue Cap: Queue already has {pending_count} pending leads for Shopee Indo. Skipping scrape.")
+        stream_log(f"🛑 Smart Queue Cap: Queue already has {pending_count} pending leads for NemuAja Indo. Skipping scrape.")
         return 0
 
     if not os.path.exists(SESSION_PATH):
@@ -60,14 +68,12 @@ def run_sniffer_indo(max_queries=2, headless=True):
         context.add_cookies(cookies)
         page = context.new_page()
 
-        # Intercept GraphQL / search
         extracted_posts = []
 
         def handle_response(response):
             if "graphql" in response.url.lower():
                 try:
                     data = response.json()
-                    # walk json to find post nodes
                     def walk(node):
                         if isinstance(node, dict):
                             if "caption" in node and "user" in node:
@@ -95,8 +101,7 @@ def run_sniffer_indo(max_queries=2, headless=True):
 
         page.on("response", handle_response)
 
-        for q_entry in INDONESIAN_QUERIES[:max_queries]:
-            query = q_entry["query"]
+        for query in INDONESIAN_QUERIES[:max_queries]:
             search_url = f"https://www.threads.net/search?q={query.replace(' ', '%20')}&filter=recent"
             stream_log(f"🔍 Searching Threads: '{query}'...")
 
@@ -104,7 +109,7 @@ def run_sniffer_indo(max_queries=2, headless=True):
                 page.goto(search_url, wait_until="domcontentloaded", timeout=30000)
                 page.wait_for_timeout(3500)
 
-                # Scroll once
+                # Scroll once to trigger graphql
                 page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
                 page.wait_for_timeout(2500)
 
@@ -121,24 +126,32 @@ def run_sniffer_indo(max_queries=2, headless=True):
                         continue
 
                     # Check duplicate
-                    c.execute("SELECT id FROM reply_approval_queue WHERE ip_id = 'shopee_id' AND thread_url = ?", (post_url,))
+                    c.execute("SELECT id FROM reply_approval_queue WHERE ip_id = 'nemuaja' AND thread_url = ?", (post_url,))
                     if c.fetchone():
                         continue
 
-                    # Evaluate context
-                    eval_res = reply_generator_id.evaluate_and_draft_id(text, author=author)
-                    if eval_res["verdict"] != "ACCEPT":
+                    # Pre-screen
+                    ok, reason = nemuaja_generator.pre_screen_indo(text, author)
+                    if not ok:
                         continue
 
-                    slug = eval_res["slug"]
-                    prod_name = eval_res["product_name"]
-                    draft = eval_res["reply_draft"]
+                    # Contextual LLM evaluation and reply drafting
+                    eval_res = nemuaja_generator.generate_reply_indo_llm(text, author=author)
+                    if not eval_res or eval_res.get("verdict") != "ACCEPT":
+                        continue
+
+                    slug = eval_res.get("slug", "solusi")
+                    prod_name = eval_res.get("product_name", "Solusi Shopee")
+                    draft = eval_res.get("reply_text", "")
+
+                    if not draft:
+                        continue
 
                     tier = "🔥 VIRAL HIJACK" if (likes >= 15 or replies >= 5) else "⚡ FRESH SNIPER"
                     score = min(100, 60 + (likes * 2) + (replies * 3))
 
                     db.add_to_queue(
-                        ip_id="shopee_id",
+                        ip_id="nemuaja",
                         author=author,
                         thread_url=post_url,
                         thread_text=text,
@@ -150,7 +163,7 @@ def run_sniffer_indo(max_queries=2, headless=True):
                         engagement_tier=tier,
                         opportunity_score=score
                     )
-                    stream_log(f"✅ Added Shopee lead for @{author}: {prod_name} ({tier} | Score: {score})")
+                    stream_log(f"✅ [nemuaja] Added lead for @{author}: {prod_name} ({tier} | Score: {score})")
                     total_added += 1
 
                 extracted_posts.clear()
@@ -161,7 +174,7 @@ def run_sniffer_indo(max_queries=2, headless=True):
         conn.close()
         browser.close()
 
-    stream_log(f"🎉 Shopee Sniffer finished. Added {total_added} new leads.")
+    stream_log(f"🎉 NemuAja Sniffer finished. Added {total_added} new leads.")
     return total_added
 
 if __name__ == "__main__":

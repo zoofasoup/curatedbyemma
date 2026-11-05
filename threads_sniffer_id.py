@@ -11,6 +11,7 @@ from datetime import datetime
 from playwright.sync_api import sync_playwright
 import db
 import nemuaja_generator
+from threads_sniffer import extract_posts_from_graphql
 
 SESSION_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "threads_session.json")
 
@@ -71,47 +72,39 @@ def run_sniffer_indo(max_queries=3, headless=True):
         extracted_posts = []
 
         def handle_response(response):
-            if "graphql" in response.url.lower():
+            url = response.url
+            if "graphql" in url or "api/graphql" in url:
                 try:
-                    data = response.json()
-                    def walk(node):
-                        if isinstance(node, dict):
-                            if "caption" in node and "user" in node:
-                                text = node.get("caption", {}).get("text", "")
-                                author = node.get("user", {}).get("username", "")
-                                code = node.get("code", "")
-                                likes = node.get("like_count", 0)
-                                replies = node.get("reply_count", 0)
-                                if text and author:
-                                    extracted_posts.append({
-                                        "text": text,
-                                        "author": author,
-                                        "url": f"https://www.threads.net/@{author}/post/{code}" if code else "",
-                                        "likes": likes,
-                                        "replies": replies
-                                    })
-                            for v in node.values():
-                                walk(v)
-                        elif isinstance(node, list):
-                            for item in node:
-                                walk(item)
-                    walk(data)
+                    ct = response.headers.get("content-type", "")
+                    if "application/json" in ct and response.status == 200:
+                        posts = extract_posts_from_graphql(response.json())
+                        if posts:
+                            for p in posts:
+                                extracted_posts.append({
+                                    "text": p["text"],
+                                    "author": p["username"],
+                                    "url": p["url"],
+                                    "likes": p["like_count"],
+                                    "replies": p["reply_count"]
+                                })
                 except Exception:
                     pass
 
         page.on("response", handle_response)
 
         for query in INDONESIAN_QUERIES[:max_queries]:
-            search_url = f"https://www.threads.net/search?q={query.replace(' ', '%20')}&filter=recent"
+            encoded_q = query.replace(" ", "%20")
+            search_url = f"https://www.threads.net/search?q={encoded_q}&serp_type=default&filter=recent"
             stream_log(f"🔍 Searching Threads: '{query}'...")
 
             try:
                 page.goto(search_url, wait_until="domcontentloaded", timeout=30000)
                 page.wait_for_timeout(3500)
 
-                # Scroll once to trigger graphql
-                page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-                page.wait_for_timeout(2500)
+                # Scroll down 2 times to trigger GraphQL feed
+                for _ in range(2):
+                    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                    page.wait_for_timeout(2000)
 
                 stream_log(f"   Extracted {len(extracted_posts)} posts from search.")
 

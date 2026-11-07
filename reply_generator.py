@@ -49,25 +49,26 @@ CATALOG_SPECS = {
         "reviews": 39300,
         "honest_pros": "Adhesive is sticky enough to pull embedded undercoat fur from velvet and textured woven sofas",
         "honest_caveats": "You burn through sheets quickly if you have a massive double-coated dog, peeling diagonal sheets takes a second to get used to",
+        "slug": "roller",
         "bio_slot": "#1",
         "draft_templates": [
             (
                 "trying to get stubborn pet hair off couch fabric is the most frustrating workout ever. "
                 "regular sticky tape rollers lose their grip in two swipes, but that extra-sticky roller with over 39k verified reviews is the consensus winner for deep fur. "
                 "only catch is you go through sheets fast with a heavy shedder, but it actually pulls what vacuums miss. "
-                "kept it saved under #1 in my bio."
+                "here's the direct link to it: curatedbyemma.pages.dev/go/roller. what breed is your pet?"
             ),
             (
                 "vacuums always seem to push double-coated dog hair deeper into weave fibers. "
                 "after testing lint tools, that pet lovers extra-sticky roller with 39k+ verified ratings was the only thing that lifted the stuck undercoat in one swipe. "
                 "sheets peel fast so don't hoard them, but it actually works without shredding the fabric. "
-                "cataloged under #1 in my bio."
+                "found the exact one here: curatedbyemma.pages.dev/go/roller. what kind of couch fabric do you have?"
             ),
             (
                 "dog fur embedded in couch cushions is an absolute nightmare to keep up with. "
                 "standard grocery store rollers are too weak, but that heavy-tack pet roller with nearly 40k reviews pulls hair vacuums leave behind. "
                 "only downside is replacing rolls frequently during shedding season, but it saves hours of scrubbing. "
-                "saved the exact one under #1 on my page."
+                "saved the link to it here: curatedbyemma.pages.dev/go/roller. are you dealing with cat or dog hair?"
             )
         ]
     },
@@ -78,25 +79,26 @@ CATALOG_SPECS = {
         "reviews": 59700,
         "honest_pros": "Rhythmic breathing motion and soft white noise genuinely calms overtired babies down to sleep",
         "honest_caveats": "Not a magic fix for teething pain or severe colic, and you will need to replace AAA batteries every few weeks",
+        "slug": "otter",
         "bio_slot": "#2",
         "draft_templates": [
             (
                 "night wakeups every hour are completely brutal, sending you so much strength. "
                 "my sister went through the exact same sleep regression and swore that rhythmic breathing otter with nearly 60k reviews was the only thing that actually calmed him down. "
                 "only catch is you go through batteries every month, but it genuinely gave them their first 5-hour sleep stretch. "
-                "cataloged it under #2 in my bio if you want to look at the reviews."
+                "here's the direct link: curatedbyemma.pages.dev/go/otter. how many months are they right now?"
             ),
             (
                 "running on two hours of sleep with a crying baby is surviving on pure adrenaline. "
                 "our friends went through that exact sleep regression and the breathing belly otter with 59k verified reviews was the only soother that settled him down without rocking for hours. "
                 "eats AAA batteries fast, but the gentle heartbeat rhythm works so well. "
-                "cataloged under #2 in my bio."
+                "found the exact one here: curatedbyemma.pages.dev/go/otter. are you guys in the 4-month or 8-month regression?"
             ),
             (
                 "infant sleep regressions will test every ounce of your sanity. "
                 "when we were researching calming soothers, that rhythmic breathing otter with nearly 60k reviews stood out because the belly motion mimics real breathing. "
                 "won't fix severe teething cries, but for overtired bedtime battles it genuinely helped. "
-                "saved under #2 on my page."
+                "saved the link to it here: curatedbyemma.pages.dev/go/otter. do they usually nap better in a crib or contact napping?"
             )
         ]
     },
@@ -107,25 +109,26 @@ CATALOG_SPECS = {
         "reviews": 27400,
         "honest_pros": "High-density molded foam that actually holds shape under full bodyweight without flattening",
         "honest_caveats": "Feels noticeably firm the first 2-3 days before conforming to your lower back, doesn't fix serious medical sciatica",
+        "slug": "lumbar",
         "bio_slot": "#3",
         "draft_templates": [
             (
                 "sitting in standard desk chairs all day literally destroys your lower back posture. "
                 "when i audited cushions to filter out sponsored hype, high-density molded foam was the only thing 27k verified buyers consistently swore by. "
                 "it won't cure medical spine issues and feels pretty firm the first couple days, but taking pressure off the tailbone made 8-hour workdays actually bearable. "
-                "cataloged the exact ergonomic one under #3 on my page."
+                "here's the direct link to it: curatedbyemma.pages.dev/go/lumbar. what kind of office chair are you using right now?"
             ),
             (
                 "the lower back ache from cheap wfh office chairs is so real. "
                 "soft squishy pillows flatten in ten minutes, but that high-density molded lumbar cushion with 27k+ reviews holds its contour all day. "
                 "feels a bit stiff the first 48 hours until it warms to your spine, but it keeps your posture aligned. "
-                "listed under #3 in my bio."
+                "found the exact one here: curatedbyemma.pages.dev/go/lumbar. do you sit for 8+ hours or do you have a standing desk too?"
             ),
             (
                 "desk chairs with zero lumbar curve compress your lower spine by 3pm. "
                 "after comparing dozens of supports, the firm memory foam cushion with 27k reviews was the undisputed winner for tailbone relief. "
                 "won't replace a physio for chronic sciatica, but it made long desk sessions painless for me. "
-                "cataloged under #3 on my page."
+                "saved the link to it here: curatedbyemma.pages.dev/go/lumbar. what kind of chair do you have?"
             )
         ]
     },
@@ -136,19 +139,20 @@ CATALOG_SPECS = {
         "reviews": 49100,
         "honest_pros": "Even, clog-free wide fan mist for air fryers without aerosol chemical propellants",
         "honest_caveats": "You have to pull the trigger with a firm, quick squeeze to get the wide fan mist instead of a stream; heavier than plastic since it's thick glass",
+        "slug": "mister",
         "bio_slot": "#4",
         "draft_templates": [
             (
                 "pouring oil from a bottle into an air fryer always turns food soggy and uneven. "
                 "standard aerosol spray cans leave sticky chemical residue, but that refillable glass oil mister with 49k+ verified reviews mists a clean wide fan. "
                 "only trick is you have to pull the trigger with a quick firm squeeze or it shoots a stream, but it completely fixed uneven air frying for me. "
-                "listed under #4 in my bio."
+                "here's the direct link to it: curatedbyemma.pages.dev/go/mister. what's your favorite thing to air fry?"
             ),
             (
                 "drizzling oil straight onto air fryer food makes half of it drenched and the other half dry. "
                 "the glass fan-spray mister with 49k reviews solved that without using propellants or aerosol cans. "
                 "glass bottle is a little heavy and you need a snappy trigger squeeze for the fan effect, but fries come out actually crispy. "
-                "cataloged under #4 in my bio."
+                "found the link here: curatedbyemma.pages.dev/go/mister. what kind of oil are you using in yours?"
             )
         ]
     },
@@ -159,19 +163,20 @@ CATALOG_SPECS = {
         "reviews": 116000,
         "honest_pros": "Dual-speed motorized rotary blades shave pills and fuzz off wool sweaters, knit cardigans, and fleece in 2 minutes",
         "honest_caveats": "Garment must be stretched completely flat on a table so blade guard doesn't catch loose seams; empty lint trap regularly",
+        "slug": "defuzzer",
         "bio_slot": "#5",
         "draft_templates": [
             (
                 "throwing away an $80 sweater just because of surface fuzz and pilling hurts so much! "
                 "that beautural fabric defuzzer with 116k reviews literally brought my 3-year-old wool cardigans back to life in two minutes. "
                 "only rule is lay the fabric completely flat on a table so the guard doesn't snag loose threads, but it makes knits look brand new. "
-                "cataloged under #5 on my page. is it a wool knit or a fleece blanket?"
+                "here's the direct link: curatedbyemma.pages.dev/go/defuzzer. is it a wool knit or a fleece blanket?"
             ),
             (
                 "chunky knit sweaters pilling after two washes is the most frustrating winter problem. "
                 "the beautural electric sweater shaver has over 115k verified reviews for a reason—it shaves off all the fuzzy bobbles without thinning the fabric. "
                 "just empty the clear lint chamber frequently so it doesn't slow down the motor, but it saved all my winter coats. "
-                "saved under #5 in my bio. what type of knit are you dealing with?"
+                "found the exact one here: curatedbyemma.pages.dev/go/defuzzer. what type of knit are you dealing with?"
             )
         ]
     },
@@ -182,19 +187,20 @@ CATALOG_SPECS = {
         "reviews": 5200,
         "honest_pros": "Heavy magnetic weighted base holds phone and watch cords firmly so they never drop behind furniture",
         "honest_caveats": "Base is heavy enough for standard phone and USB-C cords, but very stiff thick braided HDMI cords can pull it if not positioned right",
+        "slug": "cables",
         "bio_slot": "#6",
         "draft_templates": [
             (
                 "cables sliding off the nightstand and falling into the dark gap behind the bed drove me insane every single night. "
                 "that weighted magnetic cable wrangler has over 5k verified reviews and actually keeps cords anchored right where you leave them. "
                 "heavy base stays put for charging cords, just make sure to use the magnetic collars on thin wires. "
-                "saved the exact one under #6 in my bio if you want to see how it works."
+                "here's the direct link: curatedbyemma.pages.dev/go/cables. how many cords do you usually have at your bedside?"
             ),
             (
                 "fishing charging cords out from behind the headboard in the dark is beyond annoying. "
                 "the weighted magnetic cable manager with 5k reviews has enough mass to keep phone and watch chargers sitting neatly on top of the nightstand. "
                 "stiff heavy hdmi cables can slide it if tugged hard, but for bedside cords it is completely seamless. "
-                "pinned under #6 on my page."
+                "found the exact one here: curatedbyemma.pages.dev/go/cables. is your nightstand against a wall gap?"
             )
         ]
     },
@@ -205,19 +211,20 @@ CATALOG_SPECS = {
         "reviews": 22900,
         "honest_pros": "Clamp locks directly onto airplane tray table or seatback, holding phone eye-level for hands-free viewing",
         "honest_caveats": "Spring clamp is quite stiff out of the box to ensure it doesn't slip; not needed on newer aircraft with built-in seatback monitors",
+        "slug": "flight-mount",
         "bio_slot": "#7",
         "draft_templates": [
             (
                 "holding your phone looking down for hours on a flight is literal neck torture. "
                 "instead of overpriced airport gadgets, that clamp mount that locks directly onto the seatback tray table had 22k+ verified reviews for a reason—hands-free screen right at eye level. "
                 "the spring clamp is a bit stiff to open at first, but completely saves your neck on long flights. "
-                "listed under #7 on my profile list."
+                "here's the direct link: curatedbyemma.pages.dev/go/flight-mount. how long is your upcoming flight?"
             ),
             (
                 "looking straight down at your lap for a 4-hour flight leaves your neck completely stiff. "
                 "that universal tray-table phone clamp has over 22k reviews and mounts right to the latch at eye level. "
                 "clamp spring takes some force to open, but watching downloaded shows hands-free makes economy flights 10x better. "
-                "cataloged under #7 in my bio."
+                "found the exact one here: curatedbyemma.pages.dev/go/flight-mount. where are you flying to?"
             )
         ]
     },
@@ -228,19 +235,20 @@ CATALOG_SPECS = {
         "reviews": 30000,
         "honest_pros": "Heats up in 60 seconds and steams out wrinkles without dragging out a heavy iron or ironing board",
         "honest_caveats": "Compact 240ml tank only lasts for about 2-3 shirts before needing a refill; must keep it upright to prevent water bubbling",
+        "slug": "steamer",
         "bio_slot": "#8",
         "draft_templates": [
             (
                 "dragging out a heavy ironing board for travel clothes is way too much effort. "
                 "that compact handheld steamer heats in 60 seconds and has over 30k verified reviews for de-wrinkling linen and cotton in one quick pass. "
                 "small tank only does about 2 to 3 garments per water fill, but for quick travel touchups it completely replaced my iron. "
-                "cataloged under #8 on my profile page."
+                "here's the direct link: curatedbyemma.pages.dev/go/steamer. are you traveling for work or vacation?"
             ),
             (
                 "unpacking wrinkled clothes at a hotel and trying to use a rusty hotel iron is the worst. "
                 "that portable handheld steamer with 30k+ reviews steams out deep suitcase wrinkles in literally two minutes. "
                 "tank is compact so you refill after 2 shirts, but it glides right over delicate fabrics without burning. "
-                "saved under #8 on my page."
+                "found the exact one here: curatedbyemma.pages.dev/go/steamer. is it mostly linen or cotton shirts?"
             )
         ]
     },
@@ -251,19 +259,20 @@ CATALOG_SPECS = {
         "reviews": 13200,
         "honest_pros": "Zero eye pressure contoured 3D blackout mask with ultra-thin flat speakers that allow comfortable side sleeping",
         "honest_caveats": "Speakers are completely flat so side sleeping doesn't hurt your ears, but the velcro strap needs careful adjusting if you toss and turn aggressively",
+        "slug": "sleep-mask",
         "bio_slot": "#9",
         "draft_templates": [
             (
                 "if light leaks or morning noise keeps waking you up, normal hard plastic earbuds hurt your ears when sleeping on your side. "
                 "that 3D contoured eye mask has ultra-flat soft speakers built in and over 13k verified reviews for true pitch-black sleep. "
                 "velcro strap takes a night to dial in so it doesn't shift, but you can finally side sleep without sore ears. "
-                "kept the top-rated one saved under #9 in my bio."
+                "here's the direct link: curatedbyemma.pages.dev/go/sleep-mask. do you usually listen to white noise or podcasts to fall asleep?"
             ),
             (
                 "side sleeping with regular earbuds creates so much painful pressure on your ear cartilage. "
                 "that memory foam blackout mask with wafer-thin speakers inside has 13k+ reviews and lets you play white noise or podcasts comfortably on your side. "
                 "takes a minute to adjust the velcro strap snug, but the total blackout and soft speakers changed my sleep completely. "
-                "cataloged under #9 on my page."
+                "found the link here: curatedbyemma.pages.dev/go/sleep-mask. are you a light sleeper or side sleeper?"
             )
         ]
     },
@@ -274,19 +283,20 @@ CATALOG_SPECS = {
         "reviews": 151000,
         "honest_pros": "Reads accurate internal food temperatures in 3-4 seconds with foldaway stainless probe and bright backlight",
         "honest_caveats": "Do NOT leave the plastic body inside a hot oven or grill while door is shut; only probe touches the meat during measurement",
+        "slug": "thermometer",
         "bio_slot": "#10",
         "draft_templates": [
             (
                 "ugh the anxiety of dry holiday turkey or undercooked chicken is so real! "
                 "after comparing dozens of kitchen thermometers, that $15 folding thermopro with 150k verified reviews is the consensus winner. "
                 "reads accurately in 3 seconds flat. just don't leave the plastic body inside the oven door, only the probe touches meat. "
-                "cataloged under #10 on my page. are you hosting thanksgiving this year or just regular cooking?"
+                "here's the direct link: curatedbyemma.pages.dev/go/thermometer. are you hosting thanksgiving this year or just regular cooking?"
             ),
             (
                 "guessing meat doneness by poking it always results in either leather-dry chicken or raw centers. "
                 "the thermopro instant read with 151k reviews gives an exact digital reading in 3 seconds so you never overcook. "
                 "probe folds right into the handle so it's super safe in drawers. "
-                "saved under #10 in my bio. what's the main dish you usually cook?"
+                "found the exact one here: curatedbyemma.pages.dev/go/thermometer. what's the main dish you usually cook?"
             )
         ]
     }
@@ -535,7 +545,7 @@ def generate_reply_llm(post_text, author="user", timeout=25):
             f"  - Verified Reviews: {data['reviews']:,} (Rating: {data['rating']}★)\n"
             f"  - What it fixes: {data['honest_pros']}\n"
             f"  - Limitations/Cons (NEVER LIE): {data['honest_caveats']}\n"
-            f"  - Bio anchor: #{s}"
+            f"  - Direct link: curatedbyemma.pages.dev/go/{data.get('slug', str(s))}"
         )
     catalog_prompt = "\n\n".join(catalog_lines)
 
@@ -560,16 +570,16 @@ RULES:
    - Part 1: Real empathy referencing their SPECIFIC situation, vocabulary, and pain (never generic boilerplate).
    - Part 2: Honest audit citing verified Amazon consensus and review count.
    - Part 3: Honest caveat/con (what it doesn't do or real limitations).
-   - Part 4: Casual anchor to bio: "kept it saved under #[slot] in my bio" (or "cataloged under #[slot] on my page"). STRICTLY NO external links/URLs in comments to protect account from Meta spam flags!
+   - Part 4: Include the clean direct link seamlessly: "found the exact one here: curatedbyemma.pages.dev/go/[slug]" (or "here's the direct link if you wanna check it: curatedbyemma.pages.dev/go/[slug]"). Always use the clean curatedbyemma.pages.dev/go/[slug] URL so they can tap directly without hunting in a bio lander!
    - Part 5 (Conversation Magnet): End with a brief, friendly, natural question related to their post (e.g. "btw what kind of chair do you have right now?", "what breed is your pet? some coats are so much harder to pull off velvet lol", "what's the first thing you're cooking in it?"). This sparks replies and elevates the comment to the Top Comment position!
-   - Tone: Lowercase casual, friendly, authentic peer, zero marketing jargon, NO URLs, natural human flow.
+   - Tone: Lowercase casual, friendly, authentic peer, zero marketing hype, helpful friend, natural human flow.
 5. OUTPUT FORMAT:
    Return strictly valid JSON:
    {{
      "verdict": "ACCEPT" or "REJECT",
      "reason": "Clear 1-sentence reasoning",
      "slot": 1-10 or null,
-     "reply_draft": "Your customized 4-part honest reply"
+     "reply_draft": "Your customized 5-part honest reply with direct link and closing question"
    }}
 
 EMMA'S 10-SLOT CATALOG:

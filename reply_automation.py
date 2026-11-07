@@ -302,7 +302,7 @@ def send_approved_reply(queue_id):
                 raise Exception("Reply textbox not found (replies may be disabled or page failed to render).")
 
             # Enforce hard length safety check for Threads 500-char limit
-            if len(reply_text) > 480:
+            if len(reply_text) > 495:
                 browser.close()
                 raise Exception(f"Reply text exceeds Threads 500-char limit ({len(reply_text)} chars). Aborting to prevent truncation.")
 

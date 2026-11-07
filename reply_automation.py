@@ -86,7 +86,7 @@ def run_reply_automation(max_replies_this_run=2, dry_run=False):
     # Check daily limit (Aggressive max capacity: 25 per day)
     cur.execute("SELECT COUNT(*) as count FROM replies_sent WHERE ip_id = 'emma' AND DATE(sent_at) = DATE('now') AND status = 'sent'")
     today_count = cur.fetchone()["count"]
-    DAILY_MAX = 25
+    DAILY_MAX = int(os.environ.get("DAILY_REPLY_LIMIT", "40"))
     if today_count >= DAILY_MAX:
         print(f"[*] Aggressive daily limit reached for today ({today_count}/{DAILY_MAX} sent). Cooling down to protect account.")
         conn.close()

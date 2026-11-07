@@ -14,9 +14,9 @@ import db
 import reply_automation
 import threads_broadcast
 
-DAILY_LIMIT = 25
-MIN_DELAY_SECONDS = 420  # 7 minutes
-MAX_DELAY_SECONDS = 900  # 15 minutes
+DAILY_LIMIT = int(os.environ.get("DAILY_REPLY_LIMIT", "40"))
+MIN_DELAY_SECONDS = int(os.environ.get("MIN_DELAY_SECONDS", "360"))  # 6 minutes
+MAX_DELAY_SECONDS = int(os.environ.get("MAX_DELAY_SECONDS", "720"))  # 12 minutes
 
 WORKER_RUNNING = False
 WORKER_THREAD = None

@@ -87,6 +87,8 @@ def init_db():
         c.execute("ALTER TABLE reply_approval_queue ADD COLUMN replies_count INTEGER DEFAULT 0")
     if "opportunity_score" not in cols:
         c.execute("ALTER TABLE reply_approval_queue ADD COLUMN opportunity_score INTEGER DEFAULT 0")
+    if "retry_count" not in cols:
+        c.execute("ALTER TABLE reply_approval_queue ADD COLUMN retry_count INTEGER DEFAULT 0")
 
     # 3. Slot Experiment & 7-Day Performance Metrics
     c.execute("""

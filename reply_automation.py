@@ -14,6 +14,7 @@ import random
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 import db
+from browser_lock import acquire_browser_lock
 import reply_generator
 
 # -------------------------------------------------------------
@@ -230,45 +231,107 @@ def send_approved_reply(queue_id):
     cookies = session_data.get("cookies", [])
 
     direct_post_url = item["thread_url"]
+    # Normalize domain to avoid redirect hops (threads.net -> threads.com)
+    target_post_url = direct_post_url.replace("threads.net", "threads.com") if "threads.net" in direct_post_url else direct_post_url
     reply_text = item["draft_reply"]
     slot = item["matched_slot"]
     author = item["author_username"]
 
-    print(f"[*] Dispatching approved reply to @{author} ({direct_post_url})...")
+    print(f"[*] Dispatching approved reply to @{author} ({target_post_url})...")
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
-        ctx = browser.new_context(viewport={"width": 1280, "height": 800})
-        ctx.add_cookies(cookies)
-        page = ctx.new_page()
+    # Acquire exclusive browser lock so concurrent sniffer or workers do not exhaust VPS RAM
+    with acquire_browser_lock(timeout_seconds=180):
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=True,
+                args=[
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu',
+                    '--disable-ipv6',
+                    '--single-process',
+                    '--no-zygote',
+                    '--disable-extensions',
+                    '--mute-audio'
+                ]
+            )
+            ctx = browser.new_context(
+                locale="en-US",
+                timezone_id="America/New_York",
+                viewport={"width": 1280, "height": 800},
+                extra_http_headers={
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "sec-ch-ua-platform": '"macOS"'
+                },
+                user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            )
+            ctx.add_cookies(cookies)
+            page = ctx.new_page()
 
-        page.goto(direct_post_url, wait_until="domcontentloaded", timeout=25000)
-        page.wait_for_timeout(3500)
+            page.goto(target_post_url, wait_until="domcontentloaded", timeout=30000)
+            page.wait_for_timeout(3500)
 
-        # Check if page is deleted or 404
-        content_lower = page.content().lower()
-        if "isn't available" in content_lower or "page not found" in content_lower:
+            # Check if page is deleted, 404, or restricted
+            content_lower = page.content().lower()
+            if "isn't available" in content_lower or "page not found" in content_lower:
+                browser.close()
+                raise Exception("Threads post returned 404 or is no longer available.")
+            if "replies are limited" in content_lower or "only people mentioned" in content_lower:
+                browser.close()
+                raise Exception("Author restricted replies on this thread.")
+
+            composer = page.locator("div[role='textbox'][contenteditable='true']").first
+            # If not immediately visible, trigger reply button if present
+            if not composer.is_visible():
+                for trigger_sel in ["button:has-text('Reply')", "div[role='button']:has-text('Reply')", "[aria-label='Reply']", "svg[aria-label='Reply']"]:
+                    try:
+                        trig = page.locator(trigger_sel).first
+                        if trig.is_visible():
+                            trig.click()
+                            page.wait_for_timeout(800)
+                            if composer.is_visible():
+                                break
+                    except Exception:
+                        pass
+
+            try:
+                composer.wait_for(state="visible", timeout=15000)
+            except Exception:
+                browser.close()
+                raise Exception("Reply textbox not found (replies may be disabled or page failed to render).")
+
+            composer.click()
+            page.wait_for_timeout(400)
+            # Type naturally with minimal delay
+            page.keyboard.type(reply_text, delay=10)
+            page.wait_for_timeout(1000)
+
+            # Submit: Try clicking explicit 'Post' button first, fallback to Control/Meta+Enter
+            post_btn = page.locator("div[role='button']:has-text('Post'), button:has-text('Post')").first
+            clicked = False
+            try:
+                if post_btn.is_visible():
+                    post_btn.click()
+                    clicked = True
+            except Exception:
+                pass
+
+            if not clicked:
+                composer.focus()
+                page.keyboard.press("Control+Enter")
+                page.wait_for_timeout(300)
+                page.keyboard.press("Meta+Enter")
+
+            page.wait_for_timeout(4500)
+
+            # Verification: Check if error banner appeared
+            final_content = page.content().lower()
+            if "couldn't post" in final_content or "try again later" in final_content:
+                browser.close()
+                raise Exception("Meta error banner appeared ('Couldn't post' or 'Try again later').")
+
             browser.close()
-            raise Exception("Threads post returned 404 or is no longer available.")
-
-        composer = page.locator("div[role='textbox'][contenteditable='true']").first
-        try:
-            composer.wait_for(state="visible", timeout=10000)
-        except Exception:
-            browser.close()
-            raise Exception("Reply textbox not found (post may have replies disabled, or login wall appeared).")
-
-        composer.click()
-        page.wait_for_timeout(500)
-        page.keyboard.type(reply_text, delay=22)
-        page.wait_for_timeout(1000)
-
-        # Submit via Control+Enter & Meta+Enter
-        page.keyboard.press("Control+Enter")
-        page.wait_for_timeout(500)
-        page.keyboard.press("Meta+Enter")
-        page.wait_for_timeout(4000)
-        browser.close()
 
     # Update SQLite
     db.update_queue_status(queue_id, "approved")

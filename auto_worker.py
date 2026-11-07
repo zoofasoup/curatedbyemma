@@ -86,7 +86,16 @@ def dispatch_next_highest_opportunity():
     c = conn.cursor()
     # Priority Order: Strict 100% VIRAL HIJACK ONLY (min 15 likes or viral tier)
     c.execute("""
-    SELECT id, author_username, matched_slot, product_name, engagement_tier, likes_count, replies_count, opportunity_score 
+    SELECT 
+        id, 
+        author_username, 
+        matched_slot, 
+        product_name, 
+        engagement_tier, 
+        likes_count, 
+        replies_count, 
+        opportunity_score,
+        COALESCE(retry_count, 0) as retry_count
     FROM reply_approval_queue 
     WHERE ip_id = 'emma' AND status = 'pending' AND (engagement_tier LIKE '%VIRAL%' OR likes_count >= 15)
     ORDER BY 
@@ -108,6 +117,7 @@ def dispatch_next_highest_opportunity():
     slot = item["matched_slot"]
     tier = item["engagement_tier"]
     score = item["opportunity_score"]
+    retries = item["retry_count"]
 
     worker_log(f"🚀 Auto-approving lead #{queue_id} (@{author} | {tier} | Score: {score} | Slot #{slot})...")
     
@@ -121,8 +131,18 @@ def dispatch_next_highest_opportunity():
         worker_log(f"✅ Dispatched successfully to @{author}! Today's progress: {sent_now}/{DAILY_LIMIT}")
         return True, "success"
     except Exception as e:
-        worker_log(f"❌ Failed to dispatch #{queue_id}: {e}")
-        db.update_queue_status(queue_id, "failed")
+        err_str = str(e).lower()
+        is_permanent = any(p in err_str for p in ["404", "not available", "restricted", "page not found"])
+        if is_permanent or retries >= 2:
+            worker_log(f"❌ Permanent failure for lead #{queue_id}: {e}")
+            db.update_queue_status(queue_id, "failed")
+        else:
+            worker_log(f"⚠️ Transient dispatch error for lead #{queue_id} ({e}). Rescheduling retry ({retries + 1}/2)...")
+            conn = db.get_connection()
+            cur = conn.cursor()
+            cur.execute("UPDATE reply_approval_queue SET status = 'pending', retry_count = ? WHERE id = ?", (retries + 1, queue_id))
+            conn.commit()
+            conn.close()
         return False, f"error: {e}"
 
 LAST_BROADCAST_CHECK = 0

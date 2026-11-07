@@ -4,6 +4,7 @@ import json
 import time
 from datetime import datetime
 from playwright.sync_api import sync_playwright
+from browser_lock import acquire_browser_lock
 
 SESSION_FILE = "threads_session.json"
 HISTORY_FILE = "broadcast_history.json"
@@ -165,10 +166,34 @@ def publish_thread(item: dict, headless: bool = True):
     if item.get("image"):
         print(f"Image attached: {item['image']}")
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
-        context = browser.new_context(storage_state=SESSION_FILE)
-        page = context.new_page()
+    with acquire_browser_lock(timeout_seconds=180):
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=headless,
+                args=[
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu',
+                    '--disable-ipv6',
+                    '--single-process',
+                    '--no-zygote',
+                    '--disable-extensions',
+                    '--mute-audio'
+                ]
+            )
+            context = browser.new_context(
+                storage_state=SESSION_FILE,
+                locale="en-US",
+                timezone_id="America/New_York",
+                viewport={"width": 1280, "height": 800},
+                extra_http_headers={
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "sec-ch-ua-platform": '"macOS"'
+                },
+                user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            )
+            page = context.new_page()
 
         try:
             print("1. Opening Threads (threads.net)...")

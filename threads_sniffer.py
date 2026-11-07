@@ -15,6 +15,7 @@ from datetime import datetime
 from playwright.sync_api import sync_playwright
 import db
 import reply_generator
+from browser_lock import acquire_browser_lock
 
 SESSION_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "threads_session.json")
 
@@ -94,6 +95,20 @@ def extract_posts_from_graphql(payload, logger=None):
             # Check if this dict represents a Threads post
             # Usually contains 'caption' or 'text_post_app_info' or 'like_count'
             if "caption" in obj and isinstance(obj["caption"], dict) and "text" in obj["caption"]:
+                # Check reply permissions: skip posts where replies are locked or restricted
+                can_reply = True
+                if obj.get("can_reply") is False:
+                    can_reply = False
+                app_info = obj.get("text_post_app_info") or {}
+                if app_info.get("can_reply") is False:
+                    can_reply = False
+                reply_control = app_info.get("reply_control")
+                if reply_control and reply_control not in ("anyone", "everyone", ""):
+                    can_reply = False
+
+                if not can_reply:
+                    return  # skip locked thread
+
                 text = obj["caption"]["text"]
                 user = obj.get("user", {})
                 username = user.get("username", "unknown")
@@ -171,12 +186,35 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=2, headles
             except Exception:
                 pass
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless, args=['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-ipv6'])
-        ctx = browser.new_context(viewport={"width": 1280, "height": 800})
-        ctx.add_cookies(cookies)
-        page = ctx.new_page()
-        page.on("response", on_response)
+    with acquire_browser_lock(timeout_seconds=180):
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=headless,
+                args=[
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu',
+                    '--disable-ipv6',
+                    '--single-process',
+                    '--no-zygote',
+                    '--disable-extensions',
+                    '--mute-audio'
+                ]
+            )
+            ctx = browser.new_context(
+                locale="en-US",
+                timezone_id="America/New_York",
+                viewport={"width": 1280, "height": 800},
+                extra_http_headers={
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "sec-ch-ua-platform": '"macOS"'
+                },
+                user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            )
+            ctx.add_cookies(cookies)
+            page = ctx.new_page()
+            page.on("response", on_response)
 
         for label, target_url in search_targets:
             log(f"🌐 Navigating to {label}: {target_url}")

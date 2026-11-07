@@ -301,10 +301,10 @@ def send_approved_reply(queue_id):
                 browser.close()
                 raise Exception("Reply textbox not found (replies may be disabled or page failed to render).")
 
-            # Enforce hard length safety check for Threads 500-char limit
-            if len(reply_text) > 495:
+            # Enforce hard length safety check for short human replies (max 260 chars)
+            if len(reply_text) > 260:
                 browser.close()
-                raise Exception(f"Reply text exceeds Threads 500-char limit ({len(reply_text)} chars). Aborting to prevent truncation.")
+                raise Exception(f"Reply text exceeds short human limit ({len(reply_text)} chars > 260). Aborting to prevent bot detection.")
 
             composer.click()
             page.wait_for_timeout(400)

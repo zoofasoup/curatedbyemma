@@ -828,9 +828,18 @@ CATALOG_SPECS = {
     },
 }
 
+from short_templates_50 import SHORT_TEMPLATES_50
+
+# Apply concise human templates to all catalog specs
+for s_id, tmpls in SHORT_TEMPLATES_50.items():
+    if s_id in CATALOG_SPECS:
+        CATALOG_SPECS[s_id]["draft_templates"] = tmpls
+        CATALOG_SPECS[s_id]["draft_template"] = tmpls[0]
+
 # Backward compatibility alias
 for s, data in CATALOG_SPECS.items():
-    data["draft_template"] = data["draft_templates"][0]
+    if "draft_templates" in data and data["draft_templates"]:
+        data["draft_template"] = data["draft_templates"][0]
 
 def pre_screen_post(post_text, author="user"):
     """
@@ -1108,21 +1117,23 @@ RULES:
      * GOOD: "woven bedding seems to trap pet undercoat hair tighter than almost anything else..."
      * BAD: "ugh, the office chair struggle is so real!"
      * GOOD: "standard desk chairs offer basically zero lower lumbar contour, so your lower spine ends up absorbing all that compression by 3pm."
-5. STRICT LENGTH LIMIT & 5-PART CONCISE ARC (MANDATORY):
-   - HARD LENGTH CONSTRAINT: Maximum 320 to 400 characters TOTAL (including link and spaces). Threads has a strict 500-character limit. You MUST keep the reply tight, punchy, and concise. NEVER exceed 420 characters.
-   - Part 1 (1 sentence): Real empathy referencing their SPECIFIC situation and pain (never generic boilerplate).
-   - Part 2 (1 sentence): Honest audit citing verified reviews and consensus.
-   - Part 3 (1 sentence): Honest limitation/caveat (e.g. eats batteries, needs flat surface, hand wash).
-   - Part 4: Clean direct link: "here's the direct link: curatedbyemma.pages.dev/go/[slug]"
-   - Part 5 (1 sentence): Friendly conversation magnet question.
-   - Tone: Lowercase casual, friendly authentic peer, zero marketing fluff, natural human flow.
+5. ULTRA-CONCISE 2-TO-3 SENTENCE HUMAN DROP (MANDATORY: 140 TO 210 CHARACTERS):
+   - HARD LIMIT: Strictly between 140 and 210 characters TOTAL (including link and spaces).
+   - NEVER write long paragraphs, essays, or formal whitepapers! Threads users hate AI bot essays and will report them.
+   - Tone: Casual, helpful, authentic friend casually chiming in on Threads. Lowercase casual peer.
+   - Exactly 2-3 concise sentences:
+     * Sentence 1 (1 sentence): 1 quick, relatable reaction to their problem (e.g. "woven couches hold onto pet hair like velcro.")
+     * Sentence 2 (1 sentence): 1 direct casual mention with review count and the clean direct link: "that [product] (curatedbyemma.pages.dev/go/[slug]) has like [X]k reviews for [fixing that pain]."
+     * Sentence 3 (1 sentence): 1 short friendly question (e.g. "what breed do you have?")
+   - ZERO marketing hype, ZERO corporate jargon ("when auditing...", "buyer consensus indicates...").
+   - ZERO fake ownership anecdotes ("my dog", "i bought this", "my sister").
 6. OUTPUT FORMAT:
    Return strictly valid JSON:
    {{
      "verdict": "ACCEPT" or "REJECT",
      "reason": "Clear 1-sentence reasoning",
      "slot": 1-50 or null,
-     "reply_draft": "Your customized concise 5-part honest reply (STRICTLY under 420 chars total) with direct link and closing question"
+     "reply_draft": "Your customized 2-3 sentence ultra-concise reply (STRICTLY 140-210 chars total) with direct link and closing question"
    }}
 
 EMMA'S 50-SLOT CURATED VIRAL CATALOG:
@@ -1165,12 +1176,11 @@ EMMA'S 50-SLOT CURATED VIRAL CATALOG:
 
                 # Safety check: Ensure link is present
                 if expected_link not in draft and "curatedbyemma.pages.dev/go/" not in draft:
-                    draft = f"{draft}\n\nhere's the direct link: {expected_link}"
+                    draft = f"{draft} (curatedbyemma.pages.dev/go/{slug})"
 
-                # Safety check: Ensure strictly <= 450 chars for Threads 500-char limit
-                if len(draft) > 450:
-                    print(f"[!] Draft exceeds 450 chars ({len(draft)}). Trimming to fit Threads limit...")
-                    # Fallback to curated template if LLM generated an essay
+                # Safety check: Ensure strictly <= 230 chars to guarantee zero AI-bot detection
+                if len(draft) > 230:
+                    print(f"[!] Draft exceeds 230 chars ({len(draft)}). Falling back to short human template...")
                     templates = spec.get("draft_templates", [spec.get("draft_template", "")]) if spec else []
                     if templates:
                         seed_str = f"{author}_{post_text}"

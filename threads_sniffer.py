@@ -90,10 +90,15 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=2, headles
     def log(msg):
         stream_log(msg, callback=log_callback)
 
-    # 0. Smart API Guard: If queue already has 50+ pending leads, stop to conserve OpenRouter API
-    pending_count = db.get_pending_queue_count("emma")
-    if pending_count >= 50:
-        log(f"🛑 Smart Queue Cap: Queue already has {pending_count} pending leads (cap: 50). Skipping scrape & LLM evaluation to conserve API.")
+    # 0. Smart API Guard: If queue already has 30+ pending viral leads, stop to conserve OpenRouter API
+    conn = db.get_connection()
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM reply_approval_queue WHERE ip_id = 'emma' AND status = 'pending' AND (engagement_tier LIKE '%VIRAL%' OR likes_count >= 15)")
+    pending_viral_count = c.fetchone()[0]
+    conn.close()
+
+    if pending_viral_count >= 30:
+        log(f"🛑 Smart Queue Cap: Queue already has {pending_viral_count} viral pending leads. Skipping scrape & LLM evaluation.")
         return []
 
     if not os.path.exists(SESSION_PATH):
@@ -106,16 +111,8 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=2, headles
 
     encoded_q = query.replace(" ", "%20")
     
-    # Dual-Search: Top (Viral Hijack with thousands of views) + Recent (Fresh Sniper)
-    if filter_type == "top":
-        search_targets = [("🔥 TOP / VIRAL", f"https://www.threads.net/search?q={encoded_q}&serp_type=default")]
-    elif filter_type == "recent":
-        search_targets = [("⚡ RECENT / SNIPER", f"https://www.threads.net/search?q={encoded_q}&serp_type=default&filter=recent")]
-    else: # "both"
-        search_targets = [
-            ("🔥 TOP / VIRAL", f"https://www.threads.net/search?q={encoded_q}&serp_type=default"),
-            ("⚡ RECENT / SNIPER", f"https://www.threads.net/search?q={encoded_q}&serp_type=default&filter=recent")
-        ]
+    # Target TOP / VIRAL threads strictly
+    search_targets = [("🔥 TOP / VIRAL", f"https://www.threads.net/search?q={encoded_q}&serp_type=default")]
 
     log(f"🚀 Starting Sniffer for query: '{query}' ({filter_type.upper()} mode, Scrolls: {scrolls})...")
 
@@ -223,13 +220,13 @@ def run_graphql_sniffer(query="office chair lower back pain", scrolls=2, headles
             log(f"⏭️ Skipping @{author} ({url}) — already queued or replied.")
             continue
 
-        # 1. Determine Engagement Tier & Opportunity Score
-        if likes >= 20 or replies >= 5:
-            engagement_tier = "🔥 VIRAL HIJACK"
-            opportunity_score = min(100, int(likes + (replies * 3)))
-        else:
-            engagement_tier = "⚡ FRESH SNIPER"
-            opportunity_score = 85 + (15 if replies == 0 else (5 if replies <= 2 else 0))
+        # 1. Strict Viral Filter: ONLY target threads with proven viral traction
+        if likes < 15 and replies < 5:
+            log(f"⏭️ Skipping @{author} ({likes} likes, {replies} replies) — below viral threshold (min 15 likes).")
+            continue
+
+        engagement_tier = "🔥 VIRAL HIJACK"
+        opportunity_score = min(100, int(likes + (replies * 3)))
 
         log(f"--- Checking @{author} ({engagement_tier} | Score: {opportunity_score} | {likes} likes, {replies} replies) ---")
 

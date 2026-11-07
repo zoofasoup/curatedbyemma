@@ -84,17 +84,12 @@ def dispatch_next_highest_opportunity():
 
     conn = db.get_connection()
     c = conn.cursor()
-    # Priority Order: Strict VIRAL HIJACK first (highest visibility), then high-likes, then score
+    # Priority Order: Strict 100% VIRAL HIJACK ONLY (min 15 likes or viral tier)
     c.execute("""
     SELECT id, author_username, matched_slot, product_name, engagement_tier, likes_count, replies_count, opportunity_score 
     FROM reply_approval_queue 
-    WHERE ip_id = 'emma' AND status = 'pending'
+    WHERE ip_id = 'emma' AND status = 'pending' AND (engagement_tier LIKE '%VIRAL%' OR likes_count >= 15)
     ORDER BY 
-        CASE 
-            WHEN engagement_tier LIKE '%VIRAL%' THEN 1 
-            WHEN likes_count >= 15 THEN 2 
-            ELSE 3 
-        END ASC,
         likes_count DESC, 
         replies_count DESC,
         opportunity_score DESC, 
@@ -195,9 +190,15 @@ def worker_loop():
                 time.sleep(1)
             NEXT_DISPATCH_TIME = None
         elif status == "queue_empty":
-            # Queue empty, check again in 3 minutes
-            NEXT_DISPATCH_TIME = time.time() + 180
-            time.sleep(180)
+            # No pending viral leads: trigger viral sniffer automatically
+            worker_log("🔍 Viral queue is empty. Hunting for new trending viral threads...")
+            try:
+                import threads_sniffer
+                threads_sniffer.run_query_rotation(scrolls=2, headless=True)
+            except Exception as e:
+                worker_log(f"⚠️ Sniffer hunt error: {e}")
+            NEXT_DISPATCH_TIME = time.time() + 120
+            time.sleep(120)
             NEXT_DISPATCH_TIME = None
         else:
             time.sleep(60)

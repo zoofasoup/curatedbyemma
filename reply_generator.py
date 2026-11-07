@@ -1,14 +1,18 @@
 """
 Contextual Reply Generator for Emma (@curated_byemma).
-Evaluates real user complaints on Threads and drafts authentic, honest 4-part replies.
+Evaluates real user complaints on Threads and drafts authentic, honest 5-part replies.
 
 Ground Rules:
 1. Hard-filter context: Reject memorial/family grief, sports, concerts, marketing spam, and non-complaints.
-2. 4-Part Honest Arc:
+2. 5-Part Honest Arc:
    - Specific empathy acknowledging their exact pain point.
    - Honest audit: Cite verified Amazon consensus and review count.
-   - Honest caveat: State realistic limitation/con (NEVER LIE).
-   - Non-promotional anchor: Point to bio #[slot] on Emma's page. No URLs. Lowercase casual tone.
+   - Honest caveat: State realistic limitation/con.
+   - Clean direct link: curatedbyemma.pages.dev/go/[slug].
+   - Conversation Magnet: Closing question sparking sub-replies.
+3. STRICT "NEVER LIE" & NO FAKE ANECDOTES:
+   - NEVER fabricate personal ownership, personal usage, or fake family stories (NO "i swear by", "my cat", "my dog", "my sister", "for me", "saved my couch").
+   - Emma is an independent consumer researcher auditing verified consensus, review patterns, and spec teardowns.
 """
 
 import os
@@ -60,7 +64,7 @@ CATALOG_SPECS = {
             ),
             (
                 "vacuums always seem to push double-coated dog hair deeper into weave fibers. "
-                "after testing lint tools, that pet lovers extra-sticky roller with 39k+ verified ratings was the only thing that lifted the stuck undercoat in one swipe. "
+                "when auditing pet hair tools against stubborn fur, that pet lovers extra-sticky roller with 39k+ verified ratings was the consensus pick that lifts embedded undercoat in one swipe. "
                 "sheets peel fast so don't hoard them, but it actually works without shredding the fabric. "
                 "found the exact one here: curatedbyemma.pages.dev/go/roller. what kind of couch fabric do you have?"
             ),
@@ -84,20 +88,20 @@ CATALOG_SPECS = {
         "draft_templates": [
             (
                 "night wakeups every hour are completely brutal, sending you so much strength. "
-                "my sister went through the exact same sleep regression and swore that rhythmic breathing otter with nearly 60k reviews was the only thing that actually calmed him down. "
-                "only catch is you go through batteries every month, but it genuinely gave them their first 5-hour sleep stretch. "
+                "parents navigating sleep regressions consistently point to that rhythmic breathing otter with nearly 60k reviews as one of the few soothers that genuinely settles babies down. "
+                "only catch is you go through batteries every month, but verified parents highlight it gave them their first long sleep stretch. "
                 "here's the direct link: curatedbyemma.pages.dev/go/otter. how many months are they right now?"
             ),
             (
                 "running on two hours of sleep with a crying baby is surviving on pure adrenaline. "
-                "our friends went through that exact sleep regression and the breathing belly otter with 59k verified reviews was the only soother that settled him down without rocking for hours. "
+                "across parenting communities, that breathing belly otter with 59k verified reviews is the consensus favorite because the rhythmic movement settles overtired infants without rocking for hours. "
                 "eats AAA batteries fast, but the gentle heartbeat rhythm works so well. "
                 "found the exact one here: curatedbyemma.pages.dev/go/otter. are you guys in the 4-month or 8-month regression?"
             ),
             (
                 "infant sleep regressions will test every ounce of your sanity. "
-                "when we were researching calming soothers, that rhythmic breathing otter with nearly 60k reviews stood out because the belly motion mimics real breathing. "
-                "won't fix severe teething cries, but for overtired bedtime battles it genuinely helped. "
+                "when analyzing baby sleep soothers to filter out gimmicks, that rhythmic breathing otter with nearly 60k reviews stands out because the belly motion mimics gentle breathing. "
+                "won't fix severe teething cries, but for overtired bedtime battles verified parents say it genuinely helps. "
                 "saved the link to it here: curatedbyemma.pages.dev/go/otter. do they usually nap better in a crib or contact napping?"
             )
         ]
@@ -114,8 +118,8 @@ CATALOG_SPECS = {
         "draft_templates": [
             (
                 "sitting in standard desk chairs all day literally destroys your lower back posture. "
-                "when i audited cushions to filter out sponsored hype, high-density molded foam was the only thing 27k verified buyers consistently swore by. "
-                "it won't cure medical spine issues and feels pretty firm the first couple days, but taking pressure off the tailbone made 8-hour workdays actually bearable. "
+                "when auditing cushions to filter out sponsored hype, high-density molded foam was the only design 27k verified buyers consistently backed. "
+                "it won't cure medical spine issues and feels pretty firm the first couple days, but taking pressure off the tailbone makes 8-hour workdays actually bearable. "
                 "here's the direct link to it: curatedbyemma.pages.dev/go/lumbar. what kind of office chair are you using right now?"
             ),
             (
@@ -127,7 +131,7 @@ CATALOG_SPECS = {
             (
                 "desk chairs with zero lumbar curve compress your lower spine by 3pm. "
                 "after comparing dozens of supports, the firm memory foam cushion with 27k reviews was the undisputed winner for tailbone relief. "
-                "won't replace a physio for chronic sciatica, but it made long desk sessions painless for me. "
+                "won't replace a physio for chronic sciatica, but it makes long desk sessions noticeably more comfortable. "
                 "saved the link to it here: curatedbyemma.pages.dev/go/lumbar. what kind of chair do you have?"
             )
         ]
@@ -145,7 +149,7 @@ CATALOG_SPECS = {
             (
                 "pouring oil from a bottle into an air fryer always turns food soggy and uneven. "
                 "standard aerosol spray cans leave sticky chemical residue, but that refillable glass oil mister with 49k+ verified reviews mists a clean wide fan. "
-                "only trick is you have to pull the trigger with a quick firm squeeze or it shoots a stream, but it completely fixed uneven air frying for me. "
+                "only trick is you have to pull the trigger with a quick firm squeeze or it shoots a stream, but it gives a super even crisp without soaking food. "
                 "here's the direct link to it: curatedbyemma.pages.dev/go/mister. what's your favorite thing to air fry?"
             ),
             (
@@ -168,14 +172,14 @@ CATALOG_SPECS = {
         "draft_templates": [
             (
                 "throwing away an $80 sweater just because of surface fuzz and pilling hurts so much! "
-                "that beautural fabric defuzzer with 116k reviews literally brought my 3-year-old wool cardigans back to life in two minutes. "
+                "that beautural fabric defuzzer with 116k reviews is the verified consensus pick for restoring knit cardigans in two minutes. "
                 "only rule is lay the fabric completely flat on a table so the guard doesn't snag loose threads, but it makes knits look brand new. "
                 "here's the direct link: curatedbyemma.pages.dev/go/defuzzer. is it a wool knit or a fleece blanket?"
             ),
             (
                 "chunky knit sweaters pilling after two washes is the most frustrating winter problem. "
                 "the beautural electric sweater shaver has over 115k verified reviews for a reason—it shaves off all the fuzzy bobbles without thinning the fabric. "
-                "just empty the clear lint chamber frequently so it doesn't slow down the motor, but it saved all my winter coats. "
+                "just empty the clear lint chamber frequently so it doesn't slow down the motor, but it cleans up worn wool coats completely. "
                 "found the exact one here: curatedbyemma.pages.dev/go/defuzzer. what type of knit are you dealing with?"
             )
         ]
@@ -191,7 +195,7 @@ CATALOG_SPECS = {
         "bio_slot": "#6",
         "draft_templates": [
             (
-                "cables sliding off the nightstand and falling into the dark gap behind the bed drove me insane every single night. "
+                "cables sliding off the nightstand and falling into the dark gap behind the bed is such an annoying daily headache. "
                 "that weighted magnetic cable wrangler has over 5k verified reviews and actually keeps cords anchored right where you leave them. "
                 "heavy base stays put for charging cords, just make sure to use the magnetic collars on thin wires. "
                 "here's the direct link: curatedbyemma.pages.dev/go/cables. how many cords do you usually have at your bedside?"
@@ -241,7 +245,7 @@ CATALOG_SPECS = {
             (
                 "dragging out a heavy ironing board for travel clothes is way too much effort. "
                 "that compact handheld steamer heats in 60 seconds and has over 30k verified reviews for de-wrinkling linen and cotton in one quick pass. "
-                "small tank only does about 2 to 3 garments per water fill, but for quick travel touchups it completely replaced my iron. "
+                "small tank only does about 2 to 3 garments per water fill, but for quick travel touchups it handles wrinkles without dragging out a heavy iron. "
                 "here's the direct link: curatedbyemma.pages.dev/go/steamer. are you traveling for work or vacation?"
             ),
             (
@@ -271,7 +275,7 @@ CATALOG_SPECS = {
             (
                 "side sleeping with regular earbuds creates so much painful pressure on your ear cartilage. "
                 "that memory foam blackout mask with wafer-thin speakers inside has 13k+ reviews and lets you play white noise or podcasts comfortably on your side. "
-                "takes a minute to adjust the velcro strap snug, but the total blackout and soft speakers changed my sleep completely. "
+                "takes a minute to adjust the velcro strap snug, but the total blackout and soft speakers make side sleeping with audio actually comfortable. "
                 "found the link here: curatedbyemma.pages.dev/go/sleep-mask. are you a light sleeper or side sleeper?"
             )
         ]
@@ -561,7 +565,15 @@ RULES:
 2. NEVER ENGAGE LIFESTYLE / VIBE / POSITIVE POSTS:
    - If the post is someone relaxing, enjoying music, sharing playlists (#MusicThreads), wishing goodnight, or in a good mood without an actual physical problem or pain point, REJECT IMMEDIATELY.
    - We NEVER pitch products to people who are content and not asking for a solution.
-3. STRICT "NEVER LIE" & CONTEXT RELEVANCE:
+3. STRICT "NEVER LIE" & ABSOLUTELY ZERO FAKE ANECDOTES:
+   - NEVER fabricate personal ownership, personal testing claims, or fake family anecdotes!
+   - BANNED PHRASES: "i swear by", "i own this", "i bought this", "my cat", "my dog", "my sister", "my friend", "in my bedroom", "for me", "it saved my couch", "my 3-year-old cardigan".
+   - Emma is an independent consumer researcher who curates and audits verified data, independent teardowns, and buyer feedback patterns.
+   - Speak as an objective, empathetic researcher/curator:
+     * "when auditing [category] to filter out sponsored hype..."
+     * "verified buyer consensus across [X]k reviews highlights..."
+     * "independent testing consistently points to..."
+     * "reviewers with heavy shedders note that..."
    - Does one of your 10 catalog items GENUINELY solve this user's exact problem?
    - If someone's problem is NOT solved by your products (e.g. medical spine injury, thrown-out back spasms while vacuuming floor under couch, wanting robot vacuums, dog chewing walls), you MUST REJECT.
    - Do NOT force a product recommendation if it does not fit! A sofa lint roller does NOT vacuum floors or heal lower back spasms!

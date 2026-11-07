@@ -301,11 +301,34 @@ def send_approved_reply(queue_id):
                 browser.close()
                 raise Exception("Reply textbox not found (replies may be disabled or page failed to render).")
 
+            # Enforce hard length safety check for Threads 500-char limit
+            if len(reply_text) > 480:
+                browser.close()
+                raise Exception(f"Reply text exceeds Threads 500-char limit ({len(reply_text)} chars). Aborting to prevent truncation.")
+
             composer.click()
             page.wait_for_timeout(400)
-            # Type naturally with minimal delay
-            page.keyboard.type(reply_text, delay=10)
+
+            # Insert paragraphs safely:
+            # Using page.keyboard.type() with raw \n triggers physical 'Enter' keypresses,
+            # which in Threads/Instagram web comment boxes immediately SUBMITS the partial comment!
+            # Using keyboard.insert_text() with Shift+Enter for newlines completely prevents premature submission.
+            paragraphs = reply_text.split("\n")
+            for i, p_text in enumerate(paragraphs):
+                if p_text:
+                    page.keyboard.insert_text(p_text)
+                    page.wait_for_timeout(100)
+                if i < len(paragraphs) - 1:
+                    page.keyboard.press("Shift+Enter")
+                    page.wait_for_timeout(150)
+
             page.wait_for_timeout(1000)
+
+            # Pre-flight verification: Confirm composer text contains the direct link before clicking Post
+            composer_text = composer.inner_text()
+            if "curatedbyemma.pages.dev/go/" not in composer_text:
+                browser.close()
+                raise Exception(f"Affiliate link verification failed before submit: 'curatedbyemma.pages.dev/go/' not found in composer text! Text: {composer_text[:120]}")
 
             # Submit: Try clicking explicit 'Post' button first, fallback to Control/Meta+Enter
             post_btn = page.locator("div[role='button']:has-text('Post'), button:has-text('Post')").first

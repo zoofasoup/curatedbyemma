@@ -1108,20 +1108,21 @@ RULES:
      * GOOD: "woven bedding seems to trap pet undercoat hair tighter than almost anything else..."
      * BAD: "ugh, the office chair struggle is so real!"
      * GOOD: "standard desk chairs offer basically zero lower lumbar contour, so your lower spine ends up absorbing all that compression by 3pm."
-5. 5-PART HONEST ARC (if ACCEPTED):
-   - Part 1: Real empathy referencing their SPECIFIC situation, vocabulary, and pain (never generic boilerplate).
-   - Part 2: Honest audit citing verified Amazon consensus and review count.
-   - Part 3: Honest caveat/con (what it doesn't do or real limitations).
-   - Part 4: Include the clean direct link seamlessly: "found the exact one here: curatedbyemma.pages.dev/go/[slug]" (or "here's the direct link if you wanna check it: curatedbyemma.pages.dev/go/[slug]"). Always use the clean curatedbyemma.pages.dev/go/[slug] URL so they can tap directly without hunting in a bio lander!
-   - Part 5 (Conversation Magnet): End with a brief, friendly, natural question related to their post (e.g. "btw what kind of chair do you have right now?", "what breed is your pet? some coats are so much harder to pull off velvet lol", "what's the first thing you're cooking in it?"). This sparks replies and elevates the comment to the Top Comment position!
-   - Tone: Lowercase casual, friendly, authentic peer, zero marketing hype, helpful friend, natural human flow.
+5. STRICT LENGTH LIMIT & 5-PART CONCISE ARC (MANDATORY):
+   - HARD LENGTH CONSTRAINT: Maximum 320 to 400 characters TOTAL (including link and spaces). Threads has a strict 500-character limit. You MUST keep the reply tight, punchy, and concise. NEVER exceed 420 characters.
+   - Part 1 (1 sentence): Real empathy referencing their SPECIFIC situation and pain (never generic boilerplate).
+   - Part 2 (1 sentence): Honest audit citing verified reviews and consensus.
+   - Part 3 (1 sentence): Honest limitation/caveat (e.g. eats batteries, needs flat surface, hand wash).
+   - Part 4: Clean direct link: "here's the direct link: curatedbyemma.pages.dev/go/[slug]"
+   - Part 5 (1 sentence): Friendly conversation magnet question.
+   - Tone: Lowercase casual, friendly authentic peer, zero marketing fluff, natural human flow.
 6. OUTPUT FORMAT:
    Return strictly valid JSON:
    {{
      "verdict": "ACCEPT" or "REJECT",
      "reason": "Clear 1-sentence reasoning",
      "slot": 1-50 or null,
-     "reply_draft": "Your customized 5-part honest reply with direct link and closing question"
+     "reply_draft": "Your customized concise 5-part honest reply (STRICTLY under 420 chars total) with direct link and closing question"
    }}
 
 EMMA'S 50-SLOT CURATED VIRAL CATALOG:
@@ -1158,11 +1159,28 @@ EMMA'S 50-SLOT CURATED VIRAL CATALOG:
                 slot_id = int(parsed["slot"])
                 spec = CATALOG_SPECS.get(slot_id)
                 prod_name = spec["name"] if spec else f"Product #{slot_id}"
+                draft = parsed.get("reply_draft", "").strip()
+                slug = spec.get("slug", str(slot_id)) if spec else str(slot_id)
+                expected_link = f"curatedbyemma.pages.dev/go/{slug}"
+
+                # Safety check: Ensure link is present
+                if expected_link not in draft and "curatedbyemma.pages.dev/go/" not in draft:
+                    draft = f"{draft}\n\nhere's the direct link: {expected_link}"
+
+                # Safety check: Ensure strictly <= 450 chars for Threads 500-char limit
+                if len(draft) > 450:
+                    print(f"[!] Draft exceeds 450 chars ({len(draft)}). Trimming to fit Threads limit...")
+                    # Fallback to curated template if LLM generated an essay
+                    templates = spec.get("draft_templates", [spec.get("draft_template", "")]) if spec else []
+                    if templates:
+                        seed_str = f"{author}_{post_text}"
+                        draft = templates[abs(hash(seed_str)) % len(templates)]
+
                 return {
                     "verdict": "ACCEPT",
                     "slot": slot_id,
                     "product_name": prod_name,
-                    "reply_draft": parsed.get("reply_draft", ""),
+                    "reply_draft": draft,
                     "reason": parsed.get("reason", "Accepted by LLM"),
                     "source": f"openrouter/{model}"
                 }

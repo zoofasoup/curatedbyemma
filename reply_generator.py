@@ -87,7 +87,7 @@ CATALOG_SPECS = {
         "bio_slot": "#2",
         "draft_templates": [
             (
-                "night wakeups every hour are completely brutal, sending you so much strength. "
+                "night wakeups every hour are completely exhausting when you are trying to function the next day. "
                 "parents navigating sleep regressions consistently point to that rhythmic breathing otter with nearly 60k reviews as one of the few soothers that genuinely settles babies down. "
                 "only catch is you go through batteries every month, but verified parents highlight it gave them their first long sleep stretch. "
                 "here's the direct link: curatedbyemma.pages.dev/go/otter. how many months are they right now?"
@@ -291,7 +291,7 @@ CATALOG_SPECS = {
         "bio_slot": "#10",
         "draft_templates": [
             (
-                "ugh the anxiety of dry holiday turkey or undercooked chicken is so real! "
+                "the anxiety of dry holiday turkey or undercooked chicken before dinner is so stressful. "
                 "after comparing dozens of kitchen thermometers, that $15 folding thermopro with 150k verified reviews is the consensus winner. "
                 "reads accurately in 3 seconds flat. just don't leave the plastic body inside the oven door, only the probe touches meat. "
                 "here's the direct link: curatedbyemma.pages.dev/go/thermometer. are you hosting thanksgiving this year or just regular cooking?"
@@ -567,7 +567,7 @@ RULES:
    - We NEVER pitch products to people who are content and not asking for a solution.
 3. STRICT "NEVER LIE" & ABSOLUTELY ZERO FAKE ANECDOTES:
    - NEVER fabricate personal ownership, personal testing claims, or fake family anecdotes!
-   - BANNED PHRASES: "i swear by", "i own this", "i bought this", "my cat", "my dog", "my sister", "my friend", "in my bedroom", "for me", "it saved my couch", "my 3-year-old cardigan".
+   - BANNED FABRICATIONS: "i swear by", "i own this", "i bought this", "my cat", "my dog", "my sister", "my friend", "in my bedroom", "for me", "it saved my couch", "my 3-year-old cardigan".
    - Emma is an independent consumer researcher who curates and audits verified data, independent teardowns, and buyer feedback patterns.
    - Speak as an objective, empathetic researcher/curator:
      * "when auditing [category] to filter out sponsored hype..."
@@ -578,14 +578,22 @@ RULES:
    - If someone's problem is NOT solved by your products (e.g. medical spine injury, thrown-out back spasms while vacuuming floor under couch, wanting robot vacuums, dog chewing walls), you MUST REJECT.
    - Do NOT force a product recommendation if it does not fit! A sofa lint roller does NOT vacuum floors or heal lower back spasms!
    - Hard REJECT: memorials, family grief, sports games, politics, brand giveaways, spam.
-4. 5-PART HONEST ARC (if ACCEPTED):
+4. BAN AI SLOP & CLICHÉ OPENERS (NO "UGH", "OMG", "THE STRUGGLE IS REAL"):
+   - NEVER start replies with generic, whiny, robotic AI filler:
+     * STRICTLY BANNED OPENERS: "ugh", "ugh,", "omg", "omg,", "sigh", "the struggle is real", "i feel this in my soul", "this hits close to home", "sending you strength", "game-changer", "game changer".
+     * Jump straight into a grounded, natural conversational observation about their specific issue.
+     * BAD: "ugh, the struggle is real when your dog sheds all over the bed..."
+     * GOOD: "woven bedding seems to trap pet undercoat hair tighter than almost anything else..."
+     * BAD: "ugh, the office chair struggle is so real!"
+     * GOOD: "standard desk chairs offer basically zero lower lumbar contour, so your lower spine ends up absorbing all that compression by 3pm."
+5. 5-PART HONEST ARC (if ACCEPTED):
    - Part 1: Real empathy referencing their SPECIFIC situation, vocabulary, and pain (never generic boilerplate).
    - Part 2: Honest audit citing verified Amazon consensus and review count.
    - Part 3: Honest caveat/con (what it doesn't do or real limitations).
    - Part 4: Include the clean direct link seamlessly: "found the exact one here: curatedbyemma.pages.dev/go/[slug]" (or "here's the direct link if you wanna check it: curatedbyemma.pages.dev/go/[slug]"). Always use the clean curatedbyemma.pages.dev/go/[slug] URL so they can tap directly without hunting in a bio lander!
    - Part 5 (Conversation Magnet): End with a brief, friendly, natural question related to their post (e.g. "btw what kind of chair do you have right now?", "what breed is your pet? some coats are so much harder to pull off velvet lol", "what's the first thing you're cooking in it?"). This sparks replies and elevates the comment to the Top Comment position!
    - Tone: Lowercase casual, friendly, authentic peer, zero marketing hype, helpful friend, natural human flow.
-5. OUTPUT FORMAT:
+6. OUTPUT FORMAT:
    Return strictly valid JSON:
    {{
      "verdict": "ACCEPT" or "REJECT",
